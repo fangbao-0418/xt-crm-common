@@ -2,14 +2,13 @@
  * 账务调整-内部
  */
 import React from 'react'
-import Image from '@/components/Image'
 import classNames from 'classnames'
-import { getHeaders, prefix, replaceHttpUrl } from '@/util/utils'
+import Page from '@/components/page'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tooltip, Select, Button, Radio, Upload } from 'antd'
+import { Tooltip, Select, Button, Radio, Upload, Tabs } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import TextArea from 'antd/lib/input/TextArea'
 import BatchModal from './components/uploadModal'
@@ -36,6 +35,7 @@ interface State {
   selectedRowKeys: any[]
   visible: boolean
   selectedRows: any[]
+  tab: "1" | "2"
 }
 
 class Main extends AntTableRowSelection<Props, State> {
@@ -43,7 +43,8 @@ class Main extends AntTableRowSelection<Props, State> {
     selectedRows: [],
     errorUrl: null,
     selectedRowKeys: [],
-    visible: false
+    visible: false,
+    tab: "1"
   }
   public rowSelectionKey = 'id'
   public id: any
@@ -165,9 +166,25 @@ class Main extends AntTableRowSelection<Props, State> {
     }
   }]
   public componentDidMount () {
-    this.toPay('1310146542382280754')
+    this.toPay('1295289396660789333')
   }
-  public refresh () {
+  /**
+   * 刷新数据
+   * @param init - 是否初始化搜索条件 true:是 false:否
+   */
+  public refresh (init = false) {
+    if (init) {
+      this.listpage.form.setValues({
+        id: undefined,
+        subjectId: undefined,
+        subjectName: undefined,
+        auditStatus: undefined,
+        subjectType: undefined,
+        inOrOutType: undefined,
+        settlementStatus: undefined,
+        settlementType: undefined
+      })
+    }
     this.listpage.form.setValues({
       startTime: moment().subtract(30, 'days').startOf('d'),
       endTime: moment().endOf('d')
@@ -268,7 +285,7 @@ class Main extends AntTableRowSelection<Props, State> {
       this.operation(type, res)
     })
   }
-  //type 1添加，2审核， 3查看
+  // type 1添加，2审核， 3查看
   public operation (type: any, res: any) {
     const readonly=type !== 1
     const uploadProps = readonly ? { showUploadList: { showPreviewIcon: true, showRemoveIcon: false, showDownloadIcon: false } } : { listNum: 5 }
@@ -536,7 +553,6 @@ class Main extends AntTableRowSelection<Props, State> {
                   APP.error('请选择审核意见')
                   return
                 }
-                console.log(value.auditDesc)
                 if (value.auditStatus===2&&!value.auditDesc) {
                   APP.error('请输入原因')
                   return
@@ -555,11 +571,6 @@ class Main extends AntTableRowSelection<Props, State> {
       })
     }
   }
-  public handleSelectionChange = (selectedRowKeys: any) => {
-    this.setState({
-      selectedRowKeys
-    })
-  }
   public toPay (id: any) {
     const hide = this.props.alert({
       width: 1000,
@@ -576,7 +587,6 @@ class Main extends AntTableRowSelection<Props, State> {
     })
   }
   public toMultiPay () {
-    console.log(this.selectedRows, 'xxxxx')
     const hide = this.props.alert({
       width: 1000,
       title: '支付账单',
@@ -593,7 +603,7 @@ class Main extends AntTableRowSelection<Props, State> {
     })
   }
   public render () {
-    const { selectedRowKeys } = this.state
+    const { selectedRowKeys, tab } = this.state
     const rowSelection = {
       ...this.rowSelection,
       // onChange: this.handleSelectionChange,
@@ -602,11 +612,22 @@ class Main extends AntTableRowSelection<Props, State> {
       // })
     }
     return (
-      <div
+      <Page
         style={{
           background: '#FFFFFF'
         }}
       >
+        <Tabs
+          type="card"
+          onChange={(e: any) => {
+            this.setState({ tab: e }, () => {
+              this.refresh(true)
+            })
+          }}
+        >
+          <Tabs.TabPane key='1' tab='全部'></Tabs.TabPane>
+          <Tabs.TabPane key='2' tab='待结算'></Tabs.TabPane>
+        </Tabs>
         <ListPage
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
@@ -626,17 +647,7 @@ class Main extends AntTableRowSelection<Props, State> {
             }
           }}
           onReset={() => {
-            this.listpage.form.setValues({
-              id: undefined,
-              subjectId: undefined,
-              subjectName: undefined,
-              auditStatus: undefined,
-              subjectType: undefined,
-              inOrOutType: undefined,
-              settlementStatus: undefined,
-              settlementType: undefined
-            })
-            this.refresh()
+            this.refresh(true)
           }}
           rangeMap={{
             time: {
@@ -680,15 +691,28 @@ class Main extends AntTableRowSelection<Props, State> {
               <FormItem name='id' />
               <FormItem name='subjectId' />
               <FormItem name='subjectName' />
-              <FormItem name='auditStatus' />
+              {tab === "1" && <FormItem name='auditStatus' />}
               <FormItem name='subjectType' />
-              <FormItem name='inOrOutType' />
-              <FormItem name='settlementStatus' />
+              {tab === "1" && <FormItem name='inOrOutType' />}
+              {tab === "1" && <FormItem name='settlementStatus' />}
               <FormItem name='time' />
               <FormItem name='settlementType' />
             </>
           )}
           api={api.getList}
+          processPayload={(payload) => {
+            if (tab === '2') {
+              return {
+                ...payload,
+                auditStatus: 1,
+                inOrOutType: 1,
+                settlementStatus: 0,
+              }
+            }
+            return {
+              ...payload
+            }
+          }}
         />
         <BatchModal
           modalProps={{
@@ -696,7 +720,7 @@ class Main extends AntTableRowSelection<Props, State> {
             onCancel: this.handleCancel.bind(this, 'visible')
           }}
         />
-      </div>
+      </Page>
     )
   }
 

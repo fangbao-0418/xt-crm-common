@@ -10,7 +10,7 @@ import { ListRecordProps } from '../../interface'
 interface Props {
   id?: any
   rows?: any[]
-  goNext?: () => void
+  goNext?: (batchId: string) => void
 }
 
 class Main extends React.Component<Props> {
@@ -62,12 +62,18 @@ class Main extends React.Component<Props> {
       render: (text) => APP.fn.formatDate(text)
     }
   ]
+  public batchId: string
   public componentDidMount () {
     const { id, rows } = this.props
     if (id) {
-      api.getDetail(this.props.id).then((res) => {
+      api.createBatchSingle(this.props.id).then((res) => {
+        this.batchId = res.batchId
         // res.evidenceImgUrlList = res?.evidenceImgUrlList?.map(() =>)
         this.form.setValues(res)
+      })
+    } else if (rows) {
+      api.createBatch(rows.map((item => item.id))).then((res) => {
+        this.batchId = res.batchId
       })
     }
   }
@@ -124,7 +130,9 @@ class Main extends React.Component<Props> {
         <div className='text-center mt20'>
           <Button
             type='primary'
-            onClick={this.props?.goNext}
+            onClick={() => {
+              this.props?.goNext?.(this.batchId)
+            }}
           >
             确认无误，下一步
           </Button>

@@ -5,6 +5,7 @@ import AuthCodeInput from '@/components/auth-code-input'
 
 interface Props {
   goNext?: () => void
+  onFetchCode?: () => void
 }
 
 class Main extends React.Component<Props> {
@@ -25,7 +26,11 @@ class Main extends React.Component<Props> {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 8 }}
           >
-            <AuthCodeInput />
+            <AuthCodeInput
+              onClick={() => {
+                this.props?.onFetchCode?.()
+              }}
+            />
           </FormItem>
         </div>
         <div className='text-center mt20'>

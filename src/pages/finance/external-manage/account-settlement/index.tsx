@@ -9,6 +9,7 @@ import { ColumnProps } from 'antd/lib/table'
 import { Button } from 'antd'
 import { getFieldsConfig } from './config'
 import * as api from './api'
+import moment from 'moment'
 interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
@@ -97,15 +98,28 @@ class Main extends React.Component<Props> {
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='memberId' />
-              <FormItem name='nickName' />
-              <FormItem name='anchorIdentityType' />
-              <FormItem name='anchorLevel' />
-              <FormItem name='status1' />
-              <FormItem name='status2' />
+              <FormItem name='id' />
+              <FormItem name='subjectId' />
+              <FormItem name='subjectName' />
+              <FormItem name='inOrOutType' />
+              <FormItem name='processStatus' />
+              <FormItem name='createTime' />
             </>
           )}
+          rangeMap={{
+            createTime: {
+              fields: ['startTime', 'endTime']
+            }
+          }}
           api={api.fetchList}
+          processPayload={(payload) => {
+            console.log(payload, 'payload')
+            return {
+              ...payload,
+              startTime: payload.startTime || moment().subtract(30, 'days').startOf('d').unix() * 1000,
+              endTime: payload.endTime || moment().endOf('d').unix() * 1000
+            }
+          }}
         />
       </div>
     )

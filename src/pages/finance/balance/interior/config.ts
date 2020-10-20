@@ -6,19 +6,14 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      supperId: {
+      subjectType: {
         label: '商家ID',
-        type: 'input',
-        controlProps: {
-          placeholder: '请输入商家ID'
-        }
-      },
-      supplierName: {
-        label: '商家名称',
-        type: 'input',
-        controlProps: {
-          placeholder: '请输入商家名称'
-        }
+        type: 'select',
+        options: [
+          { label: '供应商', value: 1 },
+          { label: '喜团小店', value: 2 },
+          { label: 'pop店', value: 3 }
+        ]
       }
     }
   }

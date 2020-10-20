@@ -3,6 +3,8 @@ import { Steps, Icon } from 'antd'
 import Info from './Info'
 import Verify from './Verify'
 import Result from './Result'
+import * as api from '../../api'
+
 const { Step } = Steps
 
 interface Props {
@@ -16,11 +18,13 @@ interface State {
 }
 
 class Main extends React.Component<Props, State> {
+  public batchId: string
   public state: State = {
     current: 0
   }
   public render () {
     const { current } = this.state
+    const { rows, id } = this.props
     return (
       <div>
         <Steps current={current} labelPlacement='vertical'>
@@ -35,7 +39,8 @@ class Main extends React.Component<Props, State> {
             <Info
               id={this.props.id}
               rows={this.props.rows}
-              goNext={() => {
+              goNext={(batchId) => {
+                this.batchId = batchId
                 this.setState({
                   current: 1
                 })
@@ -45,6 +50,12 @@ class Main extends React.Component<Props, State> {
           {current === 1 && (
             <Verify
               // id={this.props.id}
+              onFetchCode={() => {
+                api.fetchPaymentVerifyCode({
+                  batchId: this.batchId,
+                  settlementIds: id ? [id] : (rows ? rows.map((item) => item.id) : [])
+                })
+              }}
               goNext={() => {
                 this.setState({
                   current: 2

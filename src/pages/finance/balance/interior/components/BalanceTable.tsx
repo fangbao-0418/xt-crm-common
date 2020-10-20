@@ -11,6 +11,7 @@ import { getFieldsConfig, SupplierTypeEnum } from '../config'
 import * as api from '../api'
 import MultiSearch from './MultiSearch'
 import { SupplierBalanceProfile } from '../interface'
+import Page from '@/components/page'
 
 interface Props extends AlertComponentProps {
 }
@@ -54,11 +55,7 @@ class Main extends React.Component<Props> {
   }
   public render () {
     return (
-      <div
-        style={{
-          background: '#FFFFFF'
-        }}
-      >
+      <Page>
         <ListPage
           getInstance={(ref) => this.listpage = ref}
           style={{
@@ -66,39 +63,22 @@ class Main extends React.Component<Props> {
           }}
           columns={this.columns}
           tableProps={{
-            rowKey: 'supperId'
+            rowKey: 'supplierId'
           }}
           processPayload={(payload) => {
-            if (payload.page) {
-              delete payload.page
-            }
-            if (payload.pageSize) {
-              delete payload.pageSize
-            }
+            const supplier = payload?.supplier
             return {
-              ...payload
+              ...payload,
+              supplier: undefined,
+              subjectId: supplier?.type === 'id' ? supplier?.value : undefined,
+              subjectName: supplier?.type === 'name' ? supplier?.value : undefined
             }
-          }}
-          onSubmit={()=>{
-            const values=this.listpage.form.getValues()
-            console.log(values, 'values')
-            if (!values.supperId && !values.supplierName) {
-              APP.error('供应商ID和名称至少有一项不能为空')
-              return
-            }
-            this.listpage.refresh()
-          }}
-          onReset={()=>{
-            this.listpage.form.setValues({
-              supperId: undefined,
-              supplierName: undefined
-            })
           }}
           autoFetch={false}
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='supperId' />
+              <FormItem name='subjectType' />
               <FormItem
                 label='供应商'
                 inner={(form) => {
@@ -111,7 +91,7 @@ class Main extends React.Component<Props> {
           )}
           api={api.supplierBalance}
         />
-      </div>
+      </Page>
     )
   }
 }
