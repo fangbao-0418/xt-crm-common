@@ -4,6 +4,7 @@ import { FormInstance } from '@/packages/common/components/form'
 import { Button, Card, Icon, Input, Switch, Table } from 'antd'
 import { getAllColumn, saveDiscoverArticle, getDiscoverArticle, modifyDiscoverArticle } from './api'
 import VideoUpload from '@/components/upload/VodVideo'
+import { getSignature } from '@/components/upload/api'
 import { defaultFormConfig } from './config'
 import UploadView from '@/components/upload'
 import BraftEditor from 'braft-editor'
@@ -12,6 +13,27 @@ import 'braft-editor/dist/index.css'
 import { RouteComponentProps} from 'react-router'
 interface State {
   products: any[]
+}
+function uploadFn (param: any) {
+  const tcVod = new (window as any).TcVod.default({
+    getSignature: getSignature // 前文中所述的获取上传签名的函数
+  })
+  const uploader = tcVod.upload({
+    mediaFile: param.file, // 媒体文件（视频或音频或图片），类型为 File
+  })
+  uploader.done().then((doneResult: any) => {
+    console.log('doneResult', doneResult)
+    const url = doneResult.video.url
+    param.success({
+      url,
+      meta: {
+        id: doneResult.fileId,
+        loop: true, // 指定音视频是否循环播放
+        autoPlay: true, // 指定音视频是否自动播放
+        controls: true, // 指定音视频是否显示控制栏
+      }
+    })
+  })
 }
 class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
   public state = {
@@ -126,7 +148,7 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                 <div>
                   {form.getFieldDecorator('coverImage', {
                     rules: [{
-                      validator: (rule, value, callback) => {
+                      validator: (rule: any, value: any, callback: any) => {
                         if (!value || Array.isArray(value) && value.length === 0) {
                           callback('请选择图片')
                         } else {
@@ -197,6 +219,9 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                       }]
                     })(
                       <BraftEditor
+                        media={{
+                          uploadFn
+                        }}
                         style={{ border: '1px solid #d9d9d9'}}
                         placeholder='在这里输入正文'
                       />
