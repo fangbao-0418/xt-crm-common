@@ -7,7 +7,7 @@ import { rechargeList, rechargeExport } from '../api'
 import { formatDate } from '../../helper'
 import moment from 'moment'
 import Search from './Search'
-import { namespace } from './config'
+import { namespace, ThirdPartyPlatformEnum } from './config'
 import { Link } from 'react-router-dom'
 import { formatMoneyWithSign } from '@/pages/helper'
 
@@ -144,13 +144,18 @@ class Recharge extends Component {
         dataIndex: 'rechargeTypeDesc'
       },
       {
-        title: '供应商ID',
-        dataIndex: 'storeId'
+        title: '充值平台',
+        dataIndex: 'thirdPartyPlatform',
+        render: (text) => ThirdPartyPlatformEnum[text]
       },
-      {
-        title: '供应商名称',
-        dataIndex: 'storeName'
-      },
+      // {
+      //   title: '供应商ID',
+      //   dataIndex: 'storeId'
+      // },
+      // {
+      //   title: '供应商名称',
+      //   dataIndex: 'storeName'
+      // },
       {
         title: '创建时间',
         dataIndex: 'createTime',
