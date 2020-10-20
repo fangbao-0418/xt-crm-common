@@ -130,10 +130,11 @@ class Main extends AntTableRowSelection<Props, State> {
     width: 100,
     fixed: 'right',
     align: 'center',
-    render: (text: any, record: any) => {
+    render: (text, record) => {
+      const { auditStatus, settlementStatus, inOrOutType } = record
       return (
         <>
-          {record.auditStatus === 0 && (
+          {auditStatus === 0 && (
             <span
               className='href mr8'
               onClick={
@@ -143,7 +144,7 @@ class Main extends AntTableRowSelection<Props, State> {
               审核
             </span>
           )}
-          {record.auditStatus !== 0 && (
+          {auditStatus !== 0 && (
             <span
               className='href mr8'
               onClick={
@@ -153,7 +154,7 @@ class Main extends AntTableRowSelection<Props, State> {
               查看
             </span>
           )}
-          {(
+          {settlementStatus === 0 && auditStatus === 1 && inOrOutType === 1 && (
             <span
               className='href'
               onClick={this.toPay.bind(this, record.id)}
@@ -581,6 +582,7 @@ class Main extends AntTableRowSelection<Props, State> {
           id={id}
           onClose={() => {
             hide()
+            this.refresh()
           }}
         />
       )
@@ -597,6 +599,7 @@ class Main extends AntTableRowSelection<Props, State> {
           rows={this.selectedRows}
           onClose={() => {
             hide()
+            this.refresh()
           }}
         />
       )
@@ -604,13 +607,13 @@ class Main extends AntTableRowSelection<Props, State> {
   }
   public render () {
     const { selectedRowKeys, tab } = this.state
-    const rowSelection = {
+    const rowSelection = tab === '2' ? {
       ...this.rowSelection,
       // onChange: this.handleSelectionChange,
       // getCheckboxProps: (record: ListRecordProps) => ({
       //   disabled: record.status === 1
       // })
-    }
+    } : undefined
     return (
       <Page
         style={{

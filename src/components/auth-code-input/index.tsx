@@ -8,7 +8,7 @@ interface State {
 }
 
 interface Props {
-  onClick?: () => void
+  onClick?: (cb: () => void) => void
   onChange?: (value: any) => void
   maxLength?: number
 }
@@ -61,10 +61,7 @@ class Main extends React.Component<Props> {
           <Button
             className={styles.button}
             onClick={() => {
-              this.sendCode()
-              if (this.props.onClick) {
-                this.props.onClick()
-              }
+              this.props?.onClick?.(this.sendCode.bind(this))
             }}
           >
             获取

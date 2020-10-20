@@ -15,15 +15,21 @@ interface Props {
 
 interface State {
   current: 0 | 1 | 2
+  phoneNumber: string
 }
 
 class Main extends React.Component<Props, State> {
+  /** 短信验证码 */
   public batchId: string
+  /** 平安短信指令号 */
+  public messageOrderNo: string
+  public smsCode: string
   public state: State = {
-    current: 0
+    current: 0,
+    phoneNumber: ''
   }
   public render () {
-    const { current } = this.state
+    const { current, phoneNumber } = this.state
     const { rows, id } = this.props
     return (
       <div>
@@ -39,10 +45,11 @@ class Main extends React.Component<Props, State> {
             <Info
               id={this.props.id}
               rows={this.props.rows}
-              goNext={(batchId) => {
-                this.batchId = batchId
+              goNext={(data) => {
+                this.batchId = data.batchId
                 this.setState({
-                  current: 1
+                  current: 1,
+                  phoneNumber: data.phoneNumber
                 })
               }}
             />
@@ -50,15 +57,25 @@ class Main extends React.Component<Props, State> {
           {current === 1 && (
             <Verify
               // id={this.props.id}
-              onFetchCode={() => {
+              phoneNumber={phoneNumber}
+              onFetchCode={(cb) => {
                 api.fetchPaymentVerifyCode({
                   batchId: this.batchId,
                   settlementIds: id ? [id] : (rows ? rows.map((item) => item.id) : [])
+                }).then((res) => {
+                  this.messageOrderNo = res.messageOrderNo
+                  cb()
                 })
               }}
-              goNext={() => {
+              goNext={(code) => {
                 this.setState({
                   current: 2
+                })
+                api.paymentConfirm({
+                  settlementIds: id ? [id] : (rows ? rows.map((item) => item.id) : []),
+                  batchId: this.batchId,
+                  smsCode: code,
+                  messageOrderNo: this.messageOrderNo
                 })
               }}
             />

@@ -10,11 +10,13 @@ import { ListRecordProps } from '../../interface'
 interface Props {
   id?: any
   rows?: any[]
-  goNext?: (batchId: string) => void
+  goNext?: (data: { batchId: string, phoneNumber: string }) => void
 }
 
 class Main extends React.Component<Props> {
   public form: FormInstance
+  public batchId: string
+  public phoneNumber: string
   public columns: ColumnProps<ListRecordProps>[] = [
     {
       title: '编号',
@@ -62,17 +64,18 @@ class Main extends React.Component<Props> {
       render: (text) => APP.fn.formatDate(text)
     }
   ]
-  public batchId: string
   public componentDidMount () {
     const { id, rows } = this.props
     if (id) {
       api.createBatchSingle(this.props.id).then((res) => {
         this.batchId = res.batchId
+        this.phoneNumber = res.phoneNumber
         // res.evidenceImgUrlList = res?.evidenceImgUrlList?.map(() =>)
         this.form.setValues(res)
       })
     } else if (rows) {
       api.createBatch(rows.map((item => item.id))).then((res) => {
+        this.phoneNumber = res.phoneNumber
         this.batchId = res.batchId
       })
     }
@@ -131,7 +134,7 @@ class Main extends React.Component<Props> {
           <Button
             type='primary'
             onClick={() => {
-              this.props?.goNext?.(this.batchId)
+              this.props?.goNext?.({ batchId: this.batchId, phoneNumber: this.phoneNumber })
             }}
           >
             确认无误，下一步

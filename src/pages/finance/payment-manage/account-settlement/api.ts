@@ -21,6 +21,7 @@ export const getDetail = (id: any) => {
 export const createBatchSingle = (id: any) => {
   return get<{
     batchId: string
+    phoneNumber: string
   }>('/mcweb/account/financial/disposable/out/xt/single/detail/v1', { id })
 }
 
@@ -28,6 +29,7 @@ export const createBatchSingle = (id: any) => {
 export const createBatch = (ids: any[]) => {
   return newPost<{
     batchId: string
+    phoneNumber: string
     list: any[]
   }>('/mcweb/account/financial/disposable/out/xt/batch/list/v1', { ids })
 }
@@ -38,8 +40,13 @@ export const audit = (payload: any) => {
 }
 
 /** 提交支付确认 */
-export const paymentConfirm = () => {
-  return newPost('/mcweb/account/financial/disposable/out/xt/bill/confirm/v1')
+export const paymentConfirm = (data: {
+  settlementIds: any[]
+  batchId: string
+  messageOrderNo: string
+  smsCode: string
+}) => {
+  return newPost('/mcweb/account/financial/disposable/out/xt/bill/confirm/v1', data)
 }
 
 /** 获取支付短信验证码 */
@@ -47,6 +54,6 @@ export const fetchPaymentVerifyCode = (data: {
   settlementIds: any[]
   batchId: string
 }) => {
-  return newPost('/mcweb/account/financial/disposable/out/xt/sendSmsVerifyCode/v1', data)
+  return newPost<{ messageOrderNo: string }>('/mcweb/account/financial/disposable/out/xt/sendSmsVerifyCode/v1', data)
 }
 
