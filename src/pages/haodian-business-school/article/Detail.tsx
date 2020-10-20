@@ -241,6 +241,22 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                   render: (text) => {
                     return text > 10000 ? text / 10000 + '万' : text
                   }
+                }, {
+                  title: '操作',
+                  render: (text, record, index) => {
+                    return (
+                      <span
+                        className='href'
+                        onClick={() => {
+                          const { products } = this.state
+                          products.splice(index, 1)
+                          this.setState({ products })
+                        }}
+                      >
+                        删除
+                      </span>
+                    )
+                  }
                 }]}
               />
             </div>
