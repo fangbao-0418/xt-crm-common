@@ -55,7 +55,7 @@ export const defaultFormConfig: FieldsConfig = {
         style: {
           width: 195
         },
-        min: 1
+        min: 0
       }
     }
   }

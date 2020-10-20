@@ -3,7 +3,7 @@ import { FormItem, If, SelectFetch } from '@/packages/common/components'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { defaultFormConfig, statusEnums, columnEnums } from './config'
 import { Button, Icon, Switch, Popconfirm } from 'antd'
-import { getAllColumn, getArticleList, modifyArticleStatus, modifyDiscoverArticle } from './api'
+import { deleteArticle, getAllColumn, getArticleList, modifyArticleStatus, modifyDiscoverArticle, modifyTopStatus } from './api'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Alert } from '@/packages/common/components'
 import ClipboardJS from 'clipboard'
@@ -147,9 +147,8 @@ class Main extends React.Component<AlertComponentProps, {}> {
   }
   // 删除 isDelete为1是删除
   public handleDelete = async (id: number) => {
-    const res = await modifyDiscoverArticle({
-      id,
-      isDelete: 1
+    const res = await deleteArticle({
+      id
     })
     if (res) {
       APP.success('操作成功')
@@ -169,7 +168,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
   }
   // 置顶
   public handleTopOperate = async (vals: any) => {
-    const res = await modifyDiscoverArticle(vals)
+    const res = await modifyTopStatus(vals)
     if (res) {
       APP.success('操作成功')
       this.listRef.refresh()

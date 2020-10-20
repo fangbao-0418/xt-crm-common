@@ -52,6 +52,18 @@ export function modifyDiscoverArticle (payload: Payload) {
 }
 
 /**
+ * id: 文章ID
+ * topStatus: 1、未置顶/2、已置顶
+ * 文章置顶操作
+ */
+export function modifyTopStatus (payload: {
+  id: number,
+  topStatus: 1 | 2
+}) {
+  return newPost('/mcweb/octupus/discover/article/modify/topStatus', payload)
+}
+
+/**
  * 文章上下架操作
  * id: 文章ID
  * status: 1、下架 2、下架
@@ -60,7 +72,16 @@ export function modifyArticleStatus (payload: {
   id: number,
   status: 1 | 2
 }) {
-  return newPost('/mcweb/octupus/discover/article/modify/status')
+  return newPost('/mcweb/octupus/discover/article/modify/status', payload)
+}
+
+/**
+ * 文章删除
+ */
+export function deleteArticle (payload: {
+  id: number
+}) {
+  return newPost('/mcweb/octupus/discover/article/modify/delete', payload)
 }
 
 /**
