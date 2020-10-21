@@ -47,7 +47,7 @@ class Main extends React.Component<Props> {
           maxLength={this.props.maxLength}
           onChange={(e) => {
             const value = e.target.value
-            if ((/^\d+$/).test(value)) {
+            if ((/^(\d+)?$/).test(value)) {
               this.setState({
                 value
               })

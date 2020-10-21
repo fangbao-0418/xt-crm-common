@@ -33,7 +33,6 @@ class Main extends React.Component<Props> {
               maxLength={6}
               onChange={(e) => {
                 this.code = e
-                console.log(e, 'auth code')
               }}
               onClick={(cb) => {
                 this.props?.onFetchCode?.(cb)
@@ -45,9 +44,6 @@ class Main extends React.Component<Props> {
           <Button
             type='primary'
             onClick={() => {
-              if (!this.code) {
-                return
-              }
               this.props?.goNext?.(this.code)
             }}
           >

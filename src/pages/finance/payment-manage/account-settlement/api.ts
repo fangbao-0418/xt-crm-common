@@ -22,6 +22,7 @@ export const createBatchSingle = (id: any) => {
   return get<{
     batchId: string
     phoneNumber: string
+    amount: number
   }>('/mcweb/account/financial/disposable/out/xt/single/detail/v1', { id })
 }
 

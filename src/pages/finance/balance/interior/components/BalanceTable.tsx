@@ -5,13 +5,13 @@ import React from 'react'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tag, Popconfirm, Button, Select, Input } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, SupplierTypeEnum } from '../config'
 import * as api from '../api'
 import MultiSearch from './MultiSearch'
 import { SupplierBalanceProfile } from '../interface'
 import Page from '@/components/page'
+import MoneyText from '@/components/money-text'
 
 interface Props extends AlertComponentProps {
 }
@@ -33,22 +33,22 @@ class Main extends React.Component<Props> {
     dataIndex: 'cashableAmount',
     title: '可提现余额',
     width: 120,
-    render: (text) => APP.fn.formatMoney(text)
+    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
   }, {
     dataIndex: 'unsettledAmount',
     title: '待结算金额',
     width: 120,
-    render: (text) => APP.fn.formatMoney(text)
+    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
   }, {
     dataIndex: 'frozenAmount',
     title: '冻结金额',
     width: 120,
-    render: (text) =>  APP.fn.formatMoney(text)
+    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
   }, {
     dataIndex: 'presentedAmount',
     title: '已提现金额',
     width: 120,
-    render: (text) => APP.fn.formatMoney(text)
+    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
   }]
   public refresh () {
     this.listpage.refresh()

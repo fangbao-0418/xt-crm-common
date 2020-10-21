@@ -70,6 +70,7 @@ class Main extends React.Component<Props> {
       api.createBatchSingle(this.props.id).then((res) => {
         this.batchId = res.batchId
         this.phoneNumber = res.phoneNumber
+        res.amount = APP.fn.formatMoneyNumber(-res.amount, 'm2u')
         // res.evidenceImgUrlList = res?.evidenceImgUrlList?.map(() =>)
         this.form.setValues(res)
       })
@@ -102,14 +103,33 @@ class Main extends React.Component<Props> {
               <FormItem name='subjectName' />
               <FormItem name='amount' label='账务金额' />
               <FormItem name='applicationRemark' label='原因' />
-              <FormItem name='文件凭证' label='文件凭证' />
+              <FormItem
+                name='文件凭证'
+                label='文件凭证'
+                inner={(form) => {
+                  const value = form.getFieldValue('evidenceDocUrlList')
+                  return (
+                    <>
+                      {form.getFieldDecorator('evidenceDocUrlList')(
+                        <Upload
+                          // fileType='picture-card'
+                          disabled
+                        >
+                          {!value?.length && '暂无文件' }
+                        </Upload>
+                      )}
+                      {!!value?.length && <div>（点击文件名称下载）</div>}
+                    </>
+                  )
+                }}
+              />
               <FormItem
                 name='evidenceImgUrlList'
                 label='图片凭证'
                 inner={(form) => {
                   return form.getFieldDecorator('evidenceImgUrlList')(
                     <Upload
-                      fileType='picture-card'
+                      listType='picture-card'
                       disabled
                     />
                   )

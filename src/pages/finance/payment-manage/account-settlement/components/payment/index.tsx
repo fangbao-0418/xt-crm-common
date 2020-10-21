@@ -68,14 +68,27 @@ class Main extends React.Component<Props, State> {
                 })
               }}
               goNext={(code) => {
-                this.setState({
-                  current: 2
-                })
+                if　(!this.messageOrderNo) {
+                  APP.error('请先获取短信验证码')
+                  return
+                }
+                if (!code) {
+                  APP.error('请输入短信验证码')
+                  return
+                }
+                if (!/^\d{6}$/.test(code)) {
+                  APP.error('请输入6位有效短信验证码')
+                  return
+                }
                 api.paymentConfirm({
                   settlementIds: id ? [id] : (rows ? rows.map((item) => item.id) : []),
                   batchId: this.batchId,
                   smsCode: code,
                   messageOrderNo: this.messageOrderNo
+                }).then(() => {
+                  this.setState({
+                    current: 2
+                  })
                 })
               }}
             />
