@@ -51,5 +51,6 @@ export function adapterArticleResponse (res: any) {
   if (res.contextType === '1') {
     res.context = BraftEditor.createEditorState(res.context)
   }
+  res.shareStatus = res.shareStatus === 1
   return res
 }
