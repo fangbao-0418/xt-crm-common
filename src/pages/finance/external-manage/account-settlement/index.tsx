@@ -10,47 +10,68 @@ import { Button } from 'antd'
 import { getFieldsConfig } from './config'
 import * as api from './api'
 import moment from 'moment'
+import MoneyText from '@/components/money-text'
 interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<any>[] = [{
-    title: '财务结算流水号',
+    title: '账务结算流水号',
     dataIndex: 'flowNo',
-    width: 200
+    width: 220
   }, {
-    title: '财务结算ID',
-    dataIndex: 'id',
-    width: 300
+    title: '账务结算ID',
+    dataIndex: 'settlementId',
+    width: 220,
+    render: (text, record) => {
+      return (
+        <span
+          className='href'
+          onClick={() => {
+            APP.fn.setPayload('/finance/accountsettlement', {
+              id: text,
+              startTime: moment(record.settlementCreateTime).startOf('d').unix() * 1000,
+              endTime: moment(record.settlementCreateTime).endOf('d').unix() * 1000
+            })
+            APP.open('/finance/accountsettlement')
+          }}
+        >
+          {text}
+        </span>
+      )
+    }
   }, {
     dataIndex: 'inOrOutTypeDesc',
     title: '收支类型',
+    align: 'center',
     width: 150
   }, {
     dataIndex: 'amount',
     title: '账务金额',
     width: 120,
-    render: (text) => APP.fn.formatMoney(text)
+    align: 'center',
+    render: (text) => <MoneyText value={text} />
   }, {
     dataIndex: 'subjectTypeDesc',
     title: '账务对象类型',
-    width: 100
+    width: 150
   }, {
     dataIndex: 'subjectId',
     title: '账务对象ID',
-    width: 100
+    width: 150
   }, {
     dataIndex: 'subjectName',
     title: '账务对象名称',
-    width: 100
+    width: 200
   }, {
     dataIndex: 'applicationRemark',
     title: '原因',
-    width: 100
+    width: 200
   }, {
     dataIndex: 'createTime',
     title: '创建时间',
-    width: 100
+    render: (text) => APP.fn.formatDate(text),
+    width: 200
   }, {
     dataIndex: 'creator',
     title: '创建人',
@@ -58,18 +79,28 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'outFlowNo',
     title: '三方处理流水',
-    width: 100
+    width: 220
   }, {
     dataIndex: 'outProcessStatusDesc',
     title: '三方处理结果',
-    width: 100
+    width: 200
   }, {
     dataIndex: 'outFinishedTime',
     title: '三方处理完成时间',
-    width: 100
+    render: (text) => APP.fn.formatDate(text),
+    width: 200
   }]
   public refresh () {
     this.listpage.refresh()
+  }
+  public export () {
+    api.exportFile({
+      ...this.listpage.getPayload(),
+      page: undefined,
+      pageSize: undefined
+    }).then(() => {
+      APP.success('文件导出成功，前去下载列表进行下载')
+    })
   }
   public render () {
     return (
@@ -82,13 +113,17 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
-            rowKey: 'id'
+            rowKey: 'id',
+            scroll: {
+              x: 1000
+            }
           }}
           addonAfterSearch={(
             <div>
               <Button
                 type='primary'
                 onClick={() => {
+                  this.export()
                 }}
               >
                 批量导出

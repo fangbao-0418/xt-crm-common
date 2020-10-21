@@ -52,7 +52,7 @@ class Main extends React.Component<Props> {
                 value
               })
               if (this.props.onChange) {
-                this.props.onChange(Number(value))
+                this.props.onChange(value)
               }
             }
           }}

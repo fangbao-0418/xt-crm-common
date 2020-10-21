@@ -5,6 +5,7 @@ import styles from './style.module.styl'
 import { Row, Col, Divider, Button } from 'antd'
 import * as api from '../api'
 import { BalanceProfile } from '../interface'
+import MoneyText from '@/components/money-text'
 
 interface StatisticProps {
   className: string
@@ -77,10 +78,10 @@ class Main extends React.Component<{}, State> {
         <Statistic
           className='mt20'
           dataSource={[
-            { title: '可提现余额', description: APP.fn.formatMoneyNumber(info.cashableAmount, 'm2u') },
-            { title: '待结算金额', description: APP.fn.formatMoneyNumber(info.unsettledAmount, 'm2u') },
-            { title: '冻结金额', description: APP.fn.formatMoneyNumber(info.frozenAmount, 'm2u') },
-            { title: '已提现总额', description: APP.fn.formatMoneyNumber(info.presentedAmount, 'm2u') }
+            { title: '可提现余额', description: <MoneyText value={info.cashableAmount} /> },
+            { title: '待结算金额', description: <MoneyText value={info.unsettledAmount} /> },
+            { title: '冻结金额', description: <MoneyText value={info.frozenAmount} /> },
+            { title: '已提现总额', description: <MoneyText value={info.presentedAmount} /> }
           ]}
         />
       </div>

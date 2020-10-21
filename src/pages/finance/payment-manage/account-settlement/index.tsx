@@ -166,9 +166,6 @@ class Main extends AntTableRowSelection<Props, State> {
       )
     }
   }]
-  public componentDidMount () {
-    this.toPay('1295287885222371416')
-  }
   /**
    * 刷新数据
    * @param init - 是否初始化搜索条件 true:是 false:否
@@ -635,10 +632,12 @@ class Main extends AntTableRowSelection<Props, State> {
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           rowSelection={rowSelection}
+          reserveKey='/finance/accountsettlement'
           mounted={() => {
+            const payload = this.listpage.form.getValues()
             this.listpage.form.setValues({
-              startTime: moment().subtract(30, 'days').startOf('d'),
-              endTime: moment().endOf('d')
+              startTime: payload.startTime || moment().subtract(30, 'days').startOf('d').unix() * 1000,
+              endTime: payload.endTime || moment().endOf('d').unix() * 1000
             })
           }}
           tableProps={{
@@ -704,6 +703,8 @@ class Main extends AntTableRowSelection<Props, State> {
           )}
           api={api.getList}
           processPayload={(payload) => {
+            payload.startTime =  payload.startTime || moment().subtract(30, 'days').startOf('d').unix() * 1000
+            payload.endTime = payload.endTime || moment().endOf('d').unix() * 1000
             if (tab === '2') {
               return {
                 ...payload,

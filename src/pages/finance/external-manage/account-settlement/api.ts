@@ -1,10 +1,6 @@
 const { post, get, newPost, newPut, del } = APP.http
-export const getAnchorList = (payload: any) => {
-  return get('::ulive/live/anchor/list', payload)
-}
 
-/** 获取外部账务流水 */
-export const fetchList = (payload: {
+interface Payload {
   startTime: number
   endTime: number
   /** 处理状态，-1=记账失败 0=待记账 1=记账成功 */
@@ -19,6 +15,15 @@ export const fetchList = (payload: {
   id: any
   /** 账务对象ID */
   subjectId: any
-}) => {
+  page?: number
+  pageSize?: number
+}
+
+/** 获取外部账务流水 */
+export const fetchList = (payload: Payload) => {
   return newPost('/mcweb/account/financial/disposable/out/flow/list/v1', payload)
+}
+
+export const exportFile = (payload: Payload) => {
+  return newPost('/mcweb/account/financial/disposable/out/flow/export/v1', payload)
 }

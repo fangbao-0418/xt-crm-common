@@ -33,22 +33,22 @@ class Main extends React.Component<Props> {
     dataIndex: 'cashableAmount',
     title: '可提现余额',
     width: 120,
-    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
+    render: (text) => <MoneyText value={text} />
   }, {
     dataIndex: 'unsettledAmount',
     title: '待结算金额',
     width: 120,
-    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
+    render: (text) => <MoneyText value={text} />
   }, {
     dataIndex: 'frozenAmount',
     title: '冻结金额',
     width: 120,
-    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
+    render: (text) => <MoneyText value={text} />
   }, {
     dataIndex: 'presentedAmount',
     title: '已提现金额',
     width: 120,
-    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
+    render: (text) => <MoneyText value={text} />
   }]
   public refresh () {
     this.listpage.refresh()
