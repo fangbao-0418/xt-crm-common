@@ -336,7 +336,20 @@ class GoodsTable extends Component {
                           <Col>
                             <span>充值方式：{(orderVirtualInfoVO.rechargeWayDesc)||'暂无'}</span>
                             <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{(orderVirtualInfoVO.rechargeStatusDesc)||'暂无'}</span>
-                            <span>充值单号：{(orderVirtualInfoVO.rechargeNo)||'暂无'}</span>
+                            <span>
+                              充值单号：
+                              {orderVirtualInfoVO?.rechargeNo ? (
+                                <span
+                                  className='href'
+                                  onClick={() => {
+                                    APP.fn.setPayload('/order/recharge', { serialNo: orderVirtualInfoVO?.rechargeNo })
+                                    APP.open('/order/recharge')
+                                  }}
+                                >
+                                  {orderVirtualInfoVO?.rechargeNo}
+                                </span>
+                              ) : '暂无'}
+                            </span>
                           </Col>
                         </Row>
                       ) : null}
