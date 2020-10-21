@@ -42,8 +42,8 @@ class Main extends React.Component<Props, State> {
           }}
         >
           <Radio style={radioStyle} value={0}>全部用户</Radio>
-          {/* <Radio style={radioStyle} value={1}>按用户等级</Radio> */}
-          {/* {key === 1 && (
+          <Radio style={radioStyle} value={1}>按用户等级</Radio>
+          {key === 1 && (
             <Checkbox.Group
               value={value}
               disabled={readonly}
@@ -60,23 +60,20 @@ class Main extends React.Component<Props, State> {
                   <Checkbox value={0}>普通用户</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value={10}>普通团长</Checkbox>
+                  <Checkbox value={10}>店长</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value={11} disabled>体验团长</Checkbox>
+                  <Checkbox value={11}>高级店长</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value={12} disabled>星级团长</Checkbox>
+                  <Checkbox value={12}>服务商</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value={20}>社区管理员</Checkbox>
-                </Col>
-                <Col span={8}>
-                  <Checkbox value={30}>城市合伙人</Checkbox>
+                  <Checkbox value={20}>管理员</Checkbox>
                 </Col>
               </Row>
             </Checkbox.Group>
-          )} */}
+          )} 
           <Radio
             style={radioStyle}
             value={2}

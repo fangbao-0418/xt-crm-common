@@ -55,7 +55,7 @@ class Main extends React.Component<Props, State> {
         })
       }
       p.then(() => {
-        APP.history.push('/fresh/coupon/task')
+        APP.history.push('/shop/coupon-task')
       })
     })
   }
@@ -210,7 +210,7 @@ class Main extends React.Component<Props, State> {
               <Button
                 type='primary'
                 onClick={() => {
-                  APP.history.push('/fresh/coupon/task')
+                  APP.history.push('/shop/coupon-task')
                 }}
               >
                 返回
@@ -226,7 +226,7 @@ class Main extends React.Component<Props, State> {
                 </Button>
                 <Button
                   onClick={() => {
-                    APP.history.push('/fresh/coupon/task')
+                    APP.history.push('/shop/coupon-task')
                   }}
                 >
                   取消

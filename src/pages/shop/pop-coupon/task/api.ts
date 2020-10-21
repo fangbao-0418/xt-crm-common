@@ -14,7 +14,7 @@ interface TaskListPayload {
 
 }
 export const fetchTaskList = (payload: Partial<TaskListPayload>) => {
-  return newPost('/mcweb/coupon/fresh/task/getPage', payload)
+  return newPost('/mcweb/coupon/shop/task/getPage', payload)
 }
 
 interface AddTaskPayload {
@@ -31,16 +31,16 @@ interface AddTaskPayload {
   executionTime: number
 }
 export const addTask = (payload: Partial<AddTaskPayload>) => {
-  return newPost('/mcweb/coupon/fresh/task/add', payload)
+  return newPost('/mcweb/coupon/shop/task/add', payload)
 }
 
 /** 编辑任务 */
 export const updateTask = (payload: Partial<AddTaskPayload>) => {
-  return newPost('/mcweb/coupon/fresh/task/update', payload)
+  return newPost('/mcweb/coupon/shop/task/update', payload)
 }
 
 export const fetchTaskDetail = (id: any) => {
-  return get(`/mcweb/coupon/fresh/task/getById?id=${id}`)
+  return get(`/mcweb/coupon/shop/task/getById?id=${id}`)
 }
 
 /** 优惠券列表 */
@@ -49,19 +49,19 @@ export const fetchCouponList = (payload: {
   page?: number
   pageSize?: number
 }) => {
-  return newPost('/mcweb/coupon/fresh/get/couponList', payload)
+  return newPost('/mcweb/coupon/pop/list', payload)
 }
 
 /** 停止任务 */
 export const stopTask = (id: any) => {
-  return newPost('/mcweb/coupon/fresh/task/stop', {
+  return newPost('/mcweb/coupon/shop/task/stop', {
     id
   })
 }
 
 /** 失效任务 */
 export const invalidateTask = (id: any) => {
-  return newPost('/mcweb/coupon/fresh/task/invalidate', {
+  return newPost('/mcweb/coupon/shop/task/invalidate', {
     id
   })
 }

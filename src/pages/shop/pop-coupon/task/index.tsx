@@ -87,7 +87,7 @@ class Main extends React.Component {
               <span
                 className='href mr8'
                 onClick={() => {
-                  APP.history.push(`/fresh/coupon/task/${record.id}`)
+                  APP.history.push(`/shop/coupon-task/${record.id}`)
                 }}
               >
                 编辑
@@ -124,7 +124,7 @@ class Main extends React.Component {
             <span
               className='href mr8'
               onClick={() => {
-                APP.history.push(`/fresh/coupon/task/${record.id}?readonly=true`)
+                APP.history.push(`/shop/coupon-task/${record.id}?readonly=true`)
               }}
             >
               查看
@@ -192,7 +192,7 @@ class Main extends React.Component {
             <div>
               <Button
                 type='primary'
-                onClick={() => APP.history.push('/fresh/coupon/task/-1')}
+                onClick={() => APP.history.push('/shop/coupon-task/-1')}
               >
                 新建发券任务
               </Button>
