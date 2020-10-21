@@ -248,7 +248,7 @@ class CheckBoth extends React.Component<Props, State> {
                     ]
                   })(
                     <ReturnCouponSelect
-                      orderServerVO={this.orderServerVO}
+                      deductionAmount={this.orderServerVO.deductionAmount}
                       onChange={() => {
                         this.props.form.setFieldsValue({
                           refundAmount: this.maxRefundAmount

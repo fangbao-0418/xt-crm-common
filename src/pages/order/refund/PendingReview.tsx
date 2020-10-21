@@ -36,7 +36,7 @@ import {
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo'
 import ModifyReturnAddress from '../components/modal/ModifyReturnAddress'
 import { mul } from '@/util/utils'
-import { verifyDownDgrade, getOrderRefundQuickReply } from './../api'
+import { verifyDownDgrade, getOrderRefundQuickReply, checkRefundCoupon } from './../api'
 import { OptionProps } from 'antd/lib/select'
 const { Option } = Select
 interface Props
@@ -53,6 +53,7 @@ interface State {
   firstLevel: OptionProps[],
   secondLevel: OptionProps[]
   refundTypeValue: any
+  deductionAmount?: number
 }
 
 class PendingReview extends React.Component<Props, State> {
@@ -70,12 +71,38 @@ class PendingReview extends React.Component<Props, State> {
   }
 
   componentDidMount () {
+    this.checkRefundCoupon({
+      childOrderId: this.orderInfoVO.childOrderId,
+      refundNum: this.checkVO.serverNum,
+      refundAmount: this.checkVO.refundAmount,
+      refundType: this.checkVO.refundType
+    })
     getOrderRefundQuickReply().then((res: any) => {
       res = res || {}
       const firstLevel = Object.keys(res).map((str) => ({ label: str, value: str }))
       console.log('firstLevel', firstLevel)
       this.refundQuickReply = res
       this.setState({ firstLevel })
+    })
+  }
+
+  /* 校验满赠优惠券金额 */
+  checkRefundCoupon = (data: { childOrderId: number, refundNum: number, refundAmount: number, refundType: number }, cb?: () => void) => {
+    checkRefundCoupon(data).then((res: any) => {
+      console.log(res, 'res 92')
+      if (res) {
+        this.setState({
+          deductionAmount: res.deductionAmount
+        }, () => {
+          if (cb) {
+            cb()
+          }
+        })
+      } else {
+        if (cb) {
+          cb()
+        }
+      }
     })
   }
 
@@ -127,7 +154,7 @@ class PendingReview extends React.Component<Props, State> {
           payload.returnAddress = checkVO.returnAddress
           payload.contactVO = orderServerVO.contactVO
         }
-        console.log(payload, 'payload 130')
+        console.log(payload, 'payload 157')
         APP.dispatch({
           type: `${namespace}/auditOperate`,
           payload
@@ -179,7 +206,7 @@ class PendingReview extends React.Component<Props, State> {
         ? this.checkVO.maxRefundAmount
         : this.relatedAmount
     if (refundCouponAmount === 1) {
-      maxRefundAmount = maxRefundAmount - this.orderServerVO.deductionAmount
+      maxRefundAmount = maxRefundAmount - (this.state.deductionAmount || 0)
     }
     return maxRefundAmount
   }
@@ -310,14 +337,21 @@ class PendingReview extends React.Component<Props, State> {
    */
   handleChangeServerNum = (value: any = 0) => {
     const result = mul(this.unitPrice, value)
-    this.props.form.setFieldsValue(
-      {
-        refundAmount: formatPrice(result)
-      },
-      () => {
-        this.verifyMaxRefundAmount(result)
-      }
-    )
+    this.checkRefundCoupon({
+      childOrderId: this.orderInfoVO.childOrderId,
+      refundNum: value,
+      refundAmount: this.checkVO.refundAmount,
+      refundType: this.checkVO.refundType
+    }, () => {
+      this.props.form.setFieldsValue(
+        {
+          refundAmount: formatPrice(result)
+        },
+        () => {
+          this.verifyMaxRefundAmount(result)
+        }
+      )
+    })
   }
   /**
    * 降级改变
@@ -332,10 +366,18 @@ class PendingReview extends React.Component<Props, State> {
    * 退款金额变动
    */
   handleChangeMaxRefundAmount = (value: number = 0) => {
-    this.verifyMaxRefundAmount(value * 100)
+    this.checkRefundCoupon({
+      childOrderId: this.orderInfoVO.childOrderId,
+      refundNum: value,
+      refundAmount: value * 100,
+      refundType: this.checkVO.refundType
+    }, () => {
+      this.verifyMaxRefundAmount(value * 100)
+    })
   }
   render () {
     const { getFieldDecorator } = this.props.form
+    const { deductionAmount } = this.state
     let { refundTypeValue } = this.state
     const { orderInterceptRecordVO, shopDTO } = this.props
       .data as any
@@ -348,7 +390,6 @@ class PendingReview extends React.Component<Props, State> {
       ? options.filter((v) => v.key !== 30)
       : options
     refundTypeValue = refundTypeValue || this.checkVO.refundType
-    const deductionAmount = this.orderServerVO.deductionAmount
     console.log('refundTypeValue', refundTypeValue, typeof refundTypeValue, this.checkVO)
     return (
       <div>
@@ -493,7 +534,6 @@ class PendingReview extends React.Component<Props, State> {
               deductionAmount && (
                 <Form.Item label='是否回收优惠券金额'>
                   {getFieldDecorator('refundCouponAmount', {
-                    initialValue: this.orderServerVO.refundCouponAmount,
                     rules: [
                       {
                         required: true,
@@ -502,7 +542,7 @@ class PendingReview extends React.Component<Props, State> {
                     ]
                   })(
                     <ReturnCouponSelect
-                      orderServerVO={this.orderServerVO}
+                      deductionAmount={deductionAmount}
                       onChange={() => {
                         let timer = 0
                         clearTimeout(timer)

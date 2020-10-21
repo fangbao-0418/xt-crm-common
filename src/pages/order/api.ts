@@ -377,3 +377,25 @@ export function getUserWxAccount (data: any) {
 export function compensateApply (data:any) {
   return newPost('/mcweb/sale-after/order/compensate/apply', data)
 }
+
+//校验满赠优惠券金额
+export function checkRefundCoupon (data:any) {
+  // if (data.refundAmount === 10) {
+  //   return Promise.resolve({
+  //     deductionAmount: 10
+  //   })
+  // } else if (data.refundAmount === 20) {
+  //   return Promise.resolve({
+  //     deductionAmount: 20
+  //   })
+  // } else if (data.refundAmount === 70) {
+  //   return Promise.resolve({
+  //     deductionAmount: 70
+  //   })
+  // } else {
+  //   return Promise.resolve({
+  //     deductionAmount: 30
+  //   })
+  // }
+  return get('/mcweb/refund/check/refundCoupon', data)
+}
