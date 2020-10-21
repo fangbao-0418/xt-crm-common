@@ -4,37 +4,54 @@ import { FormInstance } from '@/packages/common/components/form'
 import { Button, Card, Icon, Input, Switch, Table } from 'antd'
 import { getAllColumn, saveDiscoverArticle, getDiscoverArticle, modifyDiscoverArticle } from './api'
 import VideoUpload from '@/components/upload/VodVideo'
-import { getSignature } from '@/components/upload/api'
+import { getSignature, getStsCos } from '@/components/upload/api'
+import { createCosClient, cosUpload } from '@/components/upload/oss'
+import { RouteComponentProps} from 'react-router'
 import { defaultFormConfig } from './config'
 import UploadView from '@/components/upload'
 import BraftEditor from 'braft-editor'
 import GoodsModal from './GoodsModal'
 import 'braft-editor/dist/index.css'
-import { RouteComponentProps} from 'react-router'
 interface State {
   products: any[]
 }
 
-function uploadFn (param: any) {
-  const tcVod = new (window as any).TcVod.default({
-    getSignature: getSignature // 前文中所述的获取上传签名的函数
-  })
-  const uploader = tcVod.upload({
-    mediaFile: param.file, // 媒体文件（视频或音频或图片），类型为 File
-  })
-  uploader.done().then((doneResult: any) => {
-    console.log('doneResult', doneResult)
-    const url = doneResult.video.url
-    param.success({
-      url,
-      meta: {
-        id: doneResult.fileId,
-        loop: true, // 指定音视频是否循环播放
-        autoPlay: true, // 指定音视频是否自动播放
-        controls: true, // 指定音视频是否显示控制栏
-      }
+async function uploadFn (param: any) {
+  const file = param.file
+  // 图片走cos
+  if (['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
+    const stsCos = await getStsCos()
+    if (stsCos) {
+      const cosClient = createCosClient(stsCos)
+      const address = await cosUpload(cosClient, file, 'crm', stsCos)
+      const url = 'https://' + address.Location
+      param.success({
+        url
+      })
+    }
+  }
+  // 视频走腾讯云点播 video/x-matroska,video/mp4,video/x-msvideo,audio/mpeg
+  else if (['video/x-matroska', 'video/mp4', 'video/x-msvideo', 'audio/mpeg'].includes(param.file.type)) {
+    const tcVod = new (window as any).TcVod.default({
+      getSignature: getSignature // 前文中所述的获取上传签名的函数
     })
-  })
+    const uploader = tcVod.upload({
+      mediaFile: file, // 媒体文件（视频或音频或图片），类型为 File
+    })
+    uploader.done().then((doneResult: any) => {
+      console.log('doneResult', doneResult)
+      const url = doneResult.video.url
+      param.success({
+        url,
+        meta: {
+          id: doneResult.fileId,
+          loop: true, // 指定音视频是否循环播放
+          autoPlay: true, // 指定音视频是否自动播放
+          controls: true, // 指定音视频是否显示控制栏
+        }
+      })
+    })
+  }
 }
 class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
   public state = {
@@ -221,7 +238,12 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                     })(
                       <BraftEditor
                         media={{
-                          uploadFn
+                          uploadFn,
+                          accepts: {
+                            image: 'image/png,image/jpeg,image/gif',
+                            video: 'video/x-matroska,video/mp4,video/x-msvideo',
+                            audio: 'audio/mpeg'
+                          }
                         }}
                         style={{ border: '1px solid #d9d9d9'}}
                         placeholder='在这里输入正文'
