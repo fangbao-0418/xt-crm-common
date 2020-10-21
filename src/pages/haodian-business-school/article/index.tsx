@@ -31,7 +31,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
     render: (record: any) => {
       return (
         <div>
-          <div>{record.title}</div>
+          <div style={{ cursor: 'pointer', fontWeight: 600 }} onClick={this.handlePrivew.bind(null, record.id)}>{record.title}</div>
           <div>
             <span>
               <Icon type='user' />
@@ -51,8 +51,10 @@ class Main extends React.Component<AlertComponentProps, {}> {
               textOverflow:'ellipsis',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
-              lineHeight: '21px'
+              lineHeight: '21px',
+              cursor: 'pointer'
             }}
+            onClick={this.handlePrivew.bind(null, record.id)}
             dangerouslySetInnerHTML={{ __html: record.context}}
           ></div>
         </div>
