@@ -31,6 +31,14 @@ class Main extends React.Component<{}, State> {
         )
       }
     },
+    {
+      title: '供应商ID',
+      dataIndex: 'storeId'
+    },
+    {
+      title: '供应商名称',
+      dataIndex: 'storeName'
+    },
     { title: '规格', dataIndex: 'propertyValue' },
     { title: '成本价', dataIndex: 'costPrice', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
     { title: '市场价', dataIndex: 'marketPrice', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
