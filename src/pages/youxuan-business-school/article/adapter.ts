@@ -28,6 +28,7 @@ export function adapterArticleParams (payload: any) {
     else if (audioMimeTypes.includes(file.type)) {
       payload.resourceType = 2
     }
+    console.log('file.type', file.type)
     payload.fileSize = file.size
     payload.resourceUrl = file.url
   } else {
