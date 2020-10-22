@@ -30,8 +30,8 @@ async function uploadFn (param: any) {
       })
     }
   }
-  // 视频走腾讯云点播 video/x-matroska,video/mp4,video/x-msvideo,audio/mpeg
-  else if (['video/x-matroska', 'video/mp4', 'video/x-msvideo', 'audio/mpeg'].includes(param.file.type)) {
+  // 视频走腾讯云点播 video/x-matroska,video/mp4,video/x-msvideo,'audio/mpeg', 'audio/x-mpeg', 'audio/mp3'
+  else if (['video/x-matroska', 'video/mp4', 'video/x-msvideo', 'audio/mpeg', 'audio/x-mpeg', 'audio/mp3'].includes(param.file.type)) {
     const tcVod = new (window as any).TcVod.default({
       getSignature: getSignature // 前文中所述的获取上传签名的函数
     })
@@ -184,7 +184,7 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                       size={0.3}
                     />
                   )}
-                  <div>图片格式要求：png、jpeg、gif 尺寸建议：375px*211px</div>
+                  <div>图片格式要求：png、jpeg、gif 尺寸建议：750px*422px</div>
                 </div>
               )
             }}
