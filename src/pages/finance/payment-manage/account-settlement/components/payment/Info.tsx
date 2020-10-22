@@ -83,7 +83,7 @@ class Main extends React.Component<Props, State> {
       api.createBatchSingle(this.props.id).then((res) => {
         this.batchId = res.batchId
         this.phoneNumber = res.phoneNumber
-        res.amount = APP.fn.formatMoneyNumber(-res.amount, 'm2u')
+        res.amount = APP.fn.formatMoneyNumber(res.amount, 'm2u')
         // res.evidenceImgUrlList = res?.evidenceImgUrlList?.map(() =>)
         this.form.setValues(res)
       })
