@@ -91,7 +91,7 @@ class Main extends React.Component<Props, State> {
             }
           }}
           processPayload={(payload) => {
-            return { ...payload, channel: 1 }
+            return { ...payload, channel: 1, notInTypes: 50 }
           }}
           columns={this.columns}
           api={getProductList}
