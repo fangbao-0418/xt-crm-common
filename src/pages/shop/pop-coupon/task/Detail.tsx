@@ -149,6 +149,8 @@ class Main extends React.Component<Props, State> {
                     validator: (rule, value, cb) => {
                       if (!value) {
                         cb('请选择目标用户')
+                      } else if (value?.key === 1 && (!value?.value||value?.value?.length===0)) {
+                        cb('请选择用户等级')
                       } else if (value?.key === 2) {
                         if (!value?.value) {
                           cb('请输入用户手机号')

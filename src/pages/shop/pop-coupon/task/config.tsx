@@ -30,6 +30,7 @@ export function getFieldsConfig (): FieldsConfig {
         },
         options: [
           { label: '全部用户', value: 0 },
+          { label: '按用户等级', value: 1 },
           { label: '指定用户', value: 2 },
           { label: 'Excel文件上传', value: 3 }
         ]
@@ -88,15 +89,13 @@ export enum StatusEnum {
   已失效 = 4
 }
 
-
 export function getUserLevelText (ids: any[]) {
   const userMap: {[id: number]: string} = {
     0: '普通用户',
-    10: '普通团长',
-    11: '体验团长',
-    12: '星级团长',
-    20: '社区管理员',
-    30: '城市合伙人'
+    10: '店长',
+    20: '高级店长',
+    30: '服务商',
+    40: '管理员'
   }
   return ids.map((item: number) => {
     return userMap[item]

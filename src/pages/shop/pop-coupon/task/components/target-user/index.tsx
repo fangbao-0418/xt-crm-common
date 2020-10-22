@@ -63,13 +63,13 @@ class Main extends React.Component<Props, State> {
                   <Checkbox value={10}>店长</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value={11}>高级店长</Checkbox>
+                  <Checkbox value={20}>高级店长</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value={12}>服务商</Checkbox>
+                  <Checkbox value={30}>服务商</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value={20}>管理员</Checkbox>
+                  <Checkbox value={40}>管理员</Checkbox>
                 </Col>
               </Row>
             </Checkbox.Group>
