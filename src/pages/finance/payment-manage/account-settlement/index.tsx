@@ -586,6 +586,10 @@ class Main extends AntTableRowSelection<Props, State> {
     })
   }
   public toMultiPay () {
+    if (!this.selectedRows?.length) {
+      APP.error('请选择支付账单')
+      return
+    }
     const hide = this.props.alert({
       width: 1000,
       title: '支付账单',
@@ -679,12 +683,14 @@ class Main extends AntTableRowSelection<Props, State> {
               >
                 批量审核
               </Button> */}
-              <Button
-                type='primary'
-                onClick={this.toMultiPay.bind(this)}
-              >
-                发起支付
-              </Button>
+              {tab === '2' && (
+                <Button
+                  type='primary'
+                  onClick={this.toMultiPay.bind(this)}
+                >
+                  发起支付
+                </Button>
+              )}
             </div>
           )}
           formConfig={getFieldsConfig()}
@@ -703,6 +709,10 @@ class Main extends AntTableRowSelection<Props, State> {
           )}
           api={api.getList}
           processPayload={(payload) => {
+            this.selectedRows = []
+            this.setState({
+              selectedRowKeys: []
+            })
             payload.startTime =  payload.startTime || moment().subtract(30, 'days').startOf('d').unix() * 1000
             payload.endTime = payload.endTime || moment().endOf('d').unix() * 1000
             if (tab === '2') {

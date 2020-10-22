@@ -6,6 +6,7 @@ import { getFieldsConfig } from '../../config'
 import * as api from '../../api'
 import Upload from '@/components/upload'
 import { ListRecordProps } from '../../interface'
+import MoneyText from '@/components/money-text'
 
 interface Props {
   id?: any
@@ -13,7 +14,13 @@ interface Props {
   goNext?: (data: { batchId: string, phoneNumber: string }) => void
 }
 
-class Main extends React.Component<Props> {
+interface State {
+  list: ListRecordProps[]
+  totalAmount: number
+  totalRecords: number
+}
+
+class Main extends React.Component<Props, State> {
   public form: FormInstance
   public batchId: string
   public phoneNumber: string
@@ -49,7 +56,8 @@ class Main extends React.Component<Props> {
     {
       title: '账务金额',
       dataIndex: 'amount',
-      width: 150
+      width: 150,
+      render: (text) => <MoneyText value={text} />
     },
     {
       title: '创建时间',
@@ -64,6 +72,11 @@ class Main extends React.Component<Props> {
       render: (text) => APP.fn.formatDate(text)
     }
   ]
+  public state: State = {
+    list: [],
+    totalAmount: 0,
+    totalRecords: 0
+  }
   public componentDidMount () {
     const { id, rows } = this.props
     if (id) {
@@ -78,12 +91,18 @@ class Main extends React.Component<Props> {
       api.createBatch(rows.map((item => item.id))).then((res) => {
         this.phoneNumber = res.phoneNumber
         this.batchId = res.batchId
+        // totalAmount
+        this.setState({
+          list: res.list,
+          totalRecords: res.totalRecords,
+          totalAmount: res.totalAmount
+        })
       })
     }
   }
   public render () {
-    // const single = false
     const { id, rows } = this.props
+    const { list, totalAmount, totalRecords } = this.state
     return (
       <>
         <div style={{ width: 600, margin: '0 auto' }}>
@@ -142,13 +161,20 @@ class Main extends React.Component<Props> {
           )}
         </div>
         {rows && (
-          <Table
-            columns={this.columns}
-            dataSource={rows}
-            pagination={{
-              pageSize: 2
-            }}
-          />
+          <>
+            <Table
+              columns={this.columns}
+              dataSource={list}
+              pagination={{
+                pageSize: 10
+              }}
+            />
+            <div>
+            共计{totalRecords}条，合计
+            <MoneyText value={totalAmount} />
+            元
+            </div>
+          </>
         )}
         <div className='text-center mt20'>
           <Button

@@ -1,4 +1,5 @@
 const { post, get, newPost, newPut, del } = APP.http
+import { ListRecordProps } from './interface'
 
 //账务对象校验
 export const checkSubject = (payload: any) => {
@@ -31,7 +32,9 @@ export const createBatch = (ids: any[]) => {
   return newPost<{
     batchId: string
     phoneNumber: string
-    list: any[]
+    list: ListRecordProps[]
+    totalAmount: number
+    totalRecords: number
   }>('/mcweb/account/financial/disposable/out/xt/batch/list/v1', { ids })
 }
 

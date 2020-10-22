@@ -25,7 +25,6 @@ import InvoiceAudit from './external-manage/invioce-audit' // 发票管理
 import ExternalXituanBalance from './external-manage/xituan-balance' // 外部账户余额查询-喜团
 import Download from './download-list' // 导出
 import DistrictChiefAndAbove from './district-chief-and-above' // 区长及以上会员提现明细
-// import AdjustmentInterior from './adjustment/interior' // 账务调整-内部 废弃
 import BalanceInterior from './balance/interior' // 供应商内部余额查询
 
 export default class extends Component {
