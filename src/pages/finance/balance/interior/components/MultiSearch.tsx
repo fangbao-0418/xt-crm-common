@@ -50,7 +50,7 @@ class Main extends React.Component<Props, State> {
           onChange={(e: any) => {
             let value = e.target.value
             if (type === 'id') {
-              if (!/^\d+$/.test(value)) {
+              if (!/^(\d|)+$/.test(value)) {
                 return
               }
             }
