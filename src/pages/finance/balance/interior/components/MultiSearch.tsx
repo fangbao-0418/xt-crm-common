@@ -2,6 +2,7 @@ import React from 'react'
 import { Input, Select } from 'antd'
 
 interface Props {
+  value?: { type: 'id' | 'name', value: string }
   onChange?: (value: { type: string, value: string }) => void
 }
 
@@ -17,12 +18,20 @@ class Main extends React.Component<Props, State> {
     placeholder: '请输入供应商ID',
     value: ''
   }
+  public componentWillReceiveProps (props: Props) {
+    const value = props.value
+    this.setState({
+      type: value?.type || 'id',
+      value: value?.value
+    })
+  }
   public render () {
     const { placeholder, value, type } = this.state
     return (
       <Input.Group compact>
         <Select
           defaultValue="id"
+          value={type}
           style={{ minWidth: 80 }}
           onChange={(e: any) => {
             this.setState({
