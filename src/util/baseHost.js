@@ -5,22 +5,22 @@ let env = __ENV__
 // 日常
 if (env === 'dev') {
   baseHost = 'https://daily-crm-test.hzxituan.com'
-  h5Host = 'https://xtyouxuan.hzxituan.com/v0909_coupon/index.html'
+  h5Host = 'https://daily-myouxuan.hzxituan.com'
 }
 // 测试1
 else if (env === 'test') {
   baseHost = 'https://testapi-crmadmin.hzxituan.com'
-  h5Host = 'https://testing.hzxituan.com/v0909_coupon/index.html'
+  h5Host = 'https://testing.hzxituan.com'
 }
 // 测试2
 else if (env === 'test2') {
   baseHost = 'https://test2api-crmadmin.hzxituan.com'
-  h5Host = 'https://testing.hzxituan.com/v0909_coupon/index.html'
+  h5Host = 'https://testing.hzxituan.com'
 }
 // 预发
 else if (env === 'pre') {
   baseHost = 'https://pre-xt-crm-api.hzxituan.com'
-  h5Host = 'https://pre-xt-myouxuan.hzxituan.com/v0909_coupon/index.html'
+  h5Host = 'https://pre-xt-myouxuan.hzxituan.com'
 }
 // 正式
 else if (env === 'prod') {
