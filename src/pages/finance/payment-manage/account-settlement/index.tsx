@@ -313,6 +313,13 @@ class Main extends AntTableRowSelection<Props, State> {
               }
             }}
           >
+            {type === 3 && (
+              <FormItem
+                label='账务结算ID'
+                readonly
+                name='id'
+              />
+            )}
             <FormItem
               label='收支类型'
               required
