@@ -7,7 +7,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       subjectType: {
-        label: '商家ID',
+        label: '供应商类型',
         type: 'select',
         options: [
           { label: '供应商', value: 1 },
