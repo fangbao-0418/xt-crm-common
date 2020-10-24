@@ -24,3 +24,13 @@ export interface ListRecordProps {
   /** 结算状态，-2=结算关闭 -1=冻结中 0=待结算 1=结算中 2=已结算 */
   settlementStatus: -2 | -1 | 0 | 1 | 2
 }
+
+/** 支付结算数据  */
+export interface ConfirmDataProps {
+  batchId: any
+  phoneNumber: string
+  amount: number
+  list: ListRecordProps[]
+  totalRecords: number
+  totalAmount: number
+}

@@ -577,41 +577,81 @@ class Main extends AntTableRowSelection<Props, State> {
     }
   }
   public toPay (id: any) {
-    const hide = this.props.alert({
-      width: 1000,
-      title: '支付账单',
-      footer: false,
-      content: (
-        <Payment
-          id={id}
-          onClose={() => {
-            hide()
-            this.refresh()
-          }}
-        />
-      )
+    api.createBatchSingle(id).then((res) => {
+      const hide = this.props.alert({
+        width: 1000,
+        title: '支付账单',
+        footer: false,
+        content: (
+          <Payment
+            data={res}
+            id={id}
+            onClose={() => {
+              hide()
+              this.refresh()
+            }}
+          />
+        )
+      })
     })
+    // const hide = this.props.alert({
+    //   width: 1000,
+    //   title: '支付账单',
+    //   footer: false,
+    //   content: (
+    //     <Payment
+    //       id={id}
+    //       onClose={() => {
+    //         hide()
+    //         this.refresh()
+    //       }}
+    //     />
+    //   )
+    // })
   }
   public toMultiPay () {
-    if (!this.selectedRows?.length) {
-      APP.error('请选择支付账单')
+    const rows = this.selectedRows
+    if (!rows?.length) {
+      APP.error('请选择账单')
       return
     }
-    const hide = this.props.alert({
-      width: 1000,
-      title: '支付账单',
-      footer: false,
-      content: (
-        <Payment
-          // id={id}
-          rows={this.selectedRows}
-          onClose={() => {
-            hide()
-            this.refresh()
-          }}
-        />
-      )
+    api.createBatch(rows.map((item => item.id))).then((res) => {
+      const hide = this.props.alert({
+        width: 1000,
+        title: '支付账单',
+        footer: false,
+        content: (
+          <Payment
+            data={res}
+            rows={rows}
+            onClose={() => {
+              hide()
+              this.refresh()
+            }}
+          />
+        )
+      })
     })
+
+    // if (!this.selectedRows?.length) {
+    //   APP.error('请选择支付账单')
+    //   return
+    // }
+    // const hide = this.props.alert({
+    //   width: 1000,
+    //   title: '支付账单',
+    //   footer: false,
+    //   content: (
+    //     <Payment
+    //       // id={id}
+    //       rows={this.selectedRows}
+    //       onClose={() => {
+    //         hide()
+    //         this.refresh()
+    //       }}
+    //     />
+    //   )
+    // })
   }
   public render () {
     const { selectedRowKeys, tab } = this.state

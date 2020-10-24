@@ -7,10 +7,12 @@ import * as api from '../../api'
 import Upload from '@/components/upload'
 import { ListRecordProps } from '../../interface'
 import MoneyText from '@/components/money-text'
+import { ConfirmDataProps } from '../../interface'
 
 interface Props {
   id?: any
   rows?: any[]
+  data: ConfirmDataProps
   goNext?: (data: { batchId: string, phoneNumber: string }) => void
 }
 
@@ -79,24 +81,19 @@ class Main extends React.Component<Props, State> {
   }
   public componentDidMount () {
     const { id, rows } = this.props
+    const res = { ...this.props.data }
     if (id) {
-      api.createBatchSingle(this.props.id).then((res) => {
-        this.batchId = res.batchId
-        this.phoneNumber = res.phoneNumber
-        res.amount = APP.fn.formatMoneyNumber(res.amount, 'm2u')
-        // res.evidenceImgUrlList = res?.evidenceImgUrlList?.map(() =>)
-        this.form.setValues(res)
-      })
+      this.batchId = res.batchId
+      this.phoneNumber = res.phoneNumber
+      res.amount = APP.fn.formatMoneyNumber(res.amount, 'm2u')
+      this.form.setValues(res)
     } else if (rows) {
-      api.createBatch(rows.map((item => item.id))).then((res) => {
-        this.phoneNumber = res.phoneNumber
-        this.batchId = res.batchId
-        // totalAmount
-        this.setState({
-          list: res.list,
-          totalRecords: res.totalRecords,
-          totalAmount: res.totalAmount
-        })
+      this.phoneNumber = res.phoneNumber
+      this.batchId = res.batchId
+      this.setState({
+        list: res.list,
+        totalRecords: res.totalRecords,
+        totalAmount: res.totalAmount
       })
     }
   }

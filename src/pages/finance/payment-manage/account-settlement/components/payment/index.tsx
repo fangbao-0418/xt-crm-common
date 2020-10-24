@@ -4,6 +4,7 @@ import Info from './Info'
 import Verify from './Verify'
 import Result from './Result'
 import * as api from '../../api'
+import { ConfirmDataProps } from '../../interface'
 
 const { Step } = Steps
 
@@ -11,6 +12,7 @@ interface Props {
   id?: any
   rows?: any[]
   onClose?: () => void
+  data: ConfirmDataProps
 }
 
 interface State {
@@ -30,7 +32,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { current, phoneNumber } = this.state
-    const { rows, id } = this.props
+    const { rows, id, data } = this.props
     return (
       <div>
         <Steps current={current} labelPlacement='vertical'>
@@ -45,6 +47,7 @@ class Main extends React.Component<Props, State> {
             <Info
               id={this.props.id}
               rows={this.props.rows}
+              data={data}
               goNext={(data) => {
                 this.batchId = data.batchId
                 this.setState({

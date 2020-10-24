@@ -1,5 +1,5 @@
 const { post, get, newPost, newPut, del } = APP.http
-import { ListRecordProps } from './interface'
+import { ListRecordProps, ConfirmDataProps } from './interface'
 
 //账务对象校验
 export const checkSubject = (payload: any) => {
@@ -20,22 +20,12 @@ export const getDetail = (id: any) => {
 
 /** 单条批次创建 */
 export const createBatchSingle = (id: any) => {
-  return get<{
-    batchId: string
-    phoneNumber: string
-    amount: number
-  }>('/mcweb/account/financial/disposable/out/xt/single/detail/v1', { id })
+  return get<ConfirmDataProps>('/mcweb/account/financial/disposable/out/xt/single/detail/v1', { id })
 }
 
 /** 单条批次创建 */
 export const createBatch = (ids: any[]) => {
-  return newPost<{
-    batchId: string
-    phoneNumber: string
-    list: ListRecordProps[]
-    totalAmount: number
-    totalRecords: number
-  }>('/mcweb/account/financial/disposable/out/xt/batch/list/v1', { ids })
+  return newPost<ConfirmDataProps>('/mcweb/account/financial/disposable/out/xt/batch/list/v1', { ids })
 }
 
 /** 审核账务结算单 */
