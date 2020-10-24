@@ -306,7 +306,10 @@ class GoodsTable extends Component {
                     <Row>
                       <Col style={{ fontWeight: 'bold' }}>订单客服备注：</Col>
                       {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => (
-                        <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
+                        <Col key={v.createTime}>
+                          <span dangerouslySetInnerHTML = {{ __html: v.info }} />
+                        （{formatDate(v.createTime)} {v.operator}）
+                        </Col>
                       ))}
                       {Array.isArray(childOrder.orderChildServerVOS) && childOrder.orderChildServerVOS.map(v => (
                         <Col key={v.orderCode}>
@@ -336,7 +339,20 @@ class GoodsTable extends Component {
                           <Col>
                             <span>充值方式：{(orderVirtualInfoVO.rechargeWayDesc)||'暂无'}</span>
                             <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{(orderVirtualInfoVO.rechargeStatusDesc)||'暂无'}</span>
-                            <span>充值单号：{(orderVirtualInfoVO.rechargeNo)||'暂无'}</span>
+                            <span>
+                              充值单号：
+                              {orderVirtualInfoVO?.rechargeNo ? (
+                                <span
+                                  className='href'
+                                  onClick={() => {
+                                    APP.fn.setPayload('/order/recharge', { serialNo: orderVirtualInfoVO?.rechargeNo })
+                                    APP.open('/order/recharge')
+                                  }}
+                                >
+                                  {orderVirtualInfoVO?.rechargeNo}
+                                </span>
+                              ) : '暂无'}
+                            </span>
                           </Col>
                         </Row>
                       ) : null}

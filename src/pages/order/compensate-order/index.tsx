@@ -32,6 +32,10 @@ class Main extends React.Component<Props> {
       dataIndex: 'childOrderCode'
     },
     {
+      title: '账户结算ID',
+      dataIndex: 'accountSettleId'
+    },
+    {
       title: '订单商品',
       dataIndex: 'skuName'
     },
