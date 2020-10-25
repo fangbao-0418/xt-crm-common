@@ -28,10 +28,6 @@ const POPGoods = loadable(() => import('./pop-goods/Routes'))
 const POPCoupon = loadable(() => import('./pop-coupon/list/index'))
 /** pop优惠券详情 */
 const POPCouponDetail = loadable(() => import('./pop-coupon/list/coupon-detail'))
-/** pop优惠券任务 */
-const POPCouponTask = loadable(() => import('./pop-coupon/task/index'))
-/** pop优惠券任务详情 */
-const POPCouponTaskDetail = loadable(() => import('./pop-coupon/task/Detail'))
 class Main extends React.Component {
   render () {
     const { match } = this.props
@@ -52,8 +48,6 @@ class Main extends React.Component {
         <Route path={`${match.url}/pop-goods`} component={POPGoods} />
         <Route exact path={`${match.url}/pop-coupon`} component={POPCoupon} />
         <Route exact path={`${match.url}/pop-coupon/detail/:id`} component={POPCouponDetail} />
-        <Route exact path={`${match.url}/coupon-task`} component={POPCouponTask} />
-        <Route exact path={`${match.url}/coupon-task/:id`} component={POPCouponTaskDetail} />
       </Switch>
     )
   }
