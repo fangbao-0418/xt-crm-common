@@ -136,7 +136,7 @@ class Main extends React.Component<Props, State> {
   public fetchData () {
     const fields = this.props.form.getFieldsValue()
     api.fetchCouponList({
-      type: 1,
+      bizType: 2,
       ...fields,
       ...this.payload
     }).then((res: any) => {

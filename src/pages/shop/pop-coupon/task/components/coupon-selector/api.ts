@@ -3,5 +3,5 @@ const { post, get, newPost } = APP.http
 
 /** 获取优惠券列表 */
 export function fetchCouponList (payload: any) {
-  return newPost('/mcweb/coupon/pop/list', payload)
+  return newPost('/mcweb/coupon/get/couponList', payload)
 }
