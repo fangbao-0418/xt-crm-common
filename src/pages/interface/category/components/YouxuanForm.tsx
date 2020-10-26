@@ -416,7 +416,7 @@ class Main extends React.Component<Props, State> {
           secondStatus: secondStatus ? 1 : 0,
           secondCategoryVOS: filterSecondCategoryVOS,
         };
-        if (this.props.currId == -1) {
+        if (this.props.currId !== -1) {
           data.id = this.props.currId;
         }
         (this.props.currId !== -1 ? updateFrontCategory : saveFrontCategory)(
