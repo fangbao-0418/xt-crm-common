@@ -666,8 +666,12 @@ class PendingReview extends React.Component<Props, State> {
             {/**
              * 待审核状态显示同意和拒绝按钮
              */
-              this.isRefundStatusOf(
-                enumRefundStatus.WaitConfirm
+              (
+                this.isRefundStatusOf(
+                  enumRefundStatus.WaitConfirm
+                ) || this.isRefundStatusOf(
+                  enumRefundStatus.WaitBossConfirm
+                )
               ) && (
                 <Form.Item wrapperCol={formLeftButtonLayout}>
                   <Button
