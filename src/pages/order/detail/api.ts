@@ -1,4 +1,4 @@
-const { get } = APP.http
+const { get, newPost } = APP.http
 
 /** 收益类型 */
 export enum EarningsType {
@@ -24,4 +24,32 @@ export function getEarningsDetail(payload: {
     ]
     return res
   })
+}
+
+/** 整单收益信息 */
+export function getOrderSettlement (mainOrderId: number) {
+  return get(`/mcweb/account/pop/sale/settlement/order?mainOrderId=${mainOrderId}`)
+}
+
+/** 收益订单详情 */
+export function getSettlementOrderDetail (payload: {
+  /** 子订单id */
+  childOrderId: number
+  /** 会员id */
+  memberId: number
+}) {
+  return newPost('/mcweb/account/pop/sale/settlement/order/detail', payload).then(res => {
+    res.orderDetailVO.childPayAmount = APP.fn.formatMoneyNumber(res.orderDetailVO.childPayAmount, 'm2u')
+    return res
+  })
+}
+
+/** SKU收益列表 */
+export function getSaleSettlementSku (childOrderId: number) {
+  return get(`/mcweb/account/pop/sale/settlement/sku?childOrderId=${childOrderId}`)
+}
+
+/** pop订单收益重算 */
+export function saleSettlementRecalculate (mainOrderId: number) {
+  return get(`/mcweb/account/pop/sale/settlement/recalculate?mainOrderId=${mainOrderId}`)
 }

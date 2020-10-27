@@ -208,6 +208,8 @@ class BannerModal extends Component {
     const { isEdit, size } = this.props
     const { data, renderKey } = this.state
     const seat = [data.newSeat, data.childSeat]
+
+    console.log('seat', seat)
     return (
       <>
         <Button size={size} type='primary' onClick={this.showModal}>
@@ -294,64 +296,65 @@ class BannerModal extends Component {
             <If condition={seat[0] === 1 && seat[1] === 0}>
               <FormItem name='bgColor' />
             </If>
-              <If condition={[10].includes(seat[0])} >
-                <FormItem
-                  key={renderKey}
-                  label='Banner图片'
-                  required={true}
-                  inner={(form) => {
-                    return form.getFieldDecorator('imgList1', {
-                      initialValue: initImgList(data.imgUrlWap, 2),
-                      rules: [
-                       {
-                          validator: (rule, value, cb) => {
-                            try {
-                              if([10].includes(seat[0])){
-                                if (!value?.length) {
-                                  cb('请上传两张Banner图片')
-                                } else if (!value?.[0]) {
-                                  cb('请上传Banner图1')
-                                } else if (!value?.[1]) {
-                                  cb('请上传Banner图2')
-                                }
+            <If condition={[10].includes(seat[0])} >
+              <FormItem
+                key={renderKey}
+                label='Banner图片'
+                required={true}
+                inner={(form) => {
+                  return form.getFieldDecorator('imgList1', {
+                    initialValue: initImgList(data.imgUrlWap, 2),
+                    rules: [
+                      {
+                        validator: (rule, value, cb) => {
+                          try {
+                            if([10].includes(seat[0])){
+                              if (!value?.length) {
+                                cb('请上传两张Banner图片')
+                              } else if (!value?.[0]) {
+                                cb('请上传Banner图1')
+                              } else if (!value?.[1]) {
+                                cb('请上传Banner图2')
                               }
-                              cb()
-                            } catch (err) {
-                              console.log('err', err)
                             }
+                            cb()
+                          } catch (err) {
+                            console.log('err', err)
                           }
                         }
-                      ]
-                    })(<StartPageUpload />)
-                  }}
-                />
-              </If>
-              <If condition={[1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])}>
-                <FormItem
-                  key={renderKey}
-                  label='Banner图片'
-                  required={true}
-                  inner={(form) => {
-                    return form.getFieldDecorator('imgList', {
-                      initialValue: initImgList(data.imgUrlWap,1),
-                      rules: [
-                        {
-                          required: true,
-                          message: '请上传Banner图片'
-                        }
-                      ]
-                    })(
-                      <UploadView
-                        placeholder='上传主图'
-                        listType='picture-card'
-                        fileType={['jpg', 'jpeg', 'gif', 'png']}
-                        listNum={1}
-                        size={0.3}
-                      />
-                    )
-                  }}
-                />
-              </If>
+                      }
+                    ]
+                  })(<StartPageUpload />)
+                }}
+              />
+            </If>
+            {/* 11是商学院，显示图片不显示文案 */}
+            <If condition={[1, 2, 3, 4, 6, 7, 8, 9, 11].includes(seat[0])}>
+              <FormItem
+                key={renderKey}
+                label='Banner图片'
+                required={true}
+                inner={(form) => {
+                  return form.getFieldDecorator('imgList', {
+                    initialValue: initImgList(data.imgUrlWap,1),
+                    rules: [
+                      {
+                        required: true,
+                        message: '请上传Banner图片'
+                      }
+                    ]
+                  })(
+                    <UploadView
+                      placeholder='上传主图'
+                      listType='picture-card'
+                      fileType={['jpg', 'jpeg', 'gif', 'png']}
+                      listNum={1}
+                      size={0.3}
+                    />
+                  )
+                }}
+              />
+            </If>
             <If condition={seat[0] === 5}>
               <FormItem name='content' />
             </If>

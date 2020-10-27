@@ -13,6 +13,8 @@ interface PayloadProps {
   rechargeType: any
   childOrderCode: any
   serialNo: any
+  /** 充值平台 0-千行 1-佳诺 */
+  thirdPartyPlatform?: 0 | 1
 }
 interface Props extends FormComponentProps {
   className?: string
@@ -89,6 +91,16 @@ class Main extends React.Component<Props> {
             )}
           </Form.Item>
           <Form.Item
+            label='充值平台'
+          >
+            {getFieldDecorator('thirdPartyPlatform', { initialValue: values.thirdPartyPlatform })(
+              <Select style={{ width: 150 }} allowClear placeholder='请选择充值平台'>
+                <Select.Option value={0}>千行</Select.Option>
+                <Select.Option value={1}>佳诺</Select.Option>
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item
             label='充值账号'
           >
             {getFieldDecorator('rechargeAccount', { initialValue: values.rechargeAccount })(
@@ -128,7 +140,8 @@ class Main extends React.Component<Props> {
                   thirdPartyOrderNo: undefined,
                   rechargeType: undefined,
                   childOrderCode: undefined,
-                  serialNo: undefined
+                  serialNo: undefined,
+                  thirdPartyPlatform: undefined
                 }
                 this.payload = params
                 this.props.form.setFields(params)

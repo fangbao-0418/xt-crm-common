@@ -24,10 +24,13 @@ const ShopActivityAdd = loadable(() => import('./activity/Add'))
 const ShopActivityDetail = loadable(() => import('./activity/Detail'))
 /** pop商品 */
 const POPGoods = loadable(() => import('./pop-goods/Routes'))
+/** pop优惠券 */
+const POPCoupon = loadable(() => import('./pop-coupon/list/index'))
+/** pop优惠券详情 */
+const POPCouponDetail = loadable(() => import('./pop-coupon/list/coupon-detail'))
 class Main extends React.Component {
   render () {
     const { match } = this.props
-
     return (
       <Switch>
         <Route exact path={`${match.url}`} component={Boss} />
@@ -43,6 +46,8 @@ class Main extends React.Component {
         <Route path={`${match.url}/activity/edit`} exact component={ShopActivityAdd} />
         <Route path={`${match.url}/activity/detail`} exact component={ShopActivityDetail} />
         <Route path={`${match.url}/pop-goods`} component={POPGoods} />
+        <Route exact path={`${match.url}/pop-coupon`} component={POPCoupon} />
+        <Route exact path={`${match.url}/pop-coupon/detail/:id`} component={POPCouponDetail} />
       </Switch>
     )
   }
