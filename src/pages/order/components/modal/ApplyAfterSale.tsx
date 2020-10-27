@@ -2,7 +2,7 @@ import React from 'react'
 import { Table, Form, Input, InputNumber, Card, Modal, message } from 'antd'
 import { If } from '@/packages/common/components'
 import { FormComponentProps } from 'antd/lib/form'
-import { getDetailColumns } from '../../constant'
+import { getDetailColumns, enumRefundType } from '../../constant'
 import { refundType } from '@/enum'
 import { formatPrice } from '@/util/format'
 import UploadView from '@/components/upload'
@@ -12,7 +12,6 @@ import ModifyAddress from './ModifyShippingAddress'
 import AfterSaleSelect from '../after-sale-select'
 import { mul } from '@/util/utils'
 import { getProductDetail, customerAdd } from '../../api'
-import { enumRefundType } from '../../constant'
 const { TextArea } = Input
 
 interface Props extends FormComponentProps {
