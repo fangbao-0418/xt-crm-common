@@ -105,7 +105,9 @@ class Main extends AntTableRowSelection<Props, State> {
   }, {
     dataIndex: 'settlementStatusDesc',
     title: '结算状态',
-    width: 100
+    width: 100,
+    align: 'center',
+    render: (text) => text || '--'
   }, {
     dataIndex: 'createTime',
     title: '创建时间',
