@@ -98,7 +98,22 @@ class Main extends React.Component {
                 批量导出
               </Button>
               <div className='fr'>
-               
+                <span
+                  className='download mr8'
+                  onClick={() => {
+                    APP.fn.download(require('@/pages/fresh/assets/批量支付模版.xlsx'), '批量支付模版')
+                  }}
+                >
+                  下载批量支付模版
+                </span>
+                <span
+                  className='download'
+                  onClick={() => {
+                    APP.fn.download(require('@/pages/fresh/assets/批量失败模版.xlsx'), '批量失败模版')
+                  }}
+                >
+                  下载批量失败模版
+                </span>
               </div>
             </div>
           )}
