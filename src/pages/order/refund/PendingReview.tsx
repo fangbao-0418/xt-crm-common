@@ -154,7 +154,7 @@ class PendingReview extends React.Component<Props, State> {
           payload.returnAddress = checkVO.returnAddress
           payload.contactVO = orderServerVO.contactVO
         }
-        console.log(payload, 'payload 157')
+        console.log(payload, values, 'payload 157')
         APP.dispatch({
           type: `${namespace}/auditOperate`,
           payload
@@ -368,7 +368,7 @@ class PendingReview extends React.Component<Props, State> {
   handleChangeMaxRefundAmount = (value: number = 0) => {
     this.checkRefundCoupon({
       childOrderId: this.orderInfoVO.childOrderId,
-      refundNum: value,
+      refundNum: this.serverNum,
       refundAmount: value * 100,
       refundType: this.checkVO.refundType
     }, () => {
@@ -600,7 +600,7 @@ class PendingReview extends React.Component<Props, State> {
                 }}
               >
                 {this.state.firstLevel.map((item: OptionProps) => (
-                  <Option value={item.value}>{ item.label }</Option>
+                  <Option key={item.value} value={item.value}>{ item.label }</Option>
                 ))}
               </Select>
               <Select
@@ -613,7 +613,7 @@ class PendingReview extends React.Component<Props, State> {
                 }}
               >
                 {this.state.secondLevel.map((item: OptionProps) => (
-                  <Option value={item.value}>{ item.label }</Option>
+                  <Option key={item.value} value={item.value}>{ item.label }</Option>
                 ))}
               </Select>
             </Form.Item>
