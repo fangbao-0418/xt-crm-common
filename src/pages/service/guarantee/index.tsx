@@ -1,8 +1,16 @@
 import React from 'react'
-import { Card, Table } from 'antd'
+import { Card, Modal, Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
+import { Alert } from 'antd'
+import Detail from './Detail'
 
-class Main extends React.Component {
+interface State {
+  visible: boolean
+}
+class Main extends React.Component<{}, State> {
+  public state = {
+    visible: false
+  }
   public columns: ColumnProps<unknown>[] = [{
     title: '服务名称',
     dataIndex: 'name'
@@ -28,12 +36,27 @@ class Main extends React.Component {
     sort: 7
   }]
   public handleEdit = () => {
-    
+    this.setState({
+      visible: true
+    })
+  }
+  public onCancel = () => {
+    this.setState({ visible: false })
   }
   public render () {
+    const { visible } = this.state
     return (
       <Card>
-        <Table columns={this.columns} dataSource={this.dataSource}/>
+        <Modal title='编辑服务保障' visible={visible} onCancel={this.onCancel}>
+          <Detail />
+        </Modal>
+        <Alert
+          message="显示在商品详情页面的服务保障，正品保障，品质优选，全场包邮，运费险为平台自营+pop店商品详情共用，"
+          description={<span style={{ color: 'red' }}>参加拦截的商品不支持运费险</span>}
+          type="warning"
+          showIcon
+        />
+        <Table className='mt10' columns={this.columns} dataSource={this.dataSource}/>
       </Card>
     )
   }
