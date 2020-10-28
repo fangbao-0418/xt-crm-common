@@ -367,7 +367,7 @@ class UploadView extends Component {
       showUploadList,
       children,
       accept,
-      disabled=false,
+      disabled = false,
       ...attributes
     } = this.props
     const { fileList } = this.state

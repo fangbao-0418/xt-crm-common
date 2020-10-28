@@ -1,8 +1,14 @@
 import React from 'react'
-class Main extends React.Component {
+
+interface Props {
+  style?: React.CSSProperties
+  className?: string
+}
+
+class Main extends React.Component<Props> {
   public render () {
     return (
-      <div style={{padding: 16, background: '#FFFFFF'}}>
+      <div className={this.props.className} style={{padding: 16, background: '#FFFFFF', ...this.props.style}}>
         {this.props.children}
       </div>
     )

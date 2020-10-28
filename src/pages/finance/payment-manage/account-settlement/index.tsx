@@ -1,15 +1,15 @@
 /**
- * 账务结算（一次性账务结算）
+ * 账务调整-内部
  */
 import React from 'react'
-import Image from '@/components/Image'
 import classNames from 'classnames'
-import { getHeaders, prefix, replaceHttpUrl } from '@/util/utils'
+import Page from '@/components/page'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tooltip, Select, Button, Radio, Upload } from 'antd'
+import { Tooltip, Select, Button, Radio, Upload, Tabs } from 'antd'
+import { ColumnProps } from 'antd/lib/table'
 import TextArea from 'antd/lib/input/TextArea'
 import BatchModal from './components/uploadModal'
 import UploadView from '@/components/upload'
@@ -19,21 +19,37 @@ import If from '@/packages/common/components/if'
 import { getFieldsConfig } from './config'
 import * as api from './api'
 import moment from 'moment'
+import Payment from './components/payment'
+import { ListRecordProps } from './interface'
+import AntTableRowSelection from '@/util/AntTableRowSelection'
+
 interface Props extends AlertComponentProps {
 }
 const dateFormat = 'YYYY-MM-DD HH:mm'
 const getFormatDate = (s: any, e: any) => {
   return e ? [moment(s, dateFormat), moment(e, dateFormat)] : []
 }
-class Main extends React.Component<Props> {
-  state = {
+
+interface State {
+  errorUrl: string | null
+  selectedRowKeys: any[]
+  visible: boolean
+  selectedRows: any[]
+  tab: "1" | "2"
+}
+
+class Main extends AntTableRowSelection<Props, State> {
+  public state: State = {
+    selectedRows: [],
     errorUrl: null,
-    selectedRowKeys: null,
-    visible: false
+    selectedRowKeys: [],
+    visible: false,
+    tab: "1"
   }
+  public rowSelectionKey = 'id'
   public id: any
   public listpage: ListPageInstanceProps
-  public columns: any = [{
+  public columns: ColumnProps<ListRecordProps>[] = [{
     title: '账务结算ID',
     dataIndex: 'id',
     width: 150,
@@ -89,7 +105,9 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'settlementStatusDesc',
     title: '结算状态',
-    width: 100
+    width: 100,
+    align: 'center',
+    render: (text) => text || '--'
   }, {
     dataIndex: 'createTime',
     title: '创建时间',
@@ -114,22 +132,59 @@ class Main extends React.Component<Props> {
     width: 100,
     fixed: 'right',
     align: 'center',
-    render: (text: any, record: any) => {
-      return record.auditStatus===0 ? <span
-        className='href'
-        onClick={
-          this.getDetailData(2, record.id)
-        }>审核
-      </span>: <span
-        className='href'
-        onClick={
-          this.getDetailData(3, record.id)
-        }
-      > 查看
-      </span>
+    render: (text, record) => {
+      const { auditStatus, settlementStatus, inOrOutType } = record
+      return (
+        <>
+          {auditStatus === 0 && (
+            <span
+              className='href mr8'
+              onClick={
+                this.getDetailData(2, record.id)
+              }
+            >
+              审核
+            </span>
+          )}
+          {auditStatus !== 0 && (
+            <span
+              className='href mr8'
+              onClick={
+                this.getDetailData(3, record.id)
+              }
+            >
+              查看
+            </span>
+          )}
+          {settlementStatus === 0 && auditStatus === 1 && inOrOutType === 1 && (
+            <span
+              className='href'
+              onClick={this.toPay.bind(this, record.id)}
+            >
+              支付
+            </span>
+          )}
+        </>
+      )
     }
   }]
-  public refresh () {
+  /**
+   * 刷新数据
+   * @param init - 是否初始化搜索条件 true:是 false:否
+   */
+  public refresh (init = false) {
+    if (init) {
+      this.listpage.form.setValues({
+        id: undefined,
+        subjectId: undefined,
+        subjectName: undefined,
+        auditStatus: undefined,
+        subjectType: undefined,
+        inOrOutType: undefined,
+        settlementStatus: undefined,
+        settlementType: undefined
+      })
+    }
     this.listpage.form.setValues({
       startTime: moment().subtract(30, 'days').startOf('d'),
       endTime: moment().endOf('d')
@@ -226,18 +281,18 @@ class Main extends React.Component<Props> {
   }
   public getDetailData = (type: any, id: any) => () => {
     api.getDetail(id).then((res: any) => {
-      res.amount=res.amount/100
+      res.amount = APP.fn.formatMoneyNumber(res.amount, 'm2u')
       this.operation(type, res)
     })
   }
-  //type 1添加，2审核， 3查看
+  // type 1添加，2审核， 3查看
   public operation (type: any, res: any) {
     const readonly=type !== 1
     const uploadProps = readonly ? { showUploadList: { showPreviewIcon: true, showRemoveIcon: false, showDownloadIcon: false } } : { listNum: 5 }
     if (this.props.alert) {
       let form: FormInstance
       const hide = this.props.alert({
-        title: type===1?'创建账务结算单':(type===2?'审核账务结算单':'查看账务结算单'),
+        title: type===1 ? '创建账务结算单' : (type===2 ? '审核账务结算单' : '查看账务结算单'),
         width: 700,
         content: (
           <Form
@@ -260,6 +315,13 @@ class Main extends React.Component<Props> {
               }
             }}
           >
+            {type === 3 && (
+              <FormItem
+                label='账务结算ID'
+                readonly
+                name='id'
+              />
+            )}
             <FormItem
               label='收支类型'
               required
@@ -466,7 +528,7 @@ class Main extends React.Component<Props> {
           </Form>
         ),
         onOk: () => {
-          if (form&&type!==3) {
+          if (form && type !== 3) {
             form.props.form.validateFields((err, value) => {
               if (err) {
                 return
@@ -498,7 +560,6 @@ class Main extends React.Component<Props> {
                   APP.error('请选择审核意见')
                   return
                 }
-                console.log(value.auditDesc)
                 if (value.auditStatus===2&&!value.auditDesc) {
                   APP.error('请输入原因')
                   return
@@ -517,121 +578,223 @@ class Main extends React.Component<Props> {
       })
     }
   }
-   public handleSelectionChange = (selectedRowKeys: any) => {
-     this.setState({
-       selectedRowKeys
-     })
-   }
-   public render () {
-     const { selectedRowKeys } = this.state
-     const rowSelection = {
-       selectedRowKeys,
-       onChange: this.handleSelectionChange,
-       getCheckboxProps: (record: any) => ({
-         disabled: record.status === 1
-       })
-     }
-     return (
-       <div
-         style={{
-           background: '#FFFFFF'
-         }}
-       >
-         <ListPage
-           getInstance={(ref) => this.listpage = ref}
-           columns={this.columns}
-           rowSelection={rowSelection}
-           mounted={() => {
-             this.listpage.form.setValues({
-               startTime: moment().subtract(30, 'days').startOf('d'),
-               endTime: moment().endOf('d')
-             })
-           }}
-           tableProps={{
-             rowKey: 'anchorId',
-             scroll: {
-               x: this.columns.reduce((a: any, b:any) => {
-                 return (typeof a === 'object' ? a.width : a) as any + b.width
-               }) as number
-             }
-           }}
-           onReset={() => {
-             this.listpage.form.setValues({
-               id: undefined,
-               subjectId: undefined,
-               subjectName: undefined,
-               auditStatus: undefined,
-               subjectType: undefined,
-               inOrOutType: undefined,
-               settlementStatus: undefined,
-               settlementType: undefined
-             })
-             this.refresh()
-           }}
-           rangeMap={{
-             time: {
-               fields: ['startTime', 'endTime']
-             }
-           }}
-           addonAfterSearch={(
-             <div>
-               <Button
-                 type='primary'
-                 onClick={()=>{
-                   this.operation(1, null)
-                 }}
-               >
-                创建账务结算单
-               </Button>
-               <Button
-                 type='primary'
-                 className='ml8 mr8'
-                 onClick={this.handleBatchShow.bind(this, 'visible')}
-               >
+  public toPay (id: any) {
+    api.createBatchSingle(id).then((res) => {
+      const hide = this.props.alert({
+        width: 1000,
+        title: '支付账单',
+        footer: false,
+        content: (
+          <Payment
+            data={res}
+            id={id}
+            onClose={() => {
+              hide()
+              this.refresh()
+            }}
+          />
+        )
+      })
+    })
+    // const hide = this.props.alert({
+    //   width: 1000,
+    //   title: '支付账单',
+    //   footer: false,
+    //   content: (
+    //     <Payment
+    //       id={id}
+    //       onClose={() => {
+    //         hide()
+    //         this.refresh()
+    //       }}
+    //     />
+    //   )
+    // })
+  }
+  public toMultiPay () {
+    const rows = this.selectedRows
+    if (!rows?.length) {
+      APP.error('请选择账单')
+      return
+    }
+    api.createBatch(rows.map((item => item.id))).then((res) => {
+      const hide = this.props.alert({
+        width: 1000,
+        title: '支付账单',
+        footer: false,
+        content: (
+          <Payment
+            data={res}
+            rows={rows}
+            onClose={() => {
+              hide()
+              this.refresh()
+            }}
+          />
+        )
+      })
+    })
+
+    // if (!this.selectedRows?.length) {
+    //   APP.error('请选择支付账单')
+    //   return
+    // }
+    // const hide = this.props.alert({
+    //   width: 1000,
+    //   title: '支付账单',
+    //   footer: false,
+    //   content: (
+    //     <Payment
+    //       // id={id}
+    //       rows={this.selectedRows}
+    //       onClose={() => {
+    //         hide()
+    //         this.refresh()
+    //       }}
+    //     />
+    //   )
+    // })
+  }
+  public render () {
+    const { selectedRowKeys, tab } = this.state
+    const rowSelection = tab === '2' ? {
+      ...this.rowSelection,
+      // onChange: this.handleSelectionChange,
+      // getCheckboxProps: (record: ListRecordProps) => ({
+      //   disabled: record.status === 1
+      // })
+    } : undefined
+    return (
+      <Page
+        style={{
+          background: '#FFFFFF'
+        }}
+      >
+        <Tabs
+          type="card"
+          onChange={(e: any) => {
+            this.setState({ tab: e }, () => {
+              this.refresh(true)
+            })
+          }}
+        >
+          <Tabs.TabPane key='1' tab='全部'></Tabs.TabPane>
+          <Tabs.TabPane key='2' tab='待结算'></Tabs.TabPane>
+        </Tabs>
+        <ListPage
+          getInstance={(ref) => this.listpage = ref}
+          columns={this.columns}
+          rowSelection={rowSelection}
+          reserveKey='/finance/accountsettlement'
+          mounted={() => {
+            const payload = this.listpage.form.getValues()
+            this.listpage.form.setValues({
+              startTime: payload.startTime || moment().subtract(30, 'days').startOf('d').unix() * 1000,
+              endTime: payload.endTime || moment().endOf('d').unix() * 1000
+            })
+          }}
+          tableProps={{
+            rowKey: 'id',
+            scroll: {
+              x: this.columns.reduce((a: any, b:any) => {
+                return (typeof a === 'object' ? a.width : a) as any + b.width
+              }) as number
+            }
+          }}
+          onReset={() => {
+            this.refresh(true)
+          }}
+          rangeMap={{
+            time: {
+              fields: ['startTime', 'endTime']
+            }
+          }}
+          addonAfterSearch={(
+            <div>
+              <Button
+                type='primary'
+                onClick={()=>{
+                  this.operation(1, null)
+                }}
+              >
+              创建账务结算单
+              </Button>
+              <Button
+                type='primary'
+                className='ml8 mr8'
+                onClick={this.handleBatchShow.bind(this, 'visible')}
+              >
                 批量创建账务结算单
-               </Button>
-               {/* <Button
-                 type='primary'
-                 onClick={this.toOperate()}
-               >
+              </Button>
+              {/* <Button
+                type='primary'
+                onClick={this.toOperate()}
+              >
                 批量审核
-               </Button> */}
-             </div>
-           )}
-           formConfig={getFieldsConfig()}
-           formItemLayout={(
+              </Button> */}
+              {tab === '2' && (
+                <Button
+                  type='primary'
+                  onClick={this.toMultiPay.bind(this)}
+                >
+                  发起支付
+                </Button>
+              )}
+            </div>
+          )}
+          formConfig={getFieldsConfig()}
+          formItemLayout={(
             <>
               <FormItem name='id' />
               <FormItem name='subjectId' />
               <FormItem name='subjectName' />
-              <FormItem name='auditStatus' />
+              {tab === "1" && <FormItem name='auditStatus' />}
               <FormItem name='subjectType' />
-              <FormItem name='inOrOutType' />
-              <FormItem name='settlementStatus' />
+              {tab === "1" && <FormItem name='inOrOutType' />}
+              {tab === "1" && <FormItem name='settlementStatus' />}
               <FormItem name='time' />
               <FormItem name='settlementType' />
             </>
-           )}
-           api={api.getList}
-         />
-         <BatchModal
-           modalProps={{
-             visible: this.state.visible,
-             onCancel: this.handleCancel.bind(this, 'visible')
-           }}
-         />
-       </div>
-     )
-   }
+          )}
+          api={api.getList}
+          processPayload={(payload) => {
+            this.selectedRows = []
+            this.setState({
+              selectedRowKeys: []
+            })
+            payload.startTime =  payload.startTime || moment().subtract(30, 'days').startOf('d').unix() * 1000
+            payload.endTime = payload.endTime || moment().endOf('d').unix() * 1000
+            if (tab === '2') {
+              return {
+                ...payload,
+                auditStatus: 1,
+                inOrOutType: 1,
+                settlementStatus: 0,
+              }
+            }
+            return {
+              ...payload
+            }
+          }}
+        />
+        <BatchModal
+          modalProps={{
+            visible: this.state.visible,
+            onCancel: this.handleCancel.bind(this, 'visible')
+          }}
+        />
+      </Page>
+    )
+  }
 
   // 模态框取消操作
-  handleCancel = (key: any) => {
+  handleCancel = (key: 'visible') => {
     this.setState({
       [key]: false
     })
   }
   // 显示批量模态框
-  handleBatchShow = (key: any) => {
+  handleBatchShow = (key: 'visible') => {
     this.setState({
       [key]: true
     })
