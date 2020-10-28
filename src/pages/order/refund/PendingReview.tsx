@@ -38,6 +38,7 @@ import ModifyReturnAddress from '../components/modal/ModifyReturnAddress'
 import { mul } from '@/util/utils'
 import { verifyDownDgrade, getOrderRefundQuickReply, checkRefundCoupon } from './../api'
 import { OptionProps } from 'antd/lib/select'
+import { Decimal } from 'decimal.js'
 const { Option } = Select
 interface Props
   extends FormComponentProps,
@@ -194,6 +195,8 @@ class PendingReview extends React.Component<Props, State> {
     const result = this.props.form.getFieldValue(
       'refundAmount'
     )
+    console.log(result, 'result 197')
+    // return result
     return mul(Number(result || 0), 100)
   }
   /**
@@ -206,7 +209,11 @@ class PendingReview extends React.Component<Props, State> {
         ? this.checkVO.maxRefundAmount
         : this.relatedAmount
     if (refundCouponAmount === 1) {
-      maxRefundAmount = maxRefundAmount - (this.state.deductionAmount || 0)
+      maxRefundAmount = new Decimal(maxRefundAmount).sub(new Decimal(this.state.deductionAmount || 0)).toNumber()
+    }
+    console.log(maxRefundAmount, 'maxRefundAmount')
+    if (maxRefundAmount < 0) {
+      maxRefundAmount = 0
     }
     return maxRefundAmount
   }
@@ -223,6 +230,7 @@ class PendingReview extends React.Component<Props, State> {
    * @param freight 运费
    */
   get isReturnShipping (): boolean {
+    console.log(this.refundAmount, this.checkVO.maxRefundAmount, this.checkVO.serverNum, this.serverNum, 229)
     const result
       = this.refundAmount === this.checkVO.maxRefundAmount
       && this.checkVO.serverNum === this.serverNum
@@ -547,8 +555,9 @@ class PendingReview extends React.Component<Props, State> {
                         let timer = 0
                         clearTimeout(timer)
                         timer = setTimeout(() => {
+                          console.log(this.maxRefundAmount, 557)
                           this.props.form.setFieldsValue({
-                            refundAmount: this.maxRefundAmount
+                            refundAmount: formatPrice(this.maxRefundAmount)
                           })
                         })
                       }}
