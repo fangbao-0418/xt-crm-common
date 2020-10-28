@@ -1,16 +1,12 @@
 import React from 'react'
-import { Card, Modal, Table } from 'antd'
+import { Card, Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
+import alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { Alert } from 'antd'
 import Detail from './Detail'
+import Category from './Category'
 
-interface State {
-  visible: boolean
-}
-class Main extends React.Component<{}, State> {
-  public state = {
-    visible: false
-  }
+class Main extends React.Component<AlertComponentProps, {}> {
   public columns: ColumnProps<unknown>[] = [{
     title: '服务名称',
     dataIndex: 'name'
@@ -22,9 +18,11 @@ class Main extends React.Component<{}, State> {
     dataIndex: 'sort'
   }, {
     title: '操作',
-    render: () => {
+    render: (record) => {
       return (
         <>
+          
+          {record.name ==='运费险' && <span className='href mr10' onClick={this.handleOpen}>类目管理</span>}
           <span className='href' onClick={this.handleEdit}>编辑</span>
         </>
       )
@@ -34,22 +32,37 @@ class Main extends React.Component<{}, State> {
     name: '正品保障',
     content: '杭州市西湖区古荡湾',
     sort: 7
+  }, {
+    name: '品质优选',
+    content: '杭州市西湖区古荡湾',
+    sort: 6
+  }, {
+    name: '全场包邮',
+    content: '杭州市西湖区古荡湾，特殊商品除外，0元购等等等',
+    sort: 5
+  }, {
+    name: '运费险',
+    content: '喜团为你购买的商品投保运费险（保单生效以确认订单页展示的运费险为准）',
+    sort: 4
   }]
-  public handleEdit = () => {
-    this.setState({
-      visible: true
+  // 选择支持运费险类目
+  public handleOpen = () => {
+    this.props.alert({
+      title: '选择支持运费险类目',
+      content: <Category />
     })
   }
-  public onCancel = () => {
-    this.setState({ visible: false })
+  // 编辑
+  public handleEdit = () => {
+    this.props.alert({
+      title: '编辑服务保障',
+      content: <Detail />,
+      footer: null
+    })
   }
   public render () {
-    const { visible } = this.state
     return (
       <Card>
-        <Modal title='编辑服务保障' visible={visible} onCancel={this.onCancel}>
-          <Detail />
-        </Modal>
         <Alert
           message="显示在商品详情页面的服务保障，正品保障，品质优选，全场包邮，运费险为平台自营+pop店商品详情共用，"
           description={<span style={{ color: 'red' }}>参加拦截的商品不支持运费险</span>}
@@ -62,4 +75,4 @@ class Main extends React.Component<{}, State> {
   }
 }
 
-export default Main
+export default alert(Main)
