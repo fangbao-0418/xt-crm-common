@@ -19,10 +19,10 @@ class Main extends React.Component<AlertComponentProps> {
   public columns: ColumnProps<RecordProps>[] = [
     { title: '举报编号', dataIndex: 'id' },
     { title: '举报类型', dataIndex: 'type', render: (text) => TypeEnum[text] },
-    { title: '评论内容', dataIndex: 'description' },
+    { title: '评论内容', dataIndex: 'description', width: 300 },
     { title: '举报人', dataIndex: 'reportUserName', render: (text, record) => { return <span className='href' onClick={() => APP.open(`/user/detail?memberId=${record.reportUserId}`) }>{text}</span> } },
     { title: '商品ID', dataIndex: 'productId', render: (text, record) => { return <span className='href' onClick={() => APP.open(`/goods/sku-sale/${record.productId}`) }>{text}</span> } },
-    { title: '举报时间', dataIndex: 'createTime' },
+    { title: '举报时间', dataIndex: 'createTime', render: (text) => APP.fn.formatDate(text) },
     { title: '处理结果', dataIndex: 'status', align: 'center', render: (text) => { return (<span style={{ color: StatusColors[text] }}>{StatusEnum[text]}</span>) } },
     {
       title: '操作',
@@ -31,20 +31,20 @@ class Main extends React.Component<AlertComponentProps> {
       render: (text, record) => {
         return (
           <div>
-            <Button
-              type='primary'
-              size='small'
-              className='mr8'
-              onClick={this.showDetail.bind(this, record)}
-            >
-              查看
-            </Button>
-            {(record.status === 1 && <Button
-              size='small'
+            {record.status === 1 ? (
+            <span
+              className='href'
               onClick={this.showDetail.bind(this, record)}
             >
               审核
-            </Button>
+            </span>
+            ) : (
+              <span
+                className='href'
+                onClick={this.showDetail.bind(this, record)}
+              >
+                查看
+              </span>
             )}
           </div>
         )
@@ -58,6 +58,7 @@ class Main extends React.Component<AlertComponentProps> {
   public showDetail (record: RecordProps) {
     const hide = this.props.alert({
       width: 800,
+      title: record.status !== 1 ? '查看' : '审核',
       content: (
         <Detail
           id={record.id}
@@ -99,7 +100,7 @@ class Main extends React.Component<AlertComponentProps> {
                   type="card"
                   onChange={(e) => {
                     this.listpage.form.setValues({
-                      status: Number(e)
+                      status: e
                     })
                     this.listpage.refresh()
                   }}
@@ -113,9 +114,15 @@ class Main extends React.Component<AlertComponentProps> {
           )}
           api={api.fetchList}
           processPayload={(payload) => {
+            let status = undefined
+            if (payload.status === '2') {
+              status = [2, 3]
+            } else if (payload.status === '1') {
+              status = [1]
+            }
             return {
               ...payload,
-              status: payload.status === '-1' ? undefined : payload.status
+              status
             }
           }}
           formConfig={getFieldsConfig()}
