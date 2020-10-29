@@ -1,8 +1,9 @@
 import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import { Button, Icon, Popconfirm, Tooltip, Upload } from 'antd'
+import { getHeaders, prefix } from '@/util/utils'
 import { getList, rePaid } from './api'
 import { formConfig } from './config'
-import { Button, Icon, Popconfirm, Tooltip } from 'antd'
 
 class Main extends React.Component {
   public listRef: ListPageInstanceProps
@@ -74,6 +75,20 @@ class Main extends React.Component {
       ) : '-'
     }
   }]
+  public handleImportChange = (info: any) => {
+    const { status, response, name } = info.file;
+    if (status === 'done') {
+      if (response.success) {
+        console.log('file response =>', response)
+        this.setState({ importRes: response.data})
+        APP.success(`${name} 文件上传成功`);
+      } else {
+        APP.error(`${response.message}`);
+      }
+    } else if (status === 'error') {
+      APP.error(`${name} 文件上传错误.`);
+    }
+  };
   public render () {
     return (
       <ListPage
@@ -90,7 +105,19 @@ class Main extends React.Component {
           <>
             <Button type='primary'>导出投保excel</Button>
             <Button type='primary' className='ml10'>导出理赔excel</Button>
-            <Button type='primary' className='ml10'>导入excel</Button>
+            <Upload
+              className='mr10'
+              name='file'
+              accept='.xls,.xlsx'
+              showUploadList={false}
+              withCredentials={true}
+              action={prefix('/mcweb/trade/insurance/freight/submitExcel')}
+              headers={getHeaders({})}
+              onChange={this.handleImportChange}
+              style={{ margin: '0 10px' }}
+            >
+              <Button type='primary' className='ml10'>导入excel</Button>
+            </Upload>
           </>
         )}
         columns={this.columns}
