@@ -67,6 +67,12 @@ class Main extends React.Component {
   public state = {
     value: ['0-0-0']
   }
+  public componentDidMount () {
+    this.fetchData()
+  }
+  public fetchData () {
+    
+  }
   public onChange = (value: any) => {
     console.log('onChange ', value);
     this.setState({ value });
