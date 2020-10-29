@@ -23,7 +23,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
         <>
           
           {record.name ==='运费险' && <span className='href mr10' onClick={this.handleOpen}>类目管理</span>}
-          <span className='href' onClick={this.handleEdit}>编辑</span>
+          <span className='href' onClick={this.handleEdit.bind(null, record)}>编辑</span>
         </>
       )
     }
@@ -53,11 +53,29 @@ class Main extends React.Component<AlertComponentProps, {}> {
     })
   }
   // 编辑
-  public handleEdit = () => {
+  public handleEdit = (data: any) => {
+    let detailRef = React.createRef<Detail>()
     this.props.alert({
       title: '编辑服务保障',
-      content: <Detail />,
-      footer: null
+      content: (
+        <Detail
+          {...data}
+          ref={detailRef}
+          onMounted={(form) => {
+            form.setValues(data)
+          }}
+        />
+      ),
+      onOk(hide) {
+        const formRef = detailRef.current?.form.props.form
+        if (formRef) {
+          formRef.validateFields((errs, vals) => {
+            if (!errs) {
+              hide()
+            }
+          })
+        }
+      }
     })
   }
   public render () {

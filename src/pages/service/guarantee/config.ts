@@ -7,6 +7,12 @@ export function getFieldsConfig () {
         label: '服务名称',
         controlProps: {
           disabled: true
+        },
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请输入服务名称'
+          }]
         }
       },
       content: {
@@ -19,6 +25,12 @@ export function getFieldsConfig () {
       sort: {
         label: '排序',
         type: 'number',
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请输入排序'
+          }]
+        },
         controlProps: {
           style: {
             width: '100%'
