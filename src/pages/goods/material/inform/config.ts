@@ -14,7 +14,7 @@ export function getFieldsConfig (): FieldsConfig {
     common: {
       type: {
         type: 'select',
-        label: '举报理由',
+        label: '举报类型',
         options: [
           { label: '广告内容', value: 1 },
           { label: '不友善内容', value: 2 },
@@ -52,4 +52,19 @@ export function getFieldsConfig (): FieldsConfig {
     }
   }
   return defaultConfig
+}
+
+export enum TypeEnum {
+  '广告内容' = 1 ,
+  '不友善内容' = 2,
+  '造谣传谣' = 3,
+  '违法违规' = 4,
+  '色情低俗' = 5,
+  '其他' = 6,
+}
+
+export enum StatusEnum {
+  '待审核' = 1 ,
+  '举报成功' = 2,
+  '举报失败' = 3
 }

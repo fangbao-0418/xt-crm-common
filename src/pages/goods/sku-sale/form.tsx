@@ -320,6 +320,13 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         }
       }
       
+      if (vals.videoUrl?.length) {
+        if (!vals.videoCoverUrl?.length) {
+          APP.error('请上传视频封面')
+          return
+        }
+      }
+
       if (specs.find((item) => {
         return item.content.length === 0
       })) {
