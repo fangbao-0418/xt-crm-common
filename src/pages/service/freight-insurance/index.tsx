@@ -2,7 +2,7 @@ import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { Button, Icon, Popconfirm, Tooltip, Upload } from 'antd'
 import { getHeaders, prefix } from '@/util/utils'
-import { getList, rePaid } from './api'
+import { getList, rePaid, exportInsures, exportClaim } from './api'
 import { formConfig } from './config'
 
 class Main extends React.Component {
@@ -88,7 +88,23 @@ class Main extends React.Component {
     } else if (status === 'error') {
       APP.error(`${name} 文件上传错误.`);
     }
-  };
+  }
+  // 导出投保excel
+  public handleExportInsures = async () => {
+    const payload = this.listRef.getPayload()
+    const res = await exportInsures(payload)
+    if (res) {
+      APP.success('导出投保excel成功')
+    }
+  }
+  // 导出理赔excel
+  public handleExportClaim = async () => {
+    const payload = this.listRef.getPayload()
+    const res = await exportClaim(payload)
+    if (res) {
+      APP.success('导出投保excel成功')
+    }
+  }
   public render () {
     return (
       <ListPage
@@ -103,8 +119,8 @@ class Main extends React.Component {
         formConfig={formConfig}
         addonAfterSearch={(
           <>
-            <Button type='primary'>导出投保excel</Button>
-            <Button type='primary' className='ml10'>导出理赔excel</Button>
+            <Button type='primary' onClick={this.handleExportInsures}>导出投保excel</Button>
+            <Button type='primary' className='ml10' onClick={this.handleExportClaim}>导出理赔excel</Button>
             <Upload
               className='mr10'
               name='file'

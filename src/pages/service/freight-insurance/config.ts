@@ -1,4 +1,6 @@
-export const formConfig = {
+import { FieldsConfig } from "@/packages/common/components/form/config";
+
+export const formConfig: FieldsConfig = {
   common: {
     childOrderCode: {
       label: '订单号'
@@ -8,7 +10,10 @@ export const formConfig = {
     },
     insuranceTime: {
       label: '起止时间',
-      type: 'rangepicker'
+      type: 'rangepicker',
+      controlProps: {
+        showTime: true
+      }
     },
     insuranceStatus: {
       label: '运费险状态',
