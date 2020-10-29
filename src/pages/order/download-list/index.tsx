@@ -37,17 +37,17 @@ class Main extends React.Component {
         )
       }
     },
-    {
-      title: '任务类型',
-      dataIndex: 'type',
-      key: 'type',
-      width: 200,
-      render: (text) => {
-        return (
-          TypeEnum[text]
-        )
-      }
-    },
+    // {
+    //   title: '任务类型',
+    //   dataIndex: 'type',
+    //   key: 'type',
+    //   width: 200,
+    //   render: (text) => {
+    //     return (
+    //       TypeEnum[text]
+    //     )
+    //   }
+    // },
     {
       title: '处理状态',
       dataIndex: 'status',
@@ -102,11 +102,22 @@ class Main extends React.Component {
           hasFile = true
         }
         return (
-          <span>
-            {hasFile ? <a onClick={() => APP.fn.download(record.fileUrl || '', TypeEnum[record.type] + APP.fn.formatDate(record.createTime, 'YYYY-MM-DD-HH-mm-ss'))}>下载</a> : ''}
-            {/* <Divider type="vertical" /> */}
-            {/* <a onClick={()=>this.handleDelete(record.id)}>删除</a> */}
-          </span>
+          <>
+            {hasFile && (
+              <span
+                className='href'
+                onClick={() => {
+                  if (!record.fileUrl) {
+                    APP.error('暂无文件可供下载')
+                    return
+                  }
+                  APP.fn.download(record.fileUrl, record.fileName)
+                }}
+              >
+                下载
+              </span>
+            )}
+          </>
         )
       }
     }
