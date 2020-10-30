@@ -79,14 +79,14 @@ class MaterialTabItem extends React.Component<Props, State> {
       width: 120,
       dataIndex: 'productName'
     },
-    {
-      title: '商品渠道',
-      width: 120,
-      dataIndex: 'channel',
-      render(text: any) {
-        return channels[text]
-      }
-    },
+    // {
+    //   title: '商品渠道',
+    //   width: 120,
+    //   dataIndex: 'channel',
+    //   render(text: any) {
+    //     return channels[text]
+    //   }
+    // },
     {
       title: '内容',
       width: 100,

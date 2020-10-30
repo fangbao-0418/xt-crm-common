@@ -85,7 +85,7 @@ class Main extends React.Component<AlertComponentProps> {
           addonAfterSearch={(
             <div>
               <div>
-                <Button
+                {/* <Button
                   type='primary'
                   className='mr8'
                   onClick={() => {
@@ -93,7 +93,7 @@ class Main extends React.Component<AlertComponentProps> {
                   }}
                 >
                   添加素材
-                </Button>
+                </Button> */}
               </div>
               <div className='mt10'>
                 <Tabs
