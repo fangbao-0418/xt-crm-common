@@ -354,6 +354,17 @@ class Detail extends Component {
                           <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
                         </If>
                         <Col span={8}>供应商电话：{item.childOrder.storePhone || '无'}</Col>
+                        <Col span={8}>
+                          运费险：
+                          <span
+                            className='href'
+                            onClick={() => {
+                              APP.history.push(`/service/freight-insurance?childOrderCode=${item.childOrder.orderCode}`)
+                            }}
+                          >
+                            {item?.freightInsuranceVO?.insuranceStatusStr || '无'}
+                        </span>
+                      </Col>
                       </Row>
                       <Row>
                         {

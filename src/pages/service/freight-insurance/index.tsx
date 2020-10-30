@@ -4,7 +4,7 @@ import { Button, Icon, Popconfirm, Tooltip, Upload } from 'antd'
 import { getHeaders, prefix } from '@/util/utils'
 import { getList, rePaid, exportInsures, exportClaim } from './api'
 import { formConfig } from './config'
-
+import { parseQuery } from '@/util/utils'
 class Main extends React.Component {
   public listRef: ListPageInstanceProps
   public columns = [{
@@ -102,12 +102,18 @@ class Main extends React.Component {
     const payload = this.listRef.getPayload()
     const res = await exportClaim(payload)
     if (res) {
-      APP.success('导出投保excel成功')
+      APP.success('导出理赔excel成功')
     }
+  }
+  public componentDidMount () {
+    const query: any = parseQuery() || {}
+    this.listRef.form.setValues({ childOrderCode: query.childOrderCode })
+    this.listRef.refresh()
   }
   public render () {
     return (
       <ListPage
+        autoFetch={false}
         getInstance={(ref) => {
           this.listRef = ref
         }}
