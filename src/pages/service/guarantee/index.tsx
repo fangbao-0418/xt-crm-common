@@ -3,10 +3,17 @@ import { Card, Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { Alert } from 'antd'
+import { getGuaranteeList, updategGuarantee, getCategoryRelationDetail } from './api'
 import Detail from './Detail'
 import Category from './Category'
 
-class Main extends React.Component<AlertComponentProps, {}> {
+interface State {
+  dataSource: any[]
+}
+class Main extends React.Component<AlertComponentProps, State> {
+  public state = {
+    dataSource: []
+  }
   public columns: ColumnProps<unknown>[] = [{
     title: '服务名称',
     dataIndex: 'name'
@@ -22,34 +29,25 @@ class Main extends React.Component<AlertComponentProps, {}> {
       return (
         <>
           
-          {record.name ==='运费险' && <span className='href mr10' onClick={this.handleOpen}>类目管理</span>}
+          {record.name ==='运费险' && <span className='href mr10' onClick={this.handleOpen.bind(null, record.id)}>类目管理</span>}
           <span className='href' onClick={this.handleEdit.bind(null, record)}>编辑</span>
         </>
       )
     }
   }]
-  public dataSource = [{
-    name: '正品保障',
-    content: '杭州市西湖区古荡湾',
-    sort: 7
-  }, {
-    name: '品质优选',
-    content: '杭州市西湖区古荡湾',
-    sort: 6
-  }, {
-    name: '全场包邮',
-    content: '杭州市西湖区古荡湾，特殊商品除外，0元购等等等',
-    sort: 5
-  }, {
-    name: '运费险',
-    content: '喜团为你购买的商品投保运费险（保单生效以确认订单页展示的运费险为准）',
-    sort: 4
-  }]
+  public componentDidMount () {
+    this.fetchData()
+  }
+  public fetchData = async () => {
+    const dataSource = await getGuaranteeList()
+    this.setState({ dataSource })
+  }
   // 选择支持运费险类目
-  public handleOpen = () => {
+  public handleOpen = async (id: number) => {
+    const res = await getCategoryRelationDetail(id)
     this.props.alert({
       title: '选择支持运费险类目',
-      content: <Category />
+      content: <Category value={res} />
     })
   }
   // 编辑
@@ -69,9 +67,13 @@ class Main extends React.Component<AlertComponentProps, {}> {
       onOk(hide) {
         const formRef = detailRef.current?.form.props.form
         if (formRef) {
-          formRef.validateFields((errs, vals) => {
+          formRef.validateFields(async (errs, vals) => {
             if (!errs) {
-              hide()
+              const res = await updategGuarantee({ id: data.id, ...vals })
+              if (res) {
+                APP.success('操作成功')
+                hide()
+              }
             }
           })
         }
@@ -79,6 +81,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
     })
   }
   public render () {
+    const { dataSource } = this.state
     return (
       <Card>
         <Alert
@@ -87,7 +90,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
           type="warning"
           showIcon
         />
-        <Table className='mt10' columns={this.columns} dataSource={this.dataSource}/>
+        <Table className='mt10' columns={this.columns} dataSource={dataSource}/>
       </Card>
     )
   }

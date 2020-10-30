@@ -1,90 +1,56 @@
 import React from 'react'
 import { Form, FormItem } from '@/packages/common/components'
 import { TreeSelect } from 'antd'
+import { getCategorys } from '@/pages/interface/category/api';
 
 const { SHOW_PARENT } = TreeSelect;
 
-const treeData = [
-  {
-    title: 'Node1',
-    value: '0-0',
-    key: '0-0',
-    children: [
-      {
-        title: 'Child Node1',
-        value: '0-0-0',
-        key: '0-0-0',
-      },
-    ],
-  },
-  {
-    title: 'Node2',
-    value: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: 'Child Node3',
-        value: '0-1-0',
-        key: '0-1-0',
-      },
-      {
-        title: 'Child Node4',
-        value: '0-1-1',
-        key: '0-1-1',
-      },
-      {
-        title: 'Child Node5',
-        value: '0-1-2',
-        key: '0-1-2',
-      },
-    ],
-  },
-  {
-    title: 'Node3',
-    value: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: 'Child Node3',
-        value: '0-1-0',
-        key: '0-1-0',
-      },
-      {
-        title: 'Child Node4',
-        value: '0-1-1',
-        key: '0-1-1',
-      },
-      {
-        title: 'Child Node5',
-        value: '0-1-2',
-        key: '0-1-2',
-      },
-    ],
-  }
-];
-
-class Main extends React.Component {
+interface Props {
+  value: string[]
+}
+class Main extends React.Component<Props> {
   public state = {
-    value: ['0-0-0']
+    value: [],
+    treeData: []
   }
   public componentDidMount () {
-    this.fetchData()
+    this.onLoadData()
   }
-  public fetchData () {
-    
-  }
-  public onChange = (value: any) => {
-    console.log('onChange ', value);
+  public onChange = (value: any, label: string, extra: any) => {
+    console.log('onChange ', value, label, extra)
     this.setState({ value });
   }
+  public onLoadData = async (treeNode: any = { props: {} }) => {
+    const { id } = treeNode.props
+    let treeData: any[] = (await getCategorys(id) || [])
+    treeData = treeData.map(item => {
+      return {
+        title: item.name,
+        level: item.level,
+        pId: item.parentId,
+        id: item.id,
+        key: item.id,
+        value: item.id
+      }
+    })
+    this.setState((state: any) => {
+      return {
+        treeData: state.treeData.concat(treeData)
+      }
+    })
+  }
   public render () {
+    const { treeData, value } = this.state
     const tProps = {
+      value,
       treeData,
-      value: this.state.value,
+      treeDataSimpleMode: true,
+      loadData: this.onLoadData,
       onChange: this.onChange,
       treeCheckable: true,
       showCheckedStrategy: SHOW_PARENT,
       searchPlaceholder: '请选择类目',
+      dropdownStyle: { maxHeight: 300, overflow: 'auto' },
       style: {
         width: '100%'
       },
