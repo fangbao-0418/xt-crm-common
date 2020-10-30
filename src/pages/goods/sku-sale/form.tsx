@@ -851,8 +851,10 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               // hidden={!interceptionVisible}
               controlProps={{
                 disabled: productType === 20,
-                onChange: () => {
-                  
+                onChange: (event: any) => {
+                  if (event.target.value === 1) {
+                    this.form.setValues({ enableFreightInsurance: false })
+                  }
                 }
               }}
             />
@@ -860,10 +862,13 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             <FormItem
               label='服务保障'
               inner={(form) => {
+                const interception = form.getFieldValue('interception')
                 return (
                   <>
-                    {form.getFieldDecorator('enableFreightInsurance')(
-                      <Checkbox>赠运费险</Checkbox>
+                    {form.getFieldDecorator('enableFreightInsurance', {
+                      valuePropName: 'checked'
+                    })(
+                      <Checkbox disabled={interception === 1}>赠运费险</Checkbox>
                     )}
                     <span style={{ color: 'red' }}>拦截商品不支持运费险</span>
                   </>
