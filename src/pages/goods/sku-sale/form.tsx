@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Card, Input, Button, message, Radio, Select, Row, InputNumber } from 'antd'
+import { Modal, Card, Input, Button, message, Radio, Select, Row, InputNumber, Checkbox } from 'antd'
 import UploadView, { VideoUpload } from '@/components/upload'
 import { pick, map, size, filter, assign, isEmpty, flattenDeep } from 'lodash'
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api'
@@ -850,7 +850,24 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               verifiable
               // hidden={!interceptionVisible}
               controlProps={{
-                disabled: productType === 20
+                disabled: productType === 20,
+                onChange: () => {
+                  
+                }
+              }}
+            />
+            {/* 是否支持运费险 0:不支持,1:支持 */}
+            <FormItem
+              label='服务保障'
+              inner={(form) => {
+                return (
+                  <>
+                    {form.getFieldDecorator('enableFreightInsurance')(
+                      <Checkbox>赠运费险</Checkbox>
+                    )}
+                    <span style={{ color: 'red' }}>拦截商品不支持运费险</span>
+                  </>
+                )
               }}
             />
             <FormItem

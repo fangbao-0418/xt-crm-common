@@ -40,6 +40,8 @@ export function formRequest(payload: any) {
   result.secondCategoryId = payload.categoryId?.[1]
   result.thirdCategoryId = payload.categoryId?.[2]
   result.categoryId = payload.categoryId?.[2]
+  // 是否支持运费险 0:不支持,1:支持 勾了就传1
+  payload.enableFreightInsurance = payload.enableFreightInsurance ? 1 : 0
   return omit({ ...payload, ...result }, 'skuList')
 }
 
@@ -62,6 +64,8 @@ export function formResponse(res: any) {
   res.status = +res.status;
   res.productCustomsDetailVOList = res.productCustomsDetailVOList || [];
   res.warehouseType = res.warehouseType ? 1 :  0;
+  // 是否支持运费险 1为选中，0为未选中
+  res.enableFreightInsurance = res.enableFreightInsurance === 1
   return res;
 }
 
