@@ -59,8 +59,8 @@ export const getOrderList = APP.fn.wrapApi((data: any) => {
 }, ['orderStatus'])
 
 // 客服代申请售后单个商品详情
-export function getProductDetail ({ mainOrderId, skuId }: any) {
-  return get(`/order/afterSale/applyOrderSKuDetail/${mainOrderId}/${skuId}`)
+export function getProductDetail (childOrderId: any) {
+  return get(`/order/afterSale/applyOrderSKuDetail?childOrderId=${childOrderId}`)
 }
 // 获取售后原因
 export function customerUpdate (data: any) {
@@ -376,4 +376,26 @@ export function getUserWxAccount (data: any) {
 //发起补偿单申请
 export function compensateApply (data:any) {
   return newPost('/mcweb/sale-after/order/compensate/apply', data)
+}
+
+//校验满赠优惠券金额
+export function checkRefundCoupon (data:any) {
+  // if (data.refundAmount === 10) {
+  //   return Promise.resolve({
+  //     deductionAmount: 10
+  //   })
+  // } else if (data.refundAmount === 20) {
+  //   return Promise.resolve({
+  //     deductionAmount: 20
+  //   })
+  // } else if (data.refundAmount === 70) {
+  //   return Promise.resolve({
+  //     deductionAmount: 70
+  //   })
+  // } else {
+  //   return Promise.resolve({
+  //     deductionAmount: 30
+  //   })
+  // }
+  return get('/mcweb/refund/check/refundCoupon', data)
 }

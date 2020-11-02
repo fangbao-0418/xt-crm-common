@@ -68,9 +68,11 @@ const AfterSaleApplyInfo = (props: Props) => {
         align='middle'
       >
         <h4>售后申请信息</h4>
-        {!isRefundStatusOf(
+        {(!isRefundStatusOf(
           enumRefundStatus.WaitConfirm
-        ) && (
+        ) && !isRefundStatusOf(
+          enumRefundStatus.WaitBossConfirm
+        )) && (
           <RemarkModal
             onSuccess={onSuccess}
             refundId={props.match.params.id}

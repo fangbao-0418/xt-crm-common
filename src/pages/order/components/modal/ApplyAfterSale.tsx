@@ -11,7 +11,7 @@ import { formItemLayout } from '@/config'
 import ModifyAddress from './ModifyShippingAddress'
 import AfterSaleSelect from '../after-sale-select'
 import { mul } from '@/util/utils'
-import { getProductDetail, customerAdd } from '../../api'
+import { getProductDetail, customerAdd, checkRefundCoupon } from '../../api'
 const { TextArea } = Input
 
 interface Props extends FormComponentProps {
@@ -23,6 +23,7 @@ interface Props extends FormComponentProps {
 interface State {
   skuDetail?: any;
   refundTypeValue?: any
+  deductionInfo?: any
 }
 
 class ApplyAfterSale extends React.Component<Props, State> {
@@ -35,7 +36,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
   }
   isHaiTao: boolean
   async fetchDetail () {
-    let skuDetail: Partial<ApplyOrderSkuDetail.data> = await getProductDetail(this.props.modalInfo)
+    let skuDetail: Partial<ApplyOrderSkuDetail.data> = await getProductDetail(this.props.modalInfo?.childOrder?.id)
     if (!skuDetail) {
       APP.moon.error({
         label: '订单申请售后',
@@ -46,6 +47,16 @@ class ApplyAfterSale extends React.Component<Props, State> {
       skuDetail = {}
     }
     this.setState({ skuDetail })
+  }
+  /* 校验满赠优惠券金额 */
+  checkRefundCoupon = (data: { childOrderId: number, refundNum?: number, refundAmount?: number, refundType?: number }, cb?: () => void) => {
+    checkRefundCoupon(data).then((deductionInfo: any) => {
+      if (deductionInfo) {
+        this.setState({
+          deductionInfo
+        })
+      }
+    })
   }
   initRefundTypeValue = () => {
     const { modalInfo } = this.props
@@ -61,6 +72,9 @@ class ApplyAfterSale extends React.Component<Props, State> {
       return
     }
     this.fetchDetail()
+    this.checkRefundCoupon({
+      childOrderId: modalInfo.childOrderId
+    })
   }
   handleOk = () => {
     const {
@@ -183,7 +197,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
       modalInfo,
       form: { getFieldDecorator }
     } = this.props
-    const { refundTypeValue } = this.state
+    const { refundTypeValue, deductionInfo } = this.state
     const initialObj: any = {}
     const disabledObj: any = {}
     if (modalInfo.childOrder && modalInfo.childOrder.orderStatus === 20) {
@@ -196,6 +210,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
     const options = refundType.getArray()
     /** 海淘订单请选择售后类型没有换货 */
     const refundTypeOptions = this.isHaiTao ? options.filter(v => v.key !== 30) : options
+    console.log(skuDetail, modalInfo, 200)
     return (
       <Modal
         width='80%'
@@ -208,6 +223,11 @@ class ApplyAfterSale extends React.Component<Props, State> {
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
+            <If condition={!!deductionInfo?.deductionStr}>
+              <Form.Item label='提示'>
+                <span style={{ color: 'red' }}>{skuDetail.deductionStr}</span>
+              </Form.Item>
+            </If>
             <Form.Item label='售后类型'>
               {/* 海淘子订单售后类型不显示换货 */}
               {getFieldDecorator('refundType', {

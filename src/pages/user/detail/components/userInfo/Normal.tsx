@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Descriptions, Table, Button, Form, Select, Modal, Input, Switch, InputNumber } from 'antd'
+import { Card, Descriptions, Table, Button, Form, Select, Modal, Input, Switch, InputNumber, Radio } from 'antd'
 import moment from 'moment'
 import styles from './index.module.scss'
 import { memberModify, getReasonList, setMemberUnlocking, relieveWechat, addBlack, delBlack } from '../../api'
@@ -82,6 +82,7 @@ class Main extends React.Component<Props> {
         reasonRemark: value.reasonRemark, // 说明
         orderCode: value.orderCode, // 订单号
         reasonType: value.reasonType, //  原因编号
+        isSpecial: value.isSpecial, // 是否特殊限制业务
         tab
       }
       // console.log('params', params)
@@ -342,6 +343,20 @@ class Main extends React.Component<Props> {
                   }
                 ],
               })(<TextArea placeholder={'请输入说明内容'} />)}
+            </FormItem>
+            <FormItem label='是否特殊限制业务' required={true}>
+              {getFieldDecorator('isSpecial', {
+                initialValue: 0,
+                rules: [{
+                  required: true,
+                  message: '请选择是否特殊限制业务'
+                }]
+              })(
+                <Radio.Group>
+                  <Radio value={1}>是</Radio>
+                  <Radio value={0}>否</Radio>
+                </Radio.Group>
+              )}
             </FormItem>
           </Form>
         </Modal>
