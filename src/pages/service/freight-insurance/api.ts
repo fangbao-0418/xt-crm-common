@@ -31,18 +31,13 @@ export function rePaid (insuranceId: number) {
   return newPost('/msweb/trade/insurance/freight/rePaid', { insuranceId })
 }
 
+
+
 /**
- * 导出投保excel
+ * 导出运费险列表
+ * exportType：1 投保 2 理赔
  * @param payload
  */
 export function exportInsures (payload: Payload) {
-  return newPost('/mcweb/trade/insurance/freight/exportInsures', payload)
-}
-
-/**
- * 导出理赔excel
- * @param payload
-  */
-export function exportClaim (payload: Payload) {
-  return newPost('/mcweb/trade/insurance/freight/exportClaim', payload)
+  return newPost('/mcweb/trade/insurance/freight/export', payload)
 }

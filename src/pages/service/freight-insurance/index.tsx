@@ -2,7 +2,7 @@ import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { Button, Icon, Popconfirm, Tooltip, Upload } from 'antd'
 import { getHeaders, prefix } from '@/util/utils'
-import { getList, rePaid, exportInsures, exportClaim } from './api'
+import { getList, rePaid, exportInsures } from './api'
 import { formConfig } from './config'
 import { parseQuery } from '@/util/utils'
 class Main extends React.Component {
@@ -92,7 +92,7 @@ class Main extends React.Component {
   // 导出投保excel
   public handleExportInsures = async () => {
     const payload = this.listRef.getPayload()
-    const res = await exportInsures(payload)
+    const res = await exportInsures({ ...payload, exportType: 1 })
     if (res) {
       APP.success('导出投保excel成功')
     }
@@ -100,7 +100,7 @@ class Main extends React.Component {
   // 导出理赔excel
   public handleExportClaim = async () => {
     const payload = this.listRef.getPayload()
-    const res = await exportClaim(payload)
+    const res = await exportInsures({ ...payload, exportType: 2 })
     if (res) {
       APP.success('导出理赔excel成功')
     }

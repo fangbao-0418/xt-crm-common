@@ -362,7 +362,7 @@ class Detail extends Component {
                               APP.history.push(`/service/freight-insurance?childOrderCode=${item.childOrder.orderCode}`)
                             }}
                           >
-                            {item?.freightInsuranceVO?.insuranceStatusStr || '无'}
+                            {item?.freightInsuranceVO?.insuranceStatusStr}
                         </span>
                       </Col>
                       </Row>
