@@ -28,7 +28,7 @@ export function getList (payload: Payload) {
  * @param insuranceId
  */
 export function rePaid (insuranceId: number) {
-  return newPost('/msweb/trade/insurance/freight/rePaid', { insuranceId })
+  return newPost('/mcweb/trade/insurance/freight/rePaid', { insuranceId })
 }
 
 
