@@ -179,7 +179,8 @@ class GoodsTable extends Component {
                 size='small'
                 onClick={() => this.setState({
                   notesVisible: true,
-                  modalInfo: { ...record }
+                  modalInfo: { ...record },
+                  remark: ''
                 })}>
                 添加备注
               </Button>
@@ -242,13 +243,19 @@ class GoodsTable extends Component {
     ]
     return (
       <>
-        {this.state.modalInfo.mainOrderId
+        {
+          this.state.modalInfo.mainOrderId
           && this.state.modalInfo.skuId
-          && <ApplyAfterSaleModal
-            onCancel={() => this.setState({ visible: false })}
-            successCb={() => this.setState({ visible: false }, this.props.query)}
-            visible={this.state.visible}
-            modalInfo={this.state.modalInfo} />}
+          && this.state.visible
+          && (
+            <ApplyAfterSaleModal
+              onCancel={() => this.setState({ visible: false })}
+              successCb={() => this.setState({ visible: false }, this.props.query)}
+              visible={this.state.visible}
+              modalInfo={this.state.modalInfo}
+            />
+          )
+        }
         {
           this.state.modalInfo.orderInfo
           && (
