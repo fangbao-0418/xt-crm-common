@@ -126,6 +126,11 @@ class Main extends React.Component<AlertComponentProps> {
             }
           }}
           formConfig={getFieldsConfig()}
+          rangeMap={{
+            createTime: {
+              fields: ['startTime', 'endTime'],
+            }
+          }}
           formItemLayout={(
             <>
               <FormItem name='productId' />

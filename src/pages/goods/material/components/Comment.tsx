@@ -16,7 +16,7 @@ function ReportInfo (props: ReplyInfo2Props) {
         <div className={styles['report-info-avatar']}>
           <img src={props.headImage} />
         </div>
-        <div className={styles['report-info-info']}>
+        <div className={styles['report-info-right']}>
           <div>
             {props.nickName}
             <div className='fr font12'>
@@ -48,9 +48,9 @@ function ReportInfo (props: ReplyInfo2Props) {
             </div>
           </div>
           <div>{APP.fn.formatDate(props.createTime)}</div>
+          <div className={styles['report-info-content']}>{props.content}</div>
         </div>
       </div>
-      <div className='mt10'>{props.content}</div>
     </div>
   )
 }
