@@ -1,22 +1,16 @@
-/* eslint-disable no-const-assign */
-/* eslint-disable no-self-assign */
-/* eslint-disable react/no-find-dom-node */
 import React, { Component } from 'react'
-import { Tag, Select, Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
+import { Tag, Select, Modal, Button, Checkbox, message } from 'antd'
 import If from '@/packages/common/components/if'
-import UploadView from '../../../components/upload'
-import { getUniqueId } from '@/packages/common/utils'
+import UploadView from '@/components/upload'
 import { getBannerDetail, updateBanner, addBanner } from '../api'
-import { TextMapPosition } from '../constant'
 import platformType from '@/enum/platformType'
-// import { formatDate } from '../../helper';
 import moment from 'moment'
 import BannerPostion from '@/components/banner-position'
 import StartPageUpload from './components/StartPageUpload'
-
+import { Form, FormItem } from '@/packages/common/components'
+import { getDefaultConfig } from './config'
 import styles from './style.module.styl'
 
-const FormItem = Form.Item
 const Option = Select.Option
 /**
  * key
@@ -29,11 +23,8 @@ const Option = Select.Option
  * 7.搜索列表
  * 8.商品详情页
  */
-const formItemLayout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 14 }
-}
 const _platformType = platformType.getArray({ key: 'value', val: 'label' })
+
 const initImgList = (imgUrlWap, num) => {
   if (!imgUrlWap) {
     return
@@ -61,21 +52,21 @@ class BannerModal extends Component {
     onSuccess: () => { },
     id: '',
     isEdit: false
-  };
-
+  }
   state = {
     renderKey: 0,
+    bizSource: 0,
     visible: false,
     data: {
-      platformArray: _platformType.map(val => val.value),
+      platformArray: [],
       sort: 0,
       status: 1,
-      seat: 1
+      seat: 1,
+      bizSource: 0
     }
-  };
+  }
 
   showModal = () => {
-    this.props.form.resetFields()
     if (this.props.isEdit) {
       this.query()
     }
@@ -88,9 +79,13 @@ class BannerModal extends Component {
     getBannerDetail({
       id: this.props.id
     }).then(data => {
+      // 平台
       if (data.platform) {
         const str = data.platform.toString(2)
         const array = str.split('')
+        APP.moon.logger({
+          platform: str
+        }, 'Banner-App启动页-获取')
         data.platformArray = []
         array.forEach((val, i) => {
           if (val * 1 == 1) {
@@ -100,18 +95,41 @@ class BannerModal extends Component {
       } else {
         data.platformArray = _platformType.map(val => val.value)
       }
+      // 可见用户
+      if (data.memberRestrict) {
+        const str = data.memberRestrict.toString(2)
+        const array = str.split('')
+        data.memberRestrictArray = []
+        array.forEach((val, i) => {
+          if (val * 1 == 1) {
+            data.memberRestrictArray.push(Math.pow(2, array.length - 1 - i).toString())
+          }
+        })
+      } else {
+        data.platformArray = [_platformType[2],_platformType[3]].map(val => val.value)
+      }
       this.setState({
         data,
+        bizSource: data.bizSource,
         renderKey: this.state.renderKey + 1
       })
+      this.formRef.props.form.setFieldsValue({
+        title: data.title,
+        bizSource: data.bizSource,
+        seat: [data.newSeat, data.childSeat],
+        onlineTime: moment(data.onlineTime),
+        offlineTime: moment(data.offlineTime),
+        sort: data.sort,
+        status: data.status,
+        bgColor: data.bgColor,
+        jumpUrlWap: data.jumpUrlWap
+      })
     })
-  };
+  }
 
   handleOk = () => {
-    const { onSuccess, id, form, isEdit } = this.props
-    form.validateFields((err, values) => {
-      console.log(values)
-      console.log(err)
+    const { onSuccess, id, isEdit } = this.props
+    this.formRef.props.form.validateFields((err, values) => {
       if (!err) {
         const api = isEdit ? updateBanner : addBanner
         const params = {
@@ -127,6 +145,9 @@ class BannerModal extends Component {
           params.imgList = undefined
         }
         if([10].includes(seat[0])){
+          APP.moon.logger({
+            platformArray: params.platformArray
+          }, 'Banner-App启动页-提交')
           if(!params.imgList1||(params.imgList1&&(params.imgList1.length !==2||!params.imgList1[0].rurl||!params.imgList1[1].rurl))){
             APP.error('请上传两张banner图片')
             return
@@ -136,10 +157,27 @@ class BannerModal extends Component {
         params.newSeat = seat[0]
         params.childSeat = seat[1]
         params.seat = seat[1]
-        params.platform = 0
-        params.platformArray.forEach((val) => {
-          params.platform += val * 1
-        })
+        // 平台
+        if (params.platformArray) {
+          params.platform = 0
+          params.platformArray.forEach((val) => {
+            params.platform += val * 1
+          })
+        }
+        // 可见用户
+        if (params.memberRestrictArray) {
+          params.memberRestrict = 0
+          params.memberRestrictArray.forEach((val) => {
+            params.memberRestrict += val * 1
+          })
+        }
+        if([10].includes(seat[0])&&params.platform>6){
+          APP.moon.logger({
+            platform: params.platform
+          }, 'Banner-App启动页-修改值')
+          params.platform=6
+        }
+
         if (params.keywordsList&&params.keywordsList.length>20) {
           APP.error('关键字不能超过20个')
           return
@@ -161,15 +199,17 @@ class BannerModal extends Component {
   };
 
   handleCancel = e => {
+    this.formRef.resetValues()
     this.setState({
       visible: false
     })
   };
   render () {
     const { isEdit, size } = this.props
-    const { getFieldDecorator, setFieldsValue } = this.props.form
     const { data, renderKey } = this.state
     const seat = [data.newSeat, data.childSeat]
+
+    console.log('seat', seat)
     return (
       <>
         <Button size={size} type='primary' onClick={this.showModal}>
@@ -189,95 +229,117 @@ class BannerModal extends Component {
               </Button>
             </>
           }
-          onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <Form {...formItemLayout}>
-            <FormItem label='Banner名称'>
-              {getFieldDecorator('title', {
-                initialValue: data.title,
-                rules: [{
-                  required: true,
-                  message: 'banner名称不能为空'
-                }]
-              })(<Input placeholder='' />)}
-            </FormItem>
-            <FormItem required label='位置'>
-              {getFieldDecorator('seat', {
-                initialValue: [data.newSeat, data.childSeat],
-                rules: [
-                  {
-                    validator: (rule, value, cb) => {
-                      if (value[1] !== undefined) {
-                        cb()
-                      } else {
-                        cb('位置不能为空')
+          <Form
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
+            config={getDefaultConfig()}
+            getInstance={(ref) => {
+              this.formRef = ref
+            }}
+          >
+            <FormItem verifiable name='title' />
+            <FormItem
+              name='bizSource'
+              verifiable
+              controlProps={{
+                onChange: (bizSource) => {
+                  this.setState({ bizSource }, () => {
+                    this.formRef.setValues({ seat: [] })
+                  })
+                }                
+              }}
+            />
+            <FormItem
+              required
+              label='位置'
+              inner={(form) => {
+                return form.getFieldDecorator('seat', {
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        try {
+                          if (value && value[1] !== undefined) {
+                            cb()
+                          } else {
+                            cb('位置不能为空')
+                          }
+                        } catch (err) {
+                          console.log('err', err)
+                        }
                       }
                     }
-                  }
-                ]
-              })(
-                <BannerPostion
-                  onChange={(val) => {
-                    if([val[0], seat[0]].includes(10)){
-                      setFieldsValue({
-                        imgList:undefined,
-                        imgList1:undefined,
-                        platformArray:undefined
+                  ]
+                })(
+                  <BannerPostion
+                    bizSource={this.state.bizSource}
+                    onChange={(val) => {
+                      if([val[0], seat[0]].includes(10)){
+                        this.formRef.setValues({
+                          imgList:undefined,
+                          imgList1:undefined,
+                          platformArray:undefined
+                        })
+                      }
+                      data.newSeat = val[0]
+                      data.childSeat = val[1]
+                      this.setState({
+                        data
                       })
-                    }
-                    data.newSeat = val[0]
-                    data.childSeat = val[1]
-                    this.setState({
-                      data
-                    })
-                    
-                  }}
-                />
-              )}
-            </FormItem>
+                      
+                    }}
+                  />
+                )
+              }}
+            />
             <If condition={seat[0] === 1 && seat[1] === 0}>
-              <FormItem label='banner背景颜色'>
-                {getFieldDecorator('bgColor', {
-                  initialValue: data.bgColor
-                })(<Input placeholder='' />)}
-              </FormItem>
+              <FormItem name='bgColor' />
             </If>
-              <If
-                condition={[10].includes(seat[0])}
-                // condition={true}
-              >
-                <FormItem key={renderKey} label='Banner图片' required={true}>
-                  {getFieldDecorator('imgList1', {
+            <If condition={[10].includes(seat[0])} >
+              <FormItem
+                key={renderKey}
+                label='Banner图片'
+                required={true}
+                inner={(form) => {
+                  return form.getFieldDecorator('imgList1', {
                     initialValue: initImgList(data.imgUrlWap, 2),
                     rules: [
-                     {
+                      {
                         validator: (rule, value, cb) => {
-                          if([10].includes(seat[0])){
-                            if (!value?.length) {
-                              cb('请上传两张Banner图片')
-                            } else if (!value?.[0]) {
-                              cb('请上传Banner图1')
-                            } else if (!value?.[1]) {
-                              cb('请上传Banner图2')
+                          try {
+                            if([10].includes(seat[0])){
+                              if (!value?.length) {
+                                cb('请上传两张Banner图片')
+                              } else if (!value?.[0]) {
+                                cb('请上传Banner图1')
+                              } else if (!value?.[1]) {
+                                cb('请上传Banner图2')
+                              }
                             }
+                            cb()
+                          } catch (err) {
+                            console.log('err', err)
                           }
-                          cb()
                         }
                       }
                     ]
-                  })(
-                    <StartPageUpload />
-                  )}
-                </FormItem>
-              </If>
-              <If condition={[1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])}>
-                <FormItem key={renderKey} label='Banner图片' required={true}>
-                  {getFieldDecorator('imgList', {
+                  })(<StartPageUpload />)
+                }}
+              />
+            </If>
+            {/* 11是商学院，显示图片不显示文案 */}
+            <If condition={[1, 2, 3, 4, 6, 7, 8, 9, 11].includes(seat[0])}>
+              <FormItem
+                key={renderKey}
+                label='Banner图片'
+                required={true}
+                inner={(form) => {
+                  return form.getFieldDecorator('imgList', {
                     initialValue: initImgList(data.imgUrlWap,1),
                     rules: [
                       {
-                        required: [1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0]),
+                        required: true,
                         message: '请上传Banner图片'
                       }
                     ]
@@ -289,106 +351,107 @@ class BannerModal extends Component {
                       listNum={1}
                       size={0.3}
                     />
-                  )}
-                </FormItem>
-              </If>
+                  )
+                }}
+              />
+            </If>
             <If condition={seat[0] === 5}>
-              <FormItem label='文案'>
-                {getFieldDecorator('content', {
-                  initialValue: data.content,
-                  rules: [
-                    {
-                      required: seat[0] === 5,
-                      message: '请输入文案'
-                    }
-                  ]
-                })(
-                  <Input maxLength={25} placeholder='请输入文案' />,
-                )}
-              </FormItem>
+              <FormItem name='content' />
             </If>
-            <FormItem label='跳转地址'>
-              {getFieldDecorator('jumpUrlWap', { initialValue: data.jumpUrlWap })(
-                <Input placeholder='' />,
-              )}
-            </FormItem>
-            <FormItem label='上线时间'>
-              {getFieldDecorator('onlineTime', { initialValue: moment(data.onlineTime) })(
-                <DatePicker showTime style={{ width: 200 }} format='YYYY-MM-DD HH:mm:ss' />,
-              )}
-            </FormItem>
-            <FormItem label='下线时间'>
-              {getFieldDecorator('offlineTime', { initialValue: moment(data.offlineTime) })(
-                <DatePicker showTime style={{ width: 200 }} format='YYYY-MM-DD HH:mm:ss' />,
-              )}
-            </FormItem>
-            <FormItem label='排序'>
-              {getFieldDecorator('sort', { initialValue: data.sort })(
-                <InputNumber placeholder='' />,
-              )}
-            </FormItem>
-            <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
-              <FormItem label='平台'>
-                {getFieldDecorator('platformArray', {
-                  initialValue: data.platformArray,
-                  rules: [{
-                    required: ([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
-                    message: '请选择平台'
-                  }]
-                })(
-                  <Checkbox.Group options={[10].includes(seat[0])?[_platformType[0],_platformType[1]]:_platformType}> </Checkbox.Group>
-                )}
-              </FormItem>
-            </If>
+            <FormItem name='jumpUrlWap' />
+            <FormItem name='onlineTime' verifiable />
+            <FormItem name='offlineTime' verifiable />
+            <FormItem name='sort' verifiable />
+            {this.state.bizSource === 0 && (
+              <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+                <FormItem
+                  label='平台'
+                  inner={(form) => {
+                    return form.getFieldDecorator('platformArray', {
+                      initialValue: data.platformArray,
+                      rules: [{
+                        required: true,
+                        message: '请选择平台'
+                      }]
+                    })(
+                      <Checkbox.Group
+                        options={[10].includes(seat[0])?[_platformType[0],_platformType[1]]:_platformType}
+                      />
+                    )
+                }}/>
+              </If>
+            )}
+            {this.state.bizSource === 20 && (<>
+              <FormItem
+                label='平台'
+                inner={(form) => {
+                  return form.getFieldDecorator('platformArray', {
+                    initialValue: data.platformArray,
+                    rules: [{
+                      required: true,
+                      message: '请选择平台'
+                    }]
+                  })(
+                    <Checkbox.Group
+                      options={[_platformType[2],_platformType[3]]}
+                    />
+                  )
+                }}
+              />
+              <FormItem
+                name='memberRestrictArray'
+                fieldDecoratorOptions={{
+                  initialValue: data.memberRestrictArray
+                }}
+              />
+            </>)}
             <If condition={seat[0] === 7}>
-              <FormItem label='关键词'>
-                {getFieldDecorator('keywordsList', {
-                  initialValue: data.keywordsList,
-                  rules: [
-                    {
-                      validator: (rule, value, cb) => {
-                        console.log(value,'111')
-                        if(seat[0] === 7){
-                          if(!value||(value&&value.length===0)){
-                            cb('请输入关键词')
-                          }
-                          if(value.length>20){
-                            cb('不能超过20个关键词')
-                          }
-                          value.map((item)=>{
-                            if(item.length>10){
-                              cb('单个关键词不能超过10个字符')
+              <FormItem
+                label='关键词'
+                inner={(form) => {
+                  return form.getFieldDecorator('keywordsList', {
+                    initialValue: data.keywordsList,
+                    rules: [
+                      {
+                        validator: (rule, value, cb) => {
+                          try {
+                            if(seat[0] === 7){
+                              if(!value||(value&&value.length===0)){
+                                cb('请输入关键词')
+                              }
+                              if(value.length>20){
+                                cb('不能超过20个关键词')
+                              }
+                              value.map((item)=>{
+                                if(item.length>10){
+                                  cb('单个关键词不能超过10个字符')
+                                }
+                              })
                             }
-                          })
+                            cb()
+                          } catch (err) {
+                            console.log('err', err)
+                          }
                         }
-                        cb()
                       }
-                    }
-                  ]
-                })(
-                  <Select
-                    mode={'tags'}
-                    ref={(ref)=>{
-                      this.ref=ref
-                    }}
-                    placeholder='请输入关键词'
-                    id='keywordsList'
-                    tokenSeparators={[',']}
-                    maxLength={10}
-                    name='keywordsList'
-                    dropdownClassName={styles['select-auto']}
-                  />
-                )}
-              </FormItem>
+                    ]
+                  })(
+                    <Select
+                      mode={'tags'}
+                      ref={(ref)=>{
+                        this.ref=ref
+                      }}
+                      placeholder='请输入关键词'
+                      id='keywordsList'
+                      tokenSeparators={[',']}
+                      maxLength={10}
+                      name='keywordsList'
+                      dropdownClassName={styles['select-auto']}
+                    />
+                  )
+                }}/>
             </If>
-            <FormItem label='状态'>
-              {getFieldDecorator('status', { initialValue: data.status })(
-                <Radio.Group>
-                  <Radio value={0}>关闭</Radio>
-                  <Radio value={1}>开启</Radio>
-                </Radio.Group>,
-              )}
-            </FormItem>
+            <FormItem name='status' />
           </Form>
         </Modal>
       </>
@@ -396,4 +459,4 @@ class BannerModal extends Component {
   }
 }
 
-export default Form.create()(BannerModal)
+export default BannerModal

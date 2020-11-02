@@ -137,6 +137,18 @@ export const newPut = (url, data, config) => {
     })
   })
 }
+// delete请求
+export const newDel = (url, data, config) => {
+  return request(url, {
+    data: data,
+    method: 'delete',
+    ...config,
+    headers: getHeaders({
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json;charset=UTF-8'
+    })
+  })
+}
 
 const messageMap = {
   401: '未登录',

@@ -7,6 +7,7 @@ import { withRouter } from 'react-router'
 import { getDetailColumns } from '../constant'
 import LogisticsInfo from './logistics-info'
 import ChildOrderBenefitInfo from './child-order-benefit-info'
+import HaodianSkuIncome from './HaodianSkuIncome'
 import { formatDate } from '../../helper'
 import { setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId } from '../api'
 import alert from '@/packages/common/components/alert'
@@ -24,11 +25,11 @@ class GoodsTable extends Component {
   }
   /**
    * 是否显示申请售后按钮
-   * orderType 订单类型（0：普通订单，10：激活码订单，20：地推订单，30：助力分兑换订单，50：买赠订单，60：线下团购会订单）
+   * orderType 订单类型（0：普通订单，10：激活码订单，20：地推订单，30：助力分兑换订单，50：买赠订单，55：虚拟订单 56：直播间红包 60：线下团购会订单）
    * orderStatus 订单状态（10：待付款；20：待发货；25：部分发货； 30：已发货；40：已收货; 50完成; 60关闭）
    */
   showApplyBtn = (orderStatus, orderType) => {
-    return orderType !== 50 && orderType !== 60 && [20, 25, 30, 40, 50].includes(orderStatus)
+    return orderType !== 50 && orderType !== 60 && orderType !== 55 && orderType !== 56 && [20, 25, 30, 40, 50].includes(orderStatus)
   }
   /**
    * 如果是海淘订单，需要提示该订单商品为海淘商品，请慎重处理售后
@@ -146,11 +147,10 @@ class GoodsTable extends Component {
     const { proceedsVisible, childOrderProceeds, skuInfo } = this.state
     const orderInfo = this.props.orderInfo || {}
     const childOrder = this.props.childOrder || {}
+    console.log('childOrder', childOrder)
     const list = this.props.list || []
     const logistics = this.props.logistics || {}
     const orderVirtualInfoVO= this.props.orderVirtualInfoVO || {}
-    console.log('orderInfo')
-    console.log(orderInfo)
     const columns = [
       ...(getDetailColumns(0, orderInfo.isShop === 1).filter(item => item.key !== 'storeName')),
       {
@@ -159,10 +159,10 @@ class GoodsTable extends Component {
         key: 'operate',
         width: 130,
         render: (text, record, index) => (
-        //orderType===55虚拟商品
+        //orderType===56 直播间红包
           <>
             <div>
-              {this.showApplyBtn(orderInfo.orderStatus, record.orderType)&& record.orderType!==55 && (
+              {this.showApplyBtn(orderInfo.orderStatus, record.orderType) && (
                 <Button
                   style={{ padding: 0 }}
                   type='link'
@@ -195,8 +195,8 @@ class GoodsTable extends Component {
                 </Button>
               )}
             </div>
-            {
-              childOrder.canApplyOrderCompensate && (
+            { // 喜团好店没有发起补偿 && Number(orderInfo.orderBizType) !== 30
+              childOrder.canApplyOrderCompensate && record.orderType !== 56 && (
                 <div>
                   <Button
                     style={{ padding: 0 }}
@@ -209,7 +209,7 @@ class GoodsTable extends Component {
               )
             }
             {
-              childOrder.isHisCompensate && (
+              childOrder.isHisCompensate && record.orderType !== 56 && (
                 <div>
                   <Button
                     style={{ padding: 0 }}
@@ -223,15 +223,19 @@ class GoodsTable extends Component {
                 </div>
               )
             }
-            <div>
-              <Button
-                style={{ padding: 0 }}
-                type='link'
-                size='small'
-                onClick={() => this.childOrderProceeds(record, proceedsVisible)}>
-                {proceedsVisible ? '收起收益' : '查看收益'}
-              </Button>
-            </div>
+            {
+              record.orderType !== 56 && (
+                <div>
+                  <Button
+                    style={{ padding: 0 }}
+                    type='link'
+                    size='small'
+                    onClick={() => this.childOrderProceeds(record, proceedsVisible)}>
+                    {proceedsVisible ? '收起收益' : '查看收益'}
+                  </Button>
+                </div>
+              )
+            }
           </>
         )
       }
@@ -247,12 +251,15 @@ class GoodsTable extends Component {
             modalInfo={this.state.modalInfo} />}
         {
           this.state.modalInfo.orderInfo
-          && <Compensate
-            onCancel={() => this.setState({ compensateVisible: false })}
-            successCb={() => this.setState({ compensateVisible: false }, this.props.query)}
-            visible={this.state.compensateVisible}
-            modalInfo={this.state.modalInfo}
-          />
+          && (
+            <Compensate
+              orderBizType={Number(orderInfo.orderBizType)}
+              onCancel={() => this.setState({ compensateVisible: false })}
+              successCb={() => this.setState({ compensateVisible: false }, this.props.query)}
+              visible={this.state.compensateVisible}
+              modalInfo={this.state.modalInfo}
+            />
+          )
         }
         <Modal
           title='添加备注'
@@ -291,7 +298,7 @@ class GoodsTable extends Component {
                         <Row style={{ marginBottom: 20 }}>
                           <Col>
                             <span style={{ fontWeight: 'bold' }}>SKU收益：</span>
-                            <ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />
+                            {Number(orderInfo.orderBizType) !== 30 ?<ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />: <HaodianSkuIncome childOrder={childOrder}/>}
                           </Col>
                         </Row>
                       )
@@ -299,7 +306,10 @@ class GoodsTable extends Component {
                     <Row>
                       <Col style={{ fontWeight: 'bold' }}>订单客服备注：</Col>
                       {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => (
-                        <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
+                        <Col key={v.createTime}>
+                          <span dangerouslySetInnerHTML = {{ __html: v.info }} />
+                        （{formatDate(v.createTime)} {v.operator}）
+                        </Col>
                       ))}
                       {Array.isArray(childOrder.orderChildServerVOS) && childOrder.orderChildServerVOS.map(v => (
                         <Col key={v.orderCode}>
@@ -329,7 +339,20 @@ class GoodsTable extends Component {
                           <Col>
                             <span>充值方式：{(orderVirtualInfoVO.rechargeWayDesc)||'暂无'}</span>
                             <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{(orderVirtualInfoVO.rechargeStatusDesc)||'暂无'}</span>
-                            <span>充值单号：{(orderVirtualInfoVO.rechargeNo)||'暂无'}</span>
+                            <span>
+                              充值单号：
+                              {orderVirtualInfoVO?.rechargeNo ? (
+                                <span
+                                  className='href'
+                                  onClick={() => {
+                                    APP.fn.setPayload('/order/recharge', { serialNo: orderVirtualInfoVO?.rechargeNo })
+                                    APP.open('/order/recharge')
+                                  }}
+                                >
+                                  {orderVirtualInfoVO?.rechargeNo}
+                                </span>
+                              ) : '暂无'}
+                            </span>
                           </Col>
                         </Row>
                       ) : null}

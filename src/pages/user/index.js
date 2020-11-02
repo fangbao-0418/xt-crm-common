@@ -6,6 +6,7 @@ import Detail from './detail';
 import Intercept from './intercept';
 import InterceptUserDetail from './intercept/detail';
 import Locked from './locked'
+import Integral from './integral'
 
 export default class RouteApp extends React.Component {
   render() {
@@ -17,6 +18,7 @@ export default class RouteApp extends React.Component {
         <Route path="/user/intercept" exact={true} component={Intercept} />
         <Route path="/user/intercept/detail" component={InterceptUserDetail} />
         <Route path='/user/locked/list' component={Locked} />
+        <Route path='/user/integral' component={Integral} />
       </Switch>
     );
   }

@@ -5,8 +5,7 @@ import OrderInfo from './components/OrderInfo'
 import PendingReview from './PendingReview'
 import { namespace } from './model'
 import { Card, Row, Col } from 'antd'
-import { If } from '@/packages/common/components'
-import { enumRefundStatus, enumRefundType } from '../constant'
+import { enumRefundStatus } from '../constant'
 interface AfterSalesDetailProps {
   data: AfterSalesInfo.data;
 }
@@ -33,34 +32,39 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
   }
   render () {
     const { data } = this.props
-    const { orderInfoVO, shopDTO, ...restData } = data
+    const { orderInfoVO, shopDTO, orderServerVO, ...restData } = data
     const info = this.getInfo(data)
     console.log('info', info, typeof info)
     return (
       <>
-        {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (
-          <PendingReview />
-        ) : (
-          <>
-            <AfterSalesProcessing data={data} />
-            {/* 仅退款，待客服跟进 */}
-            {Array.isArray(info) && info.length > 0 && (
-              <Card>
-                <h3>供应商处理信息</h3>
-                <Row>
-                  {info.map((v: any) => (<Col>{v.key}：{v.value}</Col>))}
-                </Row>
-              </Card>
-            )}
-            {(typeof info === 'string' || typeof info === 'number') && (
-              <Card>
-                <h3>供应商处理信息</h3>
-                <Row>说明：{info}</Row>
-              </Card>
-            )}
-          </>
-        )}
-        <OrderInfo orderInfoVO={orderInfoVO} shopDTO={shopDTO} restData={restData} />
+        {
+          (
+            this.isRefundStatusOf(enumRefundStatus.WaitConfirm)
+              || this.isRefundStatusOf(enumRefundStatus.WaitBossConfirm)
+          ) ? (
+              <PendingReview />
+            ) : (
+              <>
+                <AfterSalesProcessing data={data} />
+                {/* 仅退款，待客服跟进 */}
+                {Array.isArray(info) && info.length > 0 && (
+                  <Card>
+                    <h3>供应商处理信息</h3>
+                    <Row>
+                      {info.map((v: any) => (<Col>{v.key}：{v.value}</Col>))}
+                    </Row>
+                  </Card>
+                )}
+                {(typeof info === 'string' || typeof info === 'number') && (
+                  <Card>
+                    <h3>供应商处理信息</h3>
+                    <Row>说明：{info}</Row>
+                  </Card>
+                )}
+              </>
+            )
+        }
+        <OrderInfo orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} shopDTO={shopDTO} restData={restData} />
       </>
     )
   }

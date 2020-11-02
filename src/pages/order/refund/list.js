@@ -39,6 +39,11 @@ const getListColumns = ({ query, history }) => [
     }
   },
   {
+    title: '订单渠道',
+    width: 100,
+    dataIndex: 'bizTypeStr'
+  },
+  {
     title: '售后状态',
     dataIndex: 'refundStatusStr',
     width: 100
@@ -142,7 +147,7 @@ export default class extends React.Component {
     /** 获取url参数 */
     const obj = parseQuery()
 
-    const fieldsValues = this.SearchForm.props.form.getFieldsValue()
+    const { store, ...fieldsValues } = this.SearchForm.props.form.getFieldsValue()
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply'])
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle'])
     const [payStartTime, payEndTime] = formatFields(fieldsValues['payTime'])
@@ -159,6 +164,7 @@ export default class extends React.Component {
     }
 
     const params = {
+      storeId: store?.key,
       ...fieldsValues,
       applyStartTime,
       applyEndTime,
@@ -179,6 +185,7 @@ export default class extends React.Component {
     refundStatus = refundStatus || typeMapRefundStatus[this.props.type]
     params.refundStatus = refundStatus && Number.isInteger(refundStatus) ? [refundStatus] : refundStatus
     APP.fn.setPayload(namespace, {
+      store,
       ...params,
       type
     })
@@ -200,6 +207,9 @@ export default class extends React.Component {
     if (params.shopType) {
       params.shopType=(params.shopType).toString()
     }
+    if (Array.isArray(params.refundStatus)) {
+      params.refundStatus = params.refundStatus.join(',')
+    }
     if (isExport) {
       this.setState({
         loading: true
@@ -218,8 +228,9 @@ export default class extends React.Component {
         return
       }
       refundList(params).then(res => {
-        if (!res || !res.data) return;
-        console.log('res', res)
+        if (!res || !res.data) {
+          return
+        }
         const records = (res.data && res.data.records) || []
         this.setState({
           records,
@@ -267,6 +278,7 @@ export default class extends React.Component {
     const payload = this.payload
     const options = formFields(this.props.type, intercept)
     const fieldsValue = {
+      store: payload.store,
       mainOrderCode: payload.mainOrderCode,
       orderCode: payload.orderCode,
       refundType: payload.refundType === undefined ? options.find(item => item.id === 'refundType')?.initialValue: payload.refundType,
@@ -334,12 +346,12 @@ export default class extends React.Component {
                 <span>申请时间：{formatDate(record.createTime)}</span>
                 {/* 待供应商审核 */}
                 {record.refundStatus === 15 && <span style={{ color: 'red' }}>
-                  供应商审核倒计时：{record.supplierResHandTime - Date.now() > 0 ? 
-                  (<Countdown
-                    value={Math.floor((record.supplierResHandTime - Date.now()) / 1000)}
-                    refresh={this.query}
-                  />)
-                  : '供应商审核超时'}
+                  供应商审核倒计时：{record.supplierResHandTime - Date.now() > 0
+                    ? (<Countdown
+                      value={Math.floor((record.supplierResHandTime - Date.now()) / 1000)}
+                      refresh={this.query}
+                    />)
+                    : '供应商审核超时'}
                 </span>}
               </div>
             )}
@@ -355,7 +367,7 @@ export default class extends React.Component {
             }}
             onChange={this.handlePageChange}
             rowKey={record => record.orderCode}
-            scroll={{ x: 1800 }}
+            scroll={{ x: 1900 }}
           />
         ) : null}
       </div>

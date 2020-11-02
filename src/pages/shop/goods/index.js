@@ -1,11 +1,11 @@
 import React from 'react'
 import { Card, Tabs, message, Button, Icon } from 'antd'
-import { getGoodsList, getCategoryTopList, passGoods, getGoodsInfo, getShopTypes } from './api'
+import { getGoodsList, getCategoryTopList, getShopList, passGoods, getGoodsInfo, getShopTypes } from './api'
 import SelectFetch from '@/components/select-fetch'
 import { ListPage, FormItem, If } from '@/packages/common/components'
 // import SuppilerSelect from '@/components/suppiler-auto-select'
 import SuppilerSelector from '@/components/supplier-selector'
-
+import SearchFetch from '@/pages/shop/pop-goods/components/search-fetch'
 import { replaceHttpUrl } from '@/util/utils'
 import CarouselPreview from '@/components/carousel-preview'
 import UnpassModal from './components/unpassModal'
@@ -261,9 +261,13 @@ class Main extends React.Component {
             } else {
               payload.auditStatus = undefined
             }
+            this.setState({
+              selectedRowKeys: []
+            })
             return {
               ...payload,
               storeId: payload.store?.key,
+              shopId: payload.shopId?.key,
               store: undefined
             }
           }}
@@ -308,7 +312,7 @@ class Main extends React.Component {
                 <FormItem name='innerAuditStatus' />
               </If>
               <FormItem label='审核人' name='auditUser' />
-              <FormItem
+              {/* <FormItem
                 label='商家类型'
                 inner={(form) => {
                   return form.getFieldDecorator('shopTypes')(
@@ -319,7 +323,7 @@ class Main extends React.Component {
                     />
                   )
                 }}
-              />
+              /> */}
               <FormItem
                 name='createTime'
                 label='创建时间'
@@ -337,6 +341,21 @@ class Main extends React.Component {
                 }}
               />
               <FormItem name='phone' />
+              <FormItem
+                label='店铺名称'
+                inner={(form) => {
+                  return form.getFieldDecorator('shopId')(
+                    <SearchFetch
+                      selectProps={{
+                        labelInValue: true
+                      }}
+                      api={getShopList}
+                      style={{ width: 172 }}
+                      placeholder='请输入店铺名称'
+                    />
+                  )
+                }}
+              />
             </>
           )}
           api={getGoodsList}

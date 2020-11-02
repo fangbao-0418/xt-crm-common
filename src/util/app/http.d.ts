@@ -11,4 +11,5 @@ interface HttpProps {
   del: <T = any>(url: string, data?: any, config?: any) => Promise<T>
   put: <T = any>(url: string, data?: any, config?: any) => Promise<T>
   newPut: <T = any>(url: string, data?: any, config?: any) => Promise<T>
+  newDel: <T = any>(url: string, data?: any, config?: any) => Promise<T>
 }

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Card, Row, Col, Modal, Table, Button } from 'antd'
 import { OrderStatusTextMap } from '../constant'
 import { formatDate, unionAddress } from '../../helper'
-import { levelName } from '../../user/utils'
+import { levelName, levelNameOfHaoDian } from '../../user/utils'
 import { If } from '@/packages/common/components'
 const initOrderInfo = {
   childOrderList: [
@@ -26,7 +26,7 @@ const modifyAddress = (changeModifyAddress) => {
 }
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddress, orderVirtualInfoVO={} }) => {
   const [visible, setVisible] = useState(false)
-  const { orderStatus, orderCode, platform, remark, orderType, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate } = orderInfo
+  const { orderStatus, orderCode, platform, remark, orderType, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate, liveId, orderBizTypeStr, orderBizType } = orderInfo
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo
   const { prov, rechargeAccount, rechargeOperatorDesc } = orderVirtualInfoVO
   // 支付时间小于1个小时显示按钮。
@@ -72,6 +72,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
         <Row gutter={24}>
           <Col span={8}>订单编号：{orderCode}</Col>
           <Col span={8}>创建时间：{formatDate(createTime)}</Col>
+          <Col span={8}>订单渠道：{orderBizTypeStr}</Col>
           <Col span={8}>订单状态：{OrderStatusTextMap[orderStatus]}</Col>
           {orderStatus === 60 && <Col span={8}>关闭原因：{closeReason}</Col>}
           <Col span={8}>买家名称：{userName}</Col>
@@ -82,11 +83,13 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
           <Col span={8}>完成时间：{formatDate(finishTime)}</Col>
         </Row>
         <Row gutter={24}>
-          <Col span={8}>下单会员类型：{levelName({ memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel })}</Col>
+        {/* orderBizType： 30代表喜团好店 orderBizType：代表喜团优选 */}
+          <Col span={8}>下单会员类型：{Number(orderBizType) === 30 ? levelNameOfHaoDian(orderMemberType) : levelName({ memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel })}</Col>
           {orderType===55&&<Col span={8}>号码归属地：{prov}</Col>}
           {orderType===55&&<Col span={16}>充值号码：{rechargeAccount}</Col>}
           {orderType===55&&<Col span={8}>运营商：{rechargeOperatorDesc}</Col>}
-          {orderType!==55&&<Col span={16}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress &&　memberAddress.phone}</Col>}
+          {orderType===56&&<Col span={8}>直播间ID：{liveId}</Col>}
+          {![55, 56].includes(orderType)&&<Col span={16}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress && memberAddress.phone}</Col>}
         </Row>
         <Row gutter={24}>
           <Col span={8}>买家备注：{remark}</Col>

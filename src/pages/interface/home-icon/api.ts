@@ -1,7 +1,7 @@
 const { post, get } = APP.http
 
-export function getIconList () {
-  return get('/homeicon/list')
+export function getIconList (bizSource: string) {
+  return get(`/homeicon/list?bizSource=${bizSource}`)
 }
 
 export function saveIcon (payload: HomeIcon.ItemProps) {

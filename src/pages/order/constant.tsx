@@ -25,8 +25,8 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       key: 'productId',
       width: '8%',
       render (id: any, record: any) {
-        //record.orderType===55虚拟商品
-        if (isXiaoDian) return id
+        //record.orderType===55 虚拟商品 56 红包订单
+        if (isXiaoDian || record.orderType === 56) return id
         return <Link to={record.orderType===55?`/goods/virtual/${id}`:`/goods/sku-sale/${id}`}>{id}</Link>
       }
     },
@@ -95,6 +95,11 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       render: MoneyRender
     },
     {
+      title: '积分抵扣',
+      dataIndex: 'pointValue',
+      width: '8%'
+    },
+    {
       title: '实付金额',
       dataIndex: 'preferentialTotalPrice',
       key: 'preferentialTotalPrice',
@@ -142,6 +147,7 @@ export enum enumRefundStatus {
   All = '',
   NoRefund = 0,
   WaitConfirm = 10,
+  WaitBossConfirm = 15,
   Operating = 20,
   OperatingFailed = 21,
   OperatingAll = 22,
@@ -170,6 +176,7 @@ export const TextMapRefundStatus = {
   [enumRefundStatus.All]: '所有',
   [enumRefundStatus.NoRefund]: '无售后',
   [enumRefundStatus.WaitConfirm]: '待审核',
+  [enumRefundStatus.WaitBossConfirm]: '待商家审核',
   [enumRefundStatus.Operating]: '处理中',
   [enumRefundStatus.OperatingFailed]: '处理中(退款失败)',
   [enumRefundStatus.OperatingAll]: '处理中(退款退货中)',

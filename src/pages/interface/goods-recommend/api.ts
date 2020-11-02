@@ -1,4 +1,5 @@
 import { Item } from './index'
+import * as adapter from './adapter'
 const { get, newPost, newPut } = APP.http
 export const fetchList = (payload: {
   createStartTime: number
@@ -32,7 +33,7 @@ export const fetchGoodsList = (
 }
 
 export const fetchDetail = (id: any) => {
-  return get('/mcweb/product/recommend/detail', { id })
+  return get('/mcweb/product/recommend/detail', { id }).then(adapter.recommend)
 }
 
 export const disabled = (id: any) => {

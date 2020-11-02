@@ -25,6 +25,11 @@ export function replaceSupplier (payload: { refundOrderCode: string }) {
   return post('/order/afterSale/audit/replaceSupplier', payload)
 }
 
+// 供应商查询
+export function supplierSearch (name: string) {
+  return post('/store/yx/list', { name, pageSize: 200 })
+}
+
 // 获取订单类型集合
 export function getOrderTypeList () {
   return get('/order/getOrderTypeList')
@@ -54,8 +59,8 @@ export const getOrderList = APP.fn.wrapApi((data: any) => {
 }, ['orderStatus'])
 
 // 客服代申请售后单个商品详情
-export function getProductDetail ({ mainOrderId, skuId }: any) {
-  return get(`/order/afterSale/applyOrderSKuDetail/${mainOrderId}/${skuId}`)
+export function getProductDetail (childOrderId: any) {
+  return get(`/order/afterSale/applyOrderSKuDetail?childOrderId=${childOrderId}`)
 }
 // 获取售后原因
 export function customerUpdate (data: any) {
@@ -105,7 +110,7 @@ export function confirmReceipt (skuServerId: number) {
  */
 export function getSkuServerProcessDetailList (params: any) {
   const { id, orderCode } = params
-  return get(`/order/afterSale/getSkuServerProcessDetailList/${id}?orderCode=${orderCode}`)
+  return get(`/order/afterSale/queryLocus?orderCode=${orderCode}&skuServerId=${id}`)
 }
 export function saveRefundInfo (data: any) {
   return post('/order/afterSale/saveRefundInfo', data)
@@ -248,7 +253,7 @@ export function closeRefund (data: any) {
 }
 
 export const exportRefund = (data: any) => {
-  return exportFile('/order/afterSale/export', data)
+  return get('/order/afterSale/export', data)
 }
 
 export function profitRecal (data: any) {
@@ -371,4 +376,26 @@ export function getUserWxAccount (data: any) {
 //发起补偿单申请
 export function compensateApply (data:any) {
   return newPost('/mcweb/sale-after/order/compensate/apply', data)
+}
+
+//校验满赠优惠券金额
+export function checkRefundCoupon (data:any) {
+  // if (data.refundAmount === 10) {
+  //   return Promise.resolve({
+  //     deductionAmount: 10
+  //   })
+  // } else if (data.refundAmount === 20) {
+  //   return Promise.resolve({
+  //     deductionAmount: 20
+  //   })
+  // } else if (data.refundAmount === 70) {
+  //   return Promise.resolve({
+  //     deductionAmount: 70
+  //   })
+  // } else {
+  //   return Promise.resolve({
+  //     deductionAmount: 30
+  //   })
+  // }
+  return get('/mcweb/refund/check/refundCoupon', data)
 }

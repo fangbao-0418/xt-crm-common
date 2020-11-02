@@ -12,19 +12,22 @@ import {
   logisticsInformationColumns,
   storeTypeMap
 } from '../config'
-import memberType from '@/enum/memberType'
+import memberType, { HDMemberType } from '@/enum/memberType'
 import moment from 'moment'
 type OrderInfoVO = AfterSalesInfo.OrderInfoVO
+type OrderServerVO = AfterSalesInfo.OrderServerVO
 type ProductVO = AfterSalesInfo.ProductVO
 type ShopDTO = AfterSalesInfo.ShopDTO
 const columns: ColumnProps<ProductVO>[] = getDetailColumns()
 interface Props extends React.Props<{}> {
   restData?: any
   orderInfoVO: OrderInfoVO
+  orderServerVO: OrderServerVO,
   shopDTO: ShopDTO
 }
 const OrderInfo: React.FC<Props> = (props: Props) => {
   const orderInfoVO = Object.assign({}, props.orderInfoVO)
+  const orderServerVO = Object.assign({}, props.orderServerVO)
   const shopDTO = props.shopDTO
   const restData = props.restData
   return (
@@ -44,6 +47,9 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         </Col>
         <Col span={8}>
           订单状态：{orderInfoVO.orderStatusStr}
+        </Col>
+        <Col span={8}>
+          订单渠道：{orderServerVO.bizTypeStr}
         </Col>
         <Col span={8}>
           订单类型：{
@@ -73,6 +79,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>
           运费: {formatMoneyWithSign(orderInfoVO.freight)}
         </Col>
+        <Col span={8}>积分抵扣：{orderInfoVO.pointValue}</Col>
       </Row>
       <Row gutter={24}>
         <Col>
@@ -86,9 +93,10 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
       <Row gutter={24}>
         <Col span={8}>用户备注：{orderInfoVO.remark}</Col>
         <Col span={8}>
-          会员等级：{memberType.getValue(
+        {/* bizType：10喜团优选 bizType：30喜团好店 */}
+          会员等级：{Number(orderServerVO.bizType) === 10 ? memberType.getValue(
             orderInfoVO.orderMemberType
-          )}
+          ) : HDMemberType.getValue(orderInfoVO.orderMemberType)}
         </Col>
       </Row>
       <Row gutter={24}>

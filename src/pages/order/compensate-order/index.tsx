@@ -5,11 +5,10 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import CouponSelector from './components/coupon-selector'
 import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig } from './config'
+import { getFieldsConfig, orderBizTypeEnums } from './config'
 import { OrderProps } from './interface'
 import { parseQuery } from '@/util/utils'
 import { getOrderlist, exportCompensate, addCoupons } from './api'
-
 interface Props extends AlertComponentProps {}
 
 class Main extends React.Component<Props> {
@@ -22,8 +21,19 @@ class Main extends React.Component<Props> {
       fixed: 'left'
     },
     {
+      title: '渠道',
+      dataIndex: 'orderBizType',
+      render: (text) => {
+        return orderBizTypeEnums[text]
+      }
+    },
+    {
       title: '订单编号',
       dataIndex: 'childOrderCode'
+    },
+    {
+      title: '账户结算ID',
+      dataIndex: 'accountSettleId'
     },
     {
       title: '订单商品',
@@ -152,6 +162,7 @@ class Main extends React.Component<Props> {
           }
         }}
         processPayload={({ compensateAmount, compensateStatus, compensatePayType, store, shop, ...payload }) => {
+          console.log('payload', payload)
           if (this.childOrderCode) {
             this.listPage?.form.setValues({
               childOrderCode: this.childOrderCode

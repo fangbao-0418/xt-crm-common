@@ -27,6 +27,7 @@ export function disabledDate(current: moment.Moment | null, date: any) {
  * @params date 禁用时间与什么时间做比较
  */
 export function disabledDateTime(current: any, date: any) {
+  console.log('disabledDateTime current', current)
   current = current || moment();
   const y = date.getFullYear();
   const M = date.getMonth();
@@ -34,7 +35,6 @@ export function disabledDateTime(current: any, date: any) {
   let h = date.getHours();
   let m = date.getMinutes();
   let s = date.getSeconds();
-
   if (
     current.year() > y ||
     (current.year() === y && current.month() > M) ||
@@ -65,6 +65,6 @@ export function disabledDateTime(current: any, date: any) {
   return {
     disabledHours: () => range(0, h),
     disabledMinutes: () => range(0, m),
-    disabledSeconds: () => range(0, s),
-  };
+    disabledSeconds: () => range(0, s)
+  }
 }
