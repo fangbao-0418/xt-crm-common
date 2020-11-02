@@ -52,7 +52,7 @@ class Main extends React.Component<Props, State> {
       const content = res.reportResult === '1' ? contents[0] : contents[1]
       res = {
         ...res,
-        feedbackWord: content.replace(/{举报原因}/, TypeEnum[res.type])
+        feedbackWord: content.replace(/{举报原因}/g, TypeEnum[res.type])
       }
       this.setState({
         record: res
@@ -66,7 +66,7 @@ class Main extends React.Component<Props, State> {
     api.auditReport({
       id: record.id,
       status: Number(record.reportResult),
-      feedbackWord: content.replace(/{举报原因}/, TypeEnum[record.type])
+      feedbackWord: content.replace(/{举报原因}/g, TypeEnum[record.type])
     }).then(() => {
       this.props?.onOk?.()
     })
@@ -118,7 +118,7 @@ class Main extends React.Component<Props, State> {
                 const value = e.target.value
                 record.reportResult = value
                 const content = value === '1' ? contents[0] : contents[1]
-                record.feedbackWord = content.replace(/{举报原因}/, TypeEnum[record.type])
+                record.feedbackWord = content.replace(/{举报原因}/g, TypeEnum[record.type])
                 this.setState({
                   record
                 })

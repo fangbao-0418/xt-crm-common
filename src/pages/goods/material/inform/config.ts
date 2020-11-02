@@ -55,7 +55,7 @@ export function getFieldsConfig (): FieldsConfig {
 }
 
 export enum TypeEnum {
-  '广告内容' = 1 ,
+  '广告内容' = 1,
   '不友善内容' = 2,
   '造谣传谣' = 3,
   '违法违规' = 4,
