@@ -16,7 +16,7 @@ import AdressReturn from './components/adress-return'
 import { defaultConfig } from './config'
 import DraggableUpload from '../components/draggable-upload'
 import { RouteComponentProps } from 'react-router'
-import { getBaseProduct, getBaseBarcode, setGroupProduct, getGroupProductDetail } from './api'
+import { getBaseProduct, getBaseBarcode, setGroupProduct, getGroupProductDetail, checkCategory } from './api'
 import { FormInstance } from '@/packages/common/components/form'
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 import PageViewer from '@/components/page-viewer'
@@ -51,6 +51,7 @@ interface SkuSaleFormState extends Record<string, any> {
   productList: any[];
   isGroup: boolean;
   productCode: string;
+  showFreightInsurance: boolean // 是否显示运费险
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
@@ -76,7 +77,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     visible: false,
     productList: [],
     isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1',
-    productCode: ''
+    productCode: '',
+    showFreightInsurance: false
   }
   id: number
   modifyTime: number
@@ -650,6 +652,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   handleCancel = () => {
     this.setState({ visible: false })
   }
+  checkCategory = async (val: number[]) => {
+    const showFreightInsurance = await checkCategory({
+      firstCategoryId: val[0],
+      secondCategoryId: val[1],
+      thirdCategoryId: val[2]
+    })
+    this.setState({ showFreightInsurance })
+  }
   render () {
     const {
       // interceptionVisible,
@@ -663,7 +673,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       visible,
       productList,
       isGroup,
-      productCode
+      productCode,
+      showFreightInsurance
     } = this.state
     const { productType, status, storeId }: any = this.form ? this.form.getValues() : {}
     console.log(barCode, 'render123', storeId)
@@ -785,6 +796,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                     }
                   }],
                   onChange: (val: any[]) => {
+                    // 校验类目是否支持展示运费险
+                    this.checkCategory(val)
                     this.getStrategyByCategory(val[0])
                   }
                 } as GetFieldDecoratorOptions)(
@@ -859,7 +872,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               }}
             />
             {/* 是否支持运费险 0:不支持,1:支持 */}
-            <FormItem
+            {showFreightInsurance && (<FormItem
               label='服务保障'
               inner={(form) => {
                 const interception = form.getFieldValue('interception')
@@ -874,7 +887,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                   </>
                 )
               }}
-            />
+            />)}
             <FormItem
               label='商品类型'
               required
