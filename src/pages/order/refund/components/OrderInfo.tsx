@@ -125,9 +125,9 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
               APP.history.push(`/service/freight-insurance?childOrderCode=${orderInfoVO.childOrderCode}`)
             }}
           >
-            {orderInfoVO?.freightInsuranceVO?.insuranceStatusStr}
+            {orderInfoVO?.freightInsuranceVO?.insuranceStatusDesc}
           </span>
-          {orderInfoVO?.freightInsuranceVO?.insuranceStatus === 15 && <span>赔付金额：{APP.fn.formatMoney(orderInfoVO?.freightInsuranceVO?.paidAmount)}</span>}
+          {orderInfoVO?.freightInsuranceVO?.insuranceStatus === 15 && <span>赔付金额：{APP.fn.formatMoney(orderInfoVO?.freightInsuranceVO?.insurancePaidAmount)}</span>}
         </Col>
       </Row>
       <h4>供应商信息</h4>

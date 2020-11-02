@@ -31,8 +31,6 @@ export function rePaid (insuranceId: number) {
   return newPost('/mcweb/trade/insurance/freight/rePaid', { insuranceId })
 }
 
-
-
 /**
  * 导出运费险列表
  * exportType：1 投保 2 理赔
