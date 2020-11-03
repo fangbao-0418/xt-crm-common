@@ -4,7 +4,7 @@ import { ColumnProps } from 'antd/lib/table'
 import alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import Image from '@/components/Image'
 import { Alert } from 'antd'
-import { getGuaranteeList, updategGuarantee, getCategoryRelationDetail } from './api'
+import { getGuaranteeList, updategGuarantee, getCategoryRelationDetail, saveRelationCategory } from './api'
 import Detail from './Detail'
 import Category from './Category'
 
@@ -50,21 +50,24 @@ class Main extends React.Component<AlertComponentProps, State> {
   }
   // 选择支持运费险类目
   public handleOpen = async (id: number) => {
-    let res = await getCategoryRelationDetail(id)
-    console.log('res', res)
+    let nodes: any[] = await getCategoryRelationDetail(id)
     this.props.alert({
       title: '选择支持运费险类目',
       content: (
         <Category
-          value={res}
-          onChange={(value: any[]) => {
-            res = value
+          value={nodes}
+          onChange={(treeNodes: any[]) => {
+            nodes = treeNodes
           }}
         />
       ),
-      onOk: () => {
-        console.log('value', res)
-            
+      onOk: async (hide) => {
+        const productGuaranteeCategoryRelationDTOList = nodes.map(item => ({ guaranteeId: id, ...item}));
+        const res = await saveRelationCategory({ productGuaranteeCategoryRelationDTOList })
+        if (res) {
+          APP.success('操作成功')
+          hide()
+        }
       }
     })
   }

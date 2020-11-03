@@ -15,10 +15,12 @@ class Main extends React.Component {
     dataIndex: 'thirdInsuranceSn'
   }, {
     title: '保额',
-    dataIndex: 'insuranceQuota'
+    dataIndex: 'insuranceQuota',
+    render: (text: any) => APP.fn.formatMoneyNumber(text, 'm2u')
   }, {
     title: '保费',
-    dataIndex: 'insuranceCost'
+    dataIndex: 'insuranceCost',
+    render: (text: any) => APP.fn.formatMoneyNumber(text, 'm2u')
   }, {
     title: '起保时间',
     dataIndex: 'insuranceStartTime',

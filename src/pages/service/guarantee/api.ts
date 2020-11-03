@@ -12,7 +12,7 @@ interface ProductGuaranteeCategoryRelationDTO {
 /**
  * 保存服务保障关联类目信息
  */
-export function saveRelationCategory (payload: ProductGuaranteeCategoryRelationDTO []) {
+export function saveRelationCategory (payload: { productGuaranteeCategoryRelationDTOList: ProductGuaranteeCategoryRelationDTO []}) {
   return newPost('/mcweb/product/guarantee/category/relation/save', payload)
 }
 
