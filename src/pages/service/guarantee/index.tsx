@@ -81,7 +81,7 @@ class Main extends React.Component<AlertComponentProps, State> {
           }}
         />
       ),
-      onOk(hide) {
+      onOk: (hide) => {
         const formRef = detailRef.current?.form.props.form
         if (formRef) {
           formRef.validateFields(async (errs, vals) => {
@@ -89,6 +89,7 @@ class Main extends React.Component<AlertComponentProps, State> {
               const res = await updategGuarantee({ id: data.id, ...vals })
               if (res) {
                 APP.success('操作成功')
+                this.fetchData()
                 hide()
               }
             }

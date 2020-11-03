@@ -3,7 +3,7 @@ import { Form, FormItem } from '@/packages/common/components'
 import { TreeSelect } from 'antd'
 import { getCategorys } from '@/pages/interface/category/api';
 
-const { SHOW_PARENT } = TreeSelect;
+const { SHOW_CHILD } = TreeSelect
 
 interface Props {
   value: string[]
@@ -19,10 +19,16 @@ class Main extends React.Component<Props, State> {
   public componentDidMount () {
     this.onLoadData()
   }
-  public onChange = (value: any, label: string, extra: any) => {
-    console.log('onChange ', value, label, extra)
-    console.log('id', extra.triggerNode.props.id)
-    this.props.onChange(value)
+  public getTreeNode = (id: number) => {
+    const { treeData } = this.state
+    const target = treeData.find((item: any) => item.id === id)
+    console.log('target', target)
+  }
+  public onChange = (ids: any, label: string, extra: any) => {
+    const treeNodes = ids.map((id: number) => {
+      return this.getTreeNode(id)
+    })
+    this.props.onChange(treeNodes)
   }
   public onLoadData = async (treeNode: any = { props: {} }) => {
     const { id } = treeNode.props
@@ -34,7 +40,8 @@ class Main extends React.Component<Props, State> {
         pId: item.parentId,
         id: item.id,
         key: item.id,
-        value: item.id
+        value: item.id,
+        isLeaf: item.level === 3
       }
     })
     this.setState((state: any) => {
@@ -46,13 +53,13 @@ class Main extends React.Component<Props, State> {
   public render () {
     const { treeData } = this.state
     const tProps = {
-      value: this.props.value,
       treeData,
+      value: this.props.value,
       treeDataSimpleMode: true,
       loadData: this.onLoadData,
       onChange: this.onChange,
       treeCheckable: true,
-      showCheckedStrategy: SHOW_PARENT,
+      showCheckedStrategy: SHOW_CHILD,
       searchPlaceholder: '请选择类目',
       dropdownStyle: { maxHeight: 300, overflow: 'auto' },
       style: {

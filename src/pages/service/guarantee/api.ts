@@ -1,3 +1,5 @@
+import { adapterGuaranteeInfo } from "./adapter"
+
 const { get, newPost, newPut } = APP.http
 
 interface ProductGuaranteeCategoryRelationDTO {
@@ -37,5 +39,6 @@ export function updategGuarantee (payload: {
   content: string
   sort: number
 }) {
+  payload = adapterGuaranteeInfo(payload)
   return newPut('/mcweb/product/guarantee/update', payload)
 }
