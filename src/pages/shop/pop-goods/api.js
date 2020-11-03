@@ -107,3 +107,15 @@ export function importAdvisePrice (file) {
     }
   })
 }
+
+/**
+ * 批量下架
+ * @param {Object} data
+ * @param {number} data.productPoolId - 商品池商品id
+ * @param {number[]} data.productPoolIds - 批量下架商品池ID列表
+ * @param {0|1} data.isAllowShelves - 是否允许再次上架 0:是 1:否
+ * @param {string} data.withdrawalInfo - 下架说明
+ */
+export function multiSoldOut (data) {
+  return newPost('/mcweb/product/shop/disable', data)
+}

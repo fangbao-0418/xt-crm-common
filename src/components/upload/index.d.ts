@@ -13,6 +13,7 @@ interface Props {
   placeholder?: string
   listType?: 'text' | 'picture' | 'picture-card'
   listNum?: number
+  /** 上传大小 */
   size?: number
   showUploadList?: booelan
   /** 支持的扩展名 多个,分割 */

@@ -89,6 +89,12 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       render: val => formatMoneyWithSign(val)
     },
     {
+      title: '调整后售价',
+      width: 100,
+      dataIndex: 'finalSalePrice',
+      render: val => formatMoneyWithSign(val)
+    },
+    {
       title: '供应商',
       width: 100,
       dataIndex: 'supplierName'
@@ -163,6 +169,24 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
         }
         return <span onClick={() => onViolation(record)} className='href'>{val}</span>
       }
+    },
+    {
+      title: '违规次数',
+      dataIndex: 'violationCount',
+      width: 100,
+      align: 'center'
+    },
+    {
+      title: '总库存',
+      dataIndex: 'usableStock',
+      width: 100,
+      align: 'center'
+    },
+    {
+      title: '累计销量',
+      dataIndex: 'saleCount',
+      width: 100,
+      align: 'center'
     },
     {
       title: '渠道',

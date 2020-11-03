@@ -66,9 +66,14 @@ function speedyInput(
                 let key = `${field}-${currentIndex}`
                 fields.push(key);
                 const record = dataSource[currentIndex]
-                const min = -Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10).toNumber()
-                const max = record.salePrice
-                const currentText = text > max ? max : ((text < min) ? min : text)
+                // const min = -Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10).toNumber()
+                // const max = record.salePrice
+                // const currentText = text > max ? max : ((text < min) ? min : text)
+                let currentText = text
+                if (field === 'companyCommission') {
+                  const min = -record.costPrice + 1
+                  currentText = text < min ? min : text
+                }
                 dataSource[currentIndex][field] = currentText
                 currentIndex++
                 values[key] = text
@@ -131,20 +136,16 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
       return (formatMoneyWithSign(value))
     }
   }, {
-    title: '佣金上浮',
+    title: '代理佣金',
     hidden: !(status === 1 && confirmStatus === 1),
-    // hidden: true,
-    dataIndex: 'commissionIncreasePrice',
+    dataIndex: 'agencyCommission',
     render: (text, record, index) => {
       if (readonly || (status !== 1 || confirmStatus !== 1)) {
         return (formatMoneyWithSign(text))
       }
-      const value = APP.fn.formatMoneyNumber(text, 'm2u')
-      const min = -APP.fn.formatMoneyNumber(Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10).toNumber(), 'm2u')
-      const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
       return speedyInput(
         form,
-        `commissionIncreasePrice`,
+        `agencyCommission`,
         text,
         record,
         index,
@@ -155,54 +156,62 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
         <InputNumber
           // value={value}
           onChange={(e) => {
-            const current = APP.fn.formatMoneyNumber(e > max ? max : ((e < min) ? min : e))
+            const current = APP.fn.formatMoneyNumber(e)
             const skuList = goodsInfo.skuList
             skuList[index] = {
               ...skuList[index],
-              commissionIncreasePrice: current,
-              increaseSalePrice: current + record.salePrice
+              agencyCommission: current
+            }
+            APP.dispatch[namespace].saveDefault({ goodsInfo });
+          }}
+          min={0}
+          max={999999999}
+          precision={2}
+        />
+      )
+    }
+  }, {
+    title: '公司利润',
+    hidden: !(status === 1 && confirmStatus === 1),
+    dataIndex: 'companyCommission',
+    render: (text, record, index) => {
+      if (readonly || (status !== 1 || confirmStatus !== 1)) {
+        return (formatMoneyWithSign(text))
+      }
+      const min = -APP.fn.formatMoneyNumber(record.costPrice - 1, 'm2u')
+      return speedyInput(
+        form,
+        `companyCommission`,
+        text,
+        record,
+        index,
+        specVals,
+        handleChangeValue,
+        agencyRate
+      )(
+        <InputNumber
+          // value={value}
+          onChange={(e) => {
+            const current = APP.fn.formatMoneyNumber(e)
+            const skuList = goodsInfo.skuList
+            skuList[index] = {
+              ...skuList[index],
+              companyCommission: current
             }
             APP.dispatch[namespace].saveDefault({ goodsInfo });
           }}
           min={min}
-          max={max}
-          precision={1}
+          max={999999999}
+          precision={2}
         />
       )
-      // return (
-      //   <Form.Item>
-      //     {
-      //       form.getFieldDecorator(`commissionIncreasePrice[${index}]`, {
-      //         initialValue: value
-      //       })(
-      //         <InputNumber
-      //           value={value}
-      //           onChange={(e) => {
-      //             const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
-      //             const current = APP.fn.formatMoneyNumber(e > max ? max : e)
-      //             const skuList = goodsInfo.skuList
-      //             skuList[index] = {
-      //               ...skuList[index],
-      //               commissionIncreasePrice: current,
-      //               increaseSalePrice: current + record.salePrice
-      //             }
-      //             APP.dispatch[namespace].saveDefault({ goodsInfo });
-      //           }}
-      //           min={-min}
-      //           max={APP.fn.formatMoneyNumber(record.salePrice, 'm2u')}
-      //           precision={1}
-      //         />
-      //       )
-      //     }
-      //   </Form.Item>
-      // )
     }
   }, {
-    title: '上浮后销售价',
+    title: '调整后销售价',
     hidden: !(status === 1 && confirmStatus === 1),
-    dataIndex: 'increaseSalePrice',
+    dataIndex: 'finalSalePrice',
     render: (value, record) => {
-      return formatMoneyWithSign(record.salePrice + record.commissionIncreasePrice)
+      return formatMoneyWithSign((record.costPrice ?? 0) + (record.agencyCommission ?? 0) + (record.companyCommission ?? 0))
     },
   }, {
     title: '建议供货价',
