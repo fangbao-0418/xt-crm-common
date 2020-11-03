@@ -79,9 +79,8 @@ class Main extends React.Component {
     const { status, response, name } = info.file;
     if (status === 'done') {
       if (response.success) {
-        console.log('file response =>', response)
-        this.setState({ importRes: response.data})
         APP.success(`${name} 文件上传成功`);
+        this.listRef.refresh()
       } else {
         APP.error(`${response.message}`);
       }
@@ -140,6 +139,7 @@ class Main extends React.Component {
             >
               <Button type='primary' className='ml10'>导入excel</Button>
             </Upload>
+            <span className='href ml10' onClick={() => APP.fn.download('http://sh-tximg-1300503753.cos.ap-shanghai.myqcloud.com/tximg/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551604390595313.xlsx', '导入模板')}>导入模板</span>
           </>
         )}
         columns={this.columns}
