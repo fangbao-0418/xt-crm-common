@@ -55,7 +55,7 @@ class Main extends React.Component<AlertComponentProps, State> {
       title: '选择支持运费险类目',
       content: (
         <Category
-          value={nodes.map(item => item.thirdCategoryId ? String(item.thirdCategoryId): '')}
+          value={nodes.map(item => item.thirdCategoryId)}
           onChange={(treeNodes: any[]) => {
             nodes = treeNodes
           }}

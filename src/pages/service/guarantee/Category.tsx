@@ -17,7 +17,7 @@ interface Node {
   isLeaf: boolean
   key: number
   level: 1 | 2 | 3
-  pId: number | string
+  pId: number
   title: string
   value: number
 }
@@ -28,12 +28,12 @@ class Main extends React.Component<Props, State> {
   public componentDidMount () {
     this.onLoadData()
   }
-  public getTreeNode = (id: number | string) => {
+  public getTreeNode = (id: number) => {
     const { treeData } = this.state
     let treeNode: any = {}
-    function loop (id: number | string) {
+    function loop (id:number) {
       const target: Partial<Node> = treeData.find((item: any) => {
-        return String(item.id) === String(id)
+        return item.id === id
       }) || {}
       if (target.level === 1) {
         treeNode.firstCategoryId = id
@@ -77,11 +77,12 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+
   public render () {
     const { treeData } = this.state
+    console.log('treeData', treeData)
     const tProps = {
       treeData,
-      value: this.props.value,
       treeDataSimpleMode: true,
       loadData: this.onLoadData,
       onChange: this.onChange,
@@ -99,7 +100,9 @@ class Main extends React.Component<Props, State> {
         <FormItem
           label='类目'
           inner={(form) => {
-            return form.getFieldDecorator('categorys')(
+            return form.getFieldDecorator('categorys', {
+              initialValue: this.props.value
+            })(
               <TreeSelect {...tProps} />
             )
           }}
