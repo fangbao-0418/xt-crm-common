@@ -80,7 +80,6 @@ class Main extends React.Component<Props, State> {
 
   public render () {
     const { treeData } = this.state
-    console.log('treeData', treeData)
     const tProps = {
       treeData,
       treeDataSimpleMode: true,
