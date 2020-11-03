@@ -77,6 +77,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { treeData } = this.state
+    console.log('this.props.value', this.props.value)
     const tProps = {
       treeData,
       value: this.props.value,
