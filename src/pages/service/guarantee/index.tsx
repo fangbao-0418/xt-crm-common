@@ -35,7 +35,6 @@ class Main extends React.Component<AlertComponentProps, State> {
     render: (record) => {
       return (
         <>
-          
           {record.name ==='运费险' && <span className='href mr10' onClick={this.handleOpen.bind(null, record.id)}>类目管理</span>}
           <span className='href' onClick={this.handleEdit.bind(null, record)}>编辑</span>
         </>

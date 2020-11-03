@@ -25,8 +25,19 @@ class Main extends React.Component<Props, {}> {
         <FormItem name='sort' verifiable />
         <FormItem
           label='icon'
+          required
           inner={(form) => {
-            return form.getFieldDecorator('imageUrl')(
+            return form.getFieldDecorator('imageUrl', {
+              rules: [{
+                validator: (rule: any, value: any, callback: any) => {
+                  if (!value || Array.isArray(value) && value.length === 0) {
+                    callback('请上传icon图片')
+                    return
+                  }
+                  callback()
+                }
+              }]
+            })(
               <UploadView
                 ossType='cos'
                 placeholder='上传icon'
