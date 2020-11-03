@@ -51,11 +51,14 @@ class Main extends React.Component<AlertComponentProps, State> {
   // 选择支持运费险类目
   public handleOpen = async (id: number) => {
     let nodes: any[] = (await getCategoryRelationDetail(id)) || []
+    const value = nodes.map(item => item.thirdCategoryId)
+    const treeExpandedKeys = nodes.reduce((prev, curr) => prev.concat([curr.firstCategoryId, curr.secondCategoryId]), [])
     this.props.alert({
       title: '选择支持运费险类目',
       content: (
         <Category
-          value={nodes.map(item => item.thirdCategoryId)}
+          value={value}
+          treeExpandedKeys={treeExpandedKeys}
           onChange={(treeNodes: any[]) => {
             nodes = treeNodes
           }}

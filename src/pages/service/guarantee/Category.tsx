@@ -7,6 +7,7 @@ const { SHOW_CHILD } = TreeSelect
 
 interface Props {
   value: string[]
+  treeExpandedKeys: string[]
   onChange: (value: any[]) => void
 }
 interface State {
@@ -80,6 +81,7 @@ class Main extends React.Component<Props, State> {
 
   public render () {
     const { treeData } = this.state
+    console.log('this.props.treeExpandedKeys', this.props.treeExpandedKeys)
     const tProps = {
       treeData,
       treeDataSimpleMode: true,
@@ -88,6 +90,7 @@ class Main extends React.Component<Props, State> {
       treeCheckable: true,
       showCheckedStrategy: SHOW_CHILD,
       searchPlaceholder: '请选择类目',
+      treeExpandedKeys: this.props.treeExpandedKeys,
       dropdownStyle: { maxHeight: 300, overflow: 'auto' },
       style: {
         width: '100%'
