@@ -7,10 +7,13 @@ const { SHOW_PARENT } = TreeSelect;
 
 interface Props {
   value: string[]
+  onChange: (value: any[]) => void
 }
-class Main extends React.Component<Props> {
+interface State {
+  treeData: any[]
+}
+class Main extends React.Component<Props, State> {
   public state = {
-    value: [],
     treeData: []
   }
   public componentDidMount () {
@@ -18,7 +21,8 @@ class Main extends React.Component<Props> {
   }
   public onChange = (value: any, label: string, extra: any) => {
     console.log('onChange ', value, label, extra)
-    this.setState({ value });
+    console.log('id', extra.triggerNode.props.id)
+    this.props.onChange(value)
   }
   public onLoadData = async (treeNode: any = { props: {} }) => {
     const { id } = treeNode.props
@@ -40,9 +44,9 @@ class Main extends React.Component<Props> {
     })
   }
   public render () {
-    const { treeData, value } = this.state
+    const { treeData } = this.state
     const tProps = {
-      value,
+      value: this.props.value,
       treeData,
       treeDataSimpleMode: true,
       loadData: this.onLoadData,

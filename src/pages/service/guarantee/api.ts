@@ -1,4 +1,19 @@
-const { get, newPut } = APP.http
+const { get, newPost, newPut } = APP.http
+
+interface ProductGuaranteeCategoryRelationDTO {
+  id: number
+  guaranteeId: number
+  firstCategoryId: number
+  secondCategoryId: number
+  thirdCategoryId: number
+}
+/**
+ * 保存服务保障关联类目信息
+ */
+export function saveRelationCategory (payload: ProductGuaranteeCategoryRelationDTO []) {
+  return newPost('/mcweb/product/guarantee/category/relation/save', payload)
+}
+
 /**
  * 查询服务保障关联类目信息详情
  */

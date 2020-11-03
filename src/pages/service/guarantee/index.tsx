@@ -44,10 +44,21 @@ class Main extends React.Component<AlertComponentProps, State> {
   }
   // 选择支持运费险类目
   public handleOpen = async (id: number) => {
-    const res = await getCategoryRelationDetail(id)
+    let res = await getCategoryRelationDetail(id)
+    console.log('res', res)
     this.props.alert({
       title: '选择支持运费险类目',
-      content: <Category value={res} />
+      content: (
+        <Category
+          value={res}
+          onChange={(value: any[]) => {
+            res = value
+          }}
+        />
+      ),
+      onOk: () => {
+        console.log('value', res)       
+      }
     })
   }
   // 编辑
