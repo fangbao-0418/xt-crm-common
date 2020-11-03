@@ -2,6 +2,7 @@ import React from 'react'
 import { Card, Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import Image from '@/components/Image'
 import { Alert } from 'antd'
 import { getGuaranteeList, updategGuarantee, getCategoryRelationDetail } from './api'
 import Detail from './Detail'
@@ -20,6 +21,12 @@ class Main extends React.Component<AlertComponentProps, State> {
   }, {
     title: '服务内容',
     dataIndex: 'content'
+  }, {
+    title: 'icon',
+    dataIndex: 'imageUrl',
+    render: (text) => {
+      return <Image width={50} height={50} src={text} alt=''/>
+    }
   }, {
     title: '排序',
     dataIndex: 'sort'
