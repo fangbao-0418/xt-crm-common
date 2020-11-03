@@ -48,11 +48,11 @@ class Main extends React.Component {
     dataIndex: 'reportNumber'
   }, {
     title: '赔款金额',
-    dataIndex: 'paidPrice',
+    dataIndex: 'paidAmount',
     render: (text: number) => APP.fn.formatMoneyNumber(text, 'm2u')
   }, {
     title: '支付宝',
-    dataIndex: 'paidReciverAccount'
+    dataIndex: 'paidReceiverAccount'
   }, {
     title: '操作',
     render: (record: any) => {
@@ -106,7 +106,7 @@ class Main extends React.Component {
   }
   public componentDidMount () {
     const query: any = parseQuery() || {}
-    this.listRef.form.setValues({ childOrderCode: query.childOrderCode })
+    this.listRef.form.setValues({ orderCode: query.childOrderCode })
     this.listRef.refresh()
   }
   public render () {
@@ -139,7 +139,7 @@ class Main extends React.Component {
             >
               <Button type='primary' className='ml10'>导入excel</Button>
             </Upload>
-            <span className='href ml10' onClick={() => APP.fn.download('http://sh-tximg-1300503753.cos.ap-shanghai.myqcloud.com/tximg/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551604390595313.xlsx', '导入模板')}>导入模板</span>
+            <span className='href ml10' onClick={() => APP.fn.download('http://sh-tximg-1300503753.cos.ap-shanghai.myqcloud.com/tximg/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551604390595313.xlsx', '运费险导入模板')}>下载导入模板</span>
           </>
         )}
         columns={this.columns}

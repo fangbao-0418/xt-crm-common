@@ -1,8 +1,8 @@
 import { FieldsConfig } from "@/packages/common/components/form/config";
-
 export const formConfig: FieldsConfig = {
+
   common: {
-    childOrderCode: {
+    orderCode: {
       label: '订单号'
     },
     thirdInsuranceSn: {

@@ -63,7 +63,8 @@ class Main extends React.Component<AlertComponentProps, State> {
         />
       ),
       onOk: () => {
-        console.log('value', res)       
+        console.log('value', res)
+            
       }
     })
   }

@@ -33,16 +33,16 @@ class Main extends React.Component<Props, State> {
     let treeNode: any = {}
     function loop (id:number) {
       const target: Partial<Node> = treeData.find((item: any) => item.id === id) || {}
+      if (target.level === 1) {
+        treeNode.firstCategoryId = id
+      }
+      else if (target.level === 2) {
+        treeNode.secondCategoryId = id
+      }
+      else if (target.level === 3) {
+        treeNode.thirdCategoryId = id
+      }
       if (target.pId) {
-        if (target.level === 1) {
-          treeNode.firstCategoryId = id
-        }
-        else if (target.level === 2) {
-          treeNode.secondCategoryId = id
-        }
-        else if (target.level === 3) {
-          treeNode.thirdCategoryId = id
-        }
         loop(target.pId)
       }
     }
