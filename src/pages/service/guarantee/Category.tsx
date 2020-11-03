@@ -12,6 +12,15 @@ interface Props {
 interface State {
   treeData: any[]
 }
+interface Node {
+  id: number
+  isLeaf: boolean
+  key: number
+  level: 1 | 2 | 3
+  pId: number
+  title: string
+  value: number
+}
 class Main extends React.Component<Props, State> {
   public state = {
     treeData: []
@@ -21,8 +30,24 @@ class Main extends React.Component<Props, State> {
   }
   public getTreeNode = (id: number) => {
     const { treeData } = this.state
-    const target = treeData.find((item: any) => item.id === id)
-    console.log('target', target)
+    let treeNode: any = {}
+    function loop (id:number) {
+      const target: Partial<Node> = treeData.find((item: any) => item.id === id) || {}
+      if (target.pId) {
+        if (target.level === 1) {
+          treeNode.firstCategoryId = id
+        }
+        else if (target.level === 2) {
+          treeNode.secondCategoryId = id
+        }
+        else if (target.level === 3) {
+          treeNode.thirdCategoryId = id
+        }
+        loop(target.pId)
+      }
+    }
+    loop(id)
+    return treeNode
   }
   public onChange = (ids: any, label: string, extra: any) => {
     const treeNodes = ids.map((id: number) => {
