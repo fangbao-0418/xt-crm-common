@@ -2,14 +2,45 @@ import React from 'react'
 import { Form, FormItem } from '@/packages/common/components'
 import { TreeSelect } from 'antd'
 import { getCategorys } from '@/pages/interface/category/api';
+import { getTreeCategory } from './api'
 
 const { SHOW_CHILD } = TreeSelect
 
 interface Props {
   value: string[]
-  treeExpandedKeys: string[]
   onChange: (value: any[]) => void
 }
+
+const valueMap: any = {};
+function loops(list: any[], parent?: any) {
+  return (list || []).map(({ children, value, title }) => {
+    const node: any = (valueMap[value] = parent ? {
+      parent,
+      value,
+      title
+    } : {
+      value,
+      title
+    });
+    let res = loops(children, node)
+    if (res.length) {
+      node.children = res
+    }
+    return node;
+  });
+}
+
+function getPath(value: string) {
+  const path = [];
+  let current = valueMap[value];
+  while (current) {
+    path.unshift(current.value);
+    current = current.parent;
+  }
+  return path;
+}
+
+
 interface State {
   treeData: any[]
 }
@@ -22,75 +53,62 @@ interface Node {
   title: string
   value: number
 }
+
+function getTreeData (list: any[]): any[] {
+  if (!Array.isArray(list)) {
+    list = []
+  }
+  list = list.map(item => {
+    if (!item.childList) {
+      return {
+        title: item.name,
+        value: item.id
+      }
+    } else {
+      return {
+        title: item.name,
+        value: item.id,
+        key: item.id,
+        children: getTreeData(item.childList)
+      }
+    }
+  })
+  return list
+}
+
 class Main extends React.Component<Props, State> {
   public state = {
     treeData: []
   }
   public componentDidMount () {
-    this.onLoadData()
+    this.fetchData()
   }
-  public getTreeNode = (id: number) => {
-    const { treeData } = this.state
-    let treeNode: any = {}
-    function loop (id:number) {
-      const target: Partial<Node> = treeData.find((item: any) => {
-        return item.id === id
-      }) || {}
-      if (target.level === 1) {
-        treeNode.firstCategoryId = id
-      }
-      else if (target.level === 2) {
-        treeNode.secondCategoryId = id
-      }
-      else if (target.level === 3) {
-        treeNode.thirdCategoryId = id
-      }
-      if (target.pId) {
-        loop(target.pId)
-      }
-    }
-    loop(id)
-    return treeNode
-  }
-  public onChange = (ids: any, label: string, extra: any) => {
-    const treeNodes = ids.map((id: number) => {
-      return this.getTreeNode(id)
+  public async fetchData () {
+    const res: any[] = await getTreeCategory()
+    const treeData = getTreeData(res)
+    loops(treeData)
+    this.setState({
+      treeData
     })
+  }
+
+  public onChange = (ids: string[], label: string, extra: any) => {
+    const treeNodes = ids.map((id: string) => {
+      const [firstCategoryId, secondCategoryId, thirdCategoryId]: any = getPath(id)
+      return { firstCategoryId, secondCategoryId, thirdCategoryId }
+    })
+    console.log('treeNodes', treeNodes)
     this.props.onChange(treeNodes)
-  }
-  public onLoadData = async (treeNode: any = { props: {} }) => {
-    const { id } = treeNode.props
-    let treeData: any[] = (await getCategorys(id) || [])
-    treeData = treeData.map(item => {
-      return {
-        title: item.name,
-        level: item.level,
-        pId: item.parentId,
-        id: item.id,
-        key: item.id,
-        value: item.id,
-        isLeaf: item.level === 3
-      }
-    })
-    this.setState((state: any) => {
-      return {
-        treeData: state.treeData.concat(treeData)
-      }
-    })
   }
 
   public render () {
     const { treeData } = this.state
-    console.log('this.props.treeExpandedKeys', this.props.treeExpandedKeys)
     const tProps = {
       treeData,
-      treeDataSimpleMode: true,
-      loadData: this.onLoadData,
       onChange: this.onChange,
       treeCheckable: true,
       showCheckedStrategy: SHOW_CHILD,
       searchPlaceholder: '请选择类目',
-      treeExpandedKeys: this.props.treeExpandedKeys,
       dropdownStyle: { maxHeight: 300, overflow: 'auto' },
       style: {
         width: '100%'

@@ -9,6 +9,13 @@ interface ProductGuaranteeCategoryRelationDTO {
   secondCategoryId: number
   thirdCategoryId: number
 }
+
+/**
+ * 商品类目树形菜单查询
+ */
+export function getTreeCategory () {
+  return newPost('/mcweb/product/category/treeCategory')
+}
 /**
  * 保存服务保障关联类目信息
  */
