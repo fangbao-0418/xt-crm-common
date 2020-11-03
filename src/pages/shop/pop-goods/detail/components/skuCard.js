@@ -8,6 +8,8 @@ import { parseQuery } from '@/util/utils'
 import ArrowContain from './arrow-contain'
 import Decimaljs from 'decimal.js'
 
+const MAX_PRICE_NUMBER = 9999999.99
+
 const ConfirmStatusEnum = {
   0: '未导入价格',
   1: '商家已确认',
@@ -116,22 +118,27 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     width: 90
   }, {
     title: '规格ID',
+    width: 150,
     dataIndex: 'productSkuId'
   }, {
     title: '条形码',
+    width: 150,
     dataIndex: 'barCode'
   }, {
     title: '供货价',
     dataIndex: 'costPrice',
+    width: 150,
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '市场价',
     dataIndex: 'marketPrice',
+    width: 150,
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '销售价',
     dataIndex: 'salePrice',
     key: 'salePrice',
+    width: 150,
     render: (value) => {
       return (formatMoneyWithSign(value))
     }
@@ -139,6 +146,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     title: '代理佣金',
     hidden: !(status === 1 && confirmStatus === 1),
     dataIndex: 'agencyCommission',
+    width: 200,
     render: (text, record, index) => {
       if (readonly || (status !== 1 || confirmStatus !== 1)) {
         return (formatMoneyWithSign(text))
@@ -155,7 +163,10 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
       )(
         <InputNumber
           // value={value}
+          style={{ width: '100%' }}
           onChange={(e) => {
+            e = e > MAX_PRICE_NUMBER ? MAX_PRICE_NUMBER : e
+            e = e < 0 ? 0 : e
             const current = APP.fn.formatMoneyNumber(e)
             const skuList = goodsInfo.skuList
             skuList[index] = {
@@ -165,7 +176,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
             APP.dispatch[namespace].saveDefault({ goodsInfo });
           }}
           min={0}
-          max={999999999}
+          max={MAX_PRICE_NUMBER}
           precision={2}
         />
       )
@@ -174,6 +185,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     title: '公司利润',
     hidden: !(status === 1 && confirmStatus === 1),
     dataIndex: 'companyCommission',
+    width: 200,
     render: (text, record, index) => {
       if (readonly || (status !== 1 || confirmStatus !== 1)) {
         return (formatMoneyWithSign(text))
@@ -191,7 +203,10 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
       )(
         <InputNumber
           // value={value}
+          style={{ width: '100%' }}
           onChange={(e) => {
+            e = e > MAX_PRICE_NUMBER ? MAX_PRICE_NUMBER : e
+            e = e < min ? min : e
             const current = APP.fn.formatMoneyNumber(e)
             const skuList = goodsInfo.skuList
             skuList[index] = {
@@ -201,7 +216,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
             APP.dispatch[namespace].saveDefault({ goodsInfo });
           }}
           min={min}
-          max={999999999}
+          max={MAX_PRICE_NUMBER}
           precision={2}
         />
       )
@@ -210,6 +225,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     title: '调整后销售价',
     hidden: !(status === 1 && confirmStatus === 1),
     dataIndex: 'finalSalePrice',
+    width: 150,
     render: (value, record) => {
       return formatMoneyWithSign((record.costPrice ?? 0) + (record.agencyCommission ?? 0) + (record.companyCommission ?? 0))
     },
@@ -217,18 +233,22 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     title: '建议供货价',
     dataIndex: 'adviseCostPrice',
     hidden: !(auditStatus === 2 && confirmStatus !== 0),
+    width: 150,
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '建议销售价',
     dataIndex: 'adviseSalePrice',
     hidden: !(auditStatus === 2 && confirmStatus !== 0),
+    width: 150,
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '总库存',
-    dataIndex: 'stock'
+    dataIndex: 'stock',
+    width: 150
   }, {
     title: '可用库存',
-    dataIndex: 'usableStock'
+    dataIndex: 'usableStock',
+    width: 150
   }].filter((item) => !item.hidden)
 
   const startColumns = fixedColumns.slice(0, 2);
@@ -236,14 +256,32 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   const columns = [...startColumns, ...dynaColums, ...endColumns].concat(confirmStatus !== 0 ? [{
     title: '商家确认状态',
     dataIndex: 'confirmStatus',
+    width: 150,
     render: (text) => {
       return ConfirmStatusEnum[confirmStatus]
     }
   }] : []);
 
-  return <div>
-    <Table pagination={false} dataSource={specVals} columns={columns} />
-  </div>
+  // console.log(columns, 'coumns coumnscoumnscoumns')
+  // console.log(columns.reduce((a, b) => {
+  //   console.log((typeof a === 'number') ? a : a?.width, b, 'xxxx')
+  //   return ((typeof a === 'number') ? a : (a?.width || 0)) + (b.width || 0)
+  // }), 'xxxxxxx')
+  return (
+    <div>
+      <Table
+        pagination={false}
+        dataSource={specVals}
+        columns={columns}
+        scroll={{
+          x: columns.reduce((a, b) => {
+            // console.log(a, b.width, 'xxxxxx')
+            return ((typeof a === 'number') ? a : (a?.width || 100)) + (b.width || 100)
+          })
+        }}
+      />
+    </div>
+  )
 }
 
 class SkuCard extends React.Component {
