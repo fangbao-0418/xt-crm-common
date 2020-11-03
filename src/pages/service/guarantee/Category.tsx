@@ -17,7 +17,7 @@ interface Node {
   isLeaf: boolean
   key: number
   level: 1 | 2 | 3
-  pId: number
+  pId: number | string
   title: string
   value: number
 }
@@ -28,11 +28,13 @@ class Main extends React.Component<Props, State> {
   public componentDidMount () {
     this.onLoadData()
   }
-  public getTreeNode = (id: number) => {
+  public getTreeNode = (id: number | string) => {
     const { treeData } = this.state
     let treeNode: any = {}
-    function loop (id:number) {
-      const target: Partial<Node> = treeData.find((item: any) => item.id === id) || {}
+    function loop (id: number | string) {
+      const target: Partial<Node> = treeData.find((item: any) => {
+        return String(item.id) === String(id)
+      }) || {}
       if (target.level === 1) {
         treeNode.firstCategoryId = id
       }
@@ -77,7 +79,6 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { treeData } = this.state
-    console.log('this.props.value', this.props.value)
     const tProps = {
       treeData,
       value: this.props.value,
