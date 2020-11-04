@@ -37,7 +37,7 @@ class Main extends React.Component {
         return (
           <>
             <span>{text}</span>
-            <Tooltip placement='top' title={record.failReason}>
+            <Tooltip placement='top' title={record.failedReason}>
               <Icon type="info-circle" />
             </Tooltip>
           </>
