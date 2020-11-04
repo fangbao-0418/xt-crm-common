@@ -222,6 +222,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
 
   //通过类目id查询是否有定价策略
   getStrategyByCategory = (categoryId: number) => {
+    if (!categoryId) {
+      return
+    }
     getStrategyByCategory({ categoryId })
       .then((strategyData: any[]) => {
         this.setState({
@@ -660,6 +663,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     this.setState({ visible: false })
   }
   checkCategory = async (val: number[]) => {
+    if (!val || Array.isArray(val) && val.length === 0) {
+      return
+    }
     const showFreightInsurance = await checkCategory({
       firstCategoryId: val[0],
       secondCategoryId: val[1],
