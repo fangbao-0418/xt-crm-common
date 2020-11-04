@@ -15,7 +15,11 @@ const StatusColors: any = {
   3: 'red'
 }
 
-class Main extends React.Component<AlertComponentProps> {
+interface State  {
+  activeKey: string
+}
+
+class Main extends React.Component<AlertComponentProps, State> {
   public columns: ColumnProps<RecordProps>[] = [
     { title: '举报编号', dataIndex: 'id' },
     { title: '举报类型', dataIndex: 'type', render: (text) => TypeEnum[text] },
@@ -52,6 +56,9 @@ class Main extends React.Component<AlertComponentProps> {
     }
   ]
   public listpage: ListPageInstanceProps
+  public state: State = {
+    activeKey: '-1'
+  }
   public componentDidMount () {
     // this.showDetail()
   }
@@ -75,6 +82,7 @@ class Main extends React.Component<AlertComponentProps> {
     })
   }
   public render () {
+    const { activeKey } = this.state
     return (
       <div>
         <ListPage
@@ -98,7 +106,11 @@ class Main extends React.Component<AlertComponentProps> {
               <div className='mt10'>
                 <Tabs
                   type="card"
+                  activeKey={activeKey}
                   onChange={(e) => {
+                    this.setState({
+                      activeKey: e
+                    })
                     this.listpage.form.setValues({
                       status: e
                     })
@@ -124,6 +136,12 @@ class Main extends React.Component<AlertComponentProps> {
               ...payload,
               status
             }
+          }}
+          onReset={() => {
+            this.setState({
+              activeKey: '-1'
+            })
+            this.listpage.refresh(true)
           }}
           formConfig={getFieldsConfig()}
           rangeMap={{
