@@ -128,6 +128,10 @@ declare module AfterSalesInfo {
     bizTypeStr: string
     bizType: number
     supplierOperateVoucherS: string[]
+    /* 优惠扣除金额 */
+    deductionAmount: number
+    /* 是否优惠扣除金额 */
+    refundCouponAmount: boolean
   }
 
   export interface ProductVO {

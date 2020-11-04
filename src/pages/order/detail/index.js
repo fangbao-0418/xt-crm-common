@@ -228,7 +228,8 @@ class Detail extends Component {
           </Row>
           <Row gutter={24}>
             <Col span={8}>订单报文：{orderPushCustomsStatusConfig[orderGlobalExtendVO.orderPushCustomsStatus]}
-              <Button type='link'
+              <Button
+                type='link'
                 onClick={() => {
                   this.props.modal.show({
                     type: 'orderMessage',
@@ -328,18 +329,24 @@ class Detail extends Component {
                                   取消拦截发货
                                 </Button>
                               )}
-                            {item.canProtocolPay ? <Button
-                              type='primary'
-                              style={{ margin: '0 10px 10px 0' }}
-                              onClick={() => this.comfirmWithhold(item.childOrder.id)}
-                            >重新发起代扣
-                            </Button> : ''}
-                            {item.canPush ? <Button
-                              style={{ margin: '0 10px 10px 0' }}
-                              type='primary'
-                              onClick={() => this.comfirmPush1688(item.childOrder.id)}
-                            >重新推送1688
-                            </Button> : ''}
+                            {item.canProtocolPay
+                              ? (
+                                <Button
+                                  type='primary'
+                                  style={{ margin: '0 10px 10px 0' }}
+                                  onClick={() => this.comfirmWithhold(item.childOrder.id)}
+                                >重新发起代扣
+                                </Button>
+                              ) : ''}
+                            {item.canPush
+                              ? (
+                                <Button
+                                  style={{ margin: '0 10px 10px 0' }}
+                                  type='primary'
+                                  onClick={() => this.comfirmPush1688(item.childOrder.id)}
+                                >重新推送1688
+                                </Button>
+                              ) : ''}
                           </span>
                         </Col>
                       </Row>
@@ -396,7 +403,7 @@ class Detail extends Component {
               refresh={this.queryProceeds}
             />
           ): (
-            <HaodianBenefitInfo orderInfo={data.orderInfo}/>
+            <HaodianBenefitInfo orderInfo={data.orderInfo} />
           )}
         </Card>
         <DeliveryModal

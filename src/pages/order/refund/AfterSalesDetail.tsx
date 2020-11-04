@@ -37,28 +37,33 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     console.log('info', info, typeof info)
     return (
       <>
-        {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (
-          <PendingReview />
-        ) : (
-          <>
-            <AfterSalesProcessing data={data} />
-            {/* 仅退款，待客服跟进 */}
-            {Array.isArray(info) && info.length > 0 && (
-              <Card>
-                <h3>供应商处理信息</h3>
-                <Row>
-                  {info.map((v: any) => (<Col>{v.key}：{v.value}</Col>))}
-                </Row>
-              </Card>
-            )}
-            {(typeof info === 'string' || typeof info === 'number') && (
-              <Card>
-                <h3>供应商处理信息</h3>
-                <Row>说明：{info}</Row>
-              </Card>
-            )}
-          </>
-        )}
+        {
+          (
+            this.isRefundStatusOf(enumRefundStatus.WaitConfirm)
+              || this.isRefundStatusOf(enumRefundStatus.WaitBossConfirm)
+          ) ? (
+              <PendingReview />
+            ) : (
+              <>
+                <AfterSalesProcessing data={data} />
+                {/* 仅退款，待客服跟进 */}
+                {Array.isArray(info) && info.length > 0 && (
+                  <Card>
+                    <h3>供应商处理信息</h3>
+                    <Row>
+                      {info.map((v: any) => (<Col>{v.key}：{v.value}</Col>))}
+                    </Row>
+                  </Card>
+                )}
+                {(typeof info === 'string' || typeof info === 'number') && (
+                  <Card>
+                    <h3>供应商处理信息</h3>
+                    <Row>说明：{info}</Row>
+                  </Card>
+                )}
+              </>
+            )
+        }
         <OrderInfo orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} shopDTO={shopDTO} restData={restData} />
       </>
     )

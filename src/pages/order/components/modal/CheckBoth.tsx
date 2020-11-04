@@ -2,13 +2,14 @@ import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Form, Modal, Radio, Button, InputNumber, Input, message, Row } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import { formItemLayout, radioStyle } from '@/config';
+import { radioStyle } from '@/config';
 import { namespace } from '../../refund/model';
 import { enumRefundType } from '../../constant';
 import { formatPrice, formatRMB } from '@/util/format';
 import { mul } from '@/util/utils';
 import ReturnShippingSelect from '../ReturnShippingSelect';
-import { verifyDownDgrade } from '@/pages/order/api';
+import ReturnCouponSelect from '../ReturnCouponSelect'
+import { verifyDownDgrade, checkRefundCoupon } from '@/pages/order/api';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
@@ -16,6 +17,7 @@ interface State {
   visible: boolean;
   isDemotion: number;
   demotionInfo: string;
+  deductionAmount?: number
 }
 class CheckBoth extends React.Component<Props, State> {
   state: State = {
@@ -27,6 +29,27 @@ class CheckBoth extends React.Component<Props, State> {
     super(props);
     this.onOk = this.onOk.bind(this);
   }
+
+  /* 校验满赠优惠券金额 */
+  checkRefundCoupon = (data: { childOrderId: number, refundNum: number, refundAmount: number, refundType: number }, cb?: () => void) => {
+    checkRefundCoupon(data).then((res: any) => {
+      console.log(res, 'res 92')
+      if (res) {
+        this.setState({
+          deductionAmount: res.deductionAmount
+        }, () => {
+          if (cb) {
+            cb()
+          }
+        })
+      } else {
+        if (cb) {
+          cb()
+        }
+      }
+    })
+  }
+
   onOk() {
     this.props.form.validateFields((errors, values) => {
       if (values.serverNum == 0) {
@@ -108,7 +131,12 @@ class CheckBoth extends React.Component<Props, State> {
    * 最终售后金额
    */
   get maxRefundAmount(): number {
-    return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount : this.relatedAmount;
+    const refundCouponAmount = this.props.form.getFieldValue('refundCouponAmount')
+    let maxRefundAmount = this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount : this.relatedAmount;
+    if (refundCouponAmount === 1) {
+      maxRefundAmount = maxRefundAmount - (this.state.deductionAmount || 0)
+    }
+    return maxRefundAmount
   }
   /**
    * 审核信息对象
@@ -126,11 +154,21 @@ class CheckBoth extends React.Component<Props, State> {
   * 修改售后数目
   */
   handleChangeServerNum = (value: any = 0) => {
-    let result = mul(this.unitPrice, value)
-    this.props.form.setFieldsValue({
-      refundAmount: formatPrice(result)
+    const result = mul(this.unitPrice, value)
+    this.checkRefundCoupon({
+      childOrderId: this.orderInfoVO.childOrderId,
+      refundNum: value,
+      refundAmount: this.checkVO.refundAmount,
+      refundType: this.checkVO.refundType
     }, () => {
-      this.verifyMaxRefundAmount(result);
+      this.props.form.setFieldsValue(
+        {
+          refundAmount: formatPrice(result)
+        },
+        () => {
+          this.verifyMaxRefundAmount(result)
+        }
+      )
     })
   }
    /**
@@ -163,7 +201,14 @@ class CheckBoth extends React.Component<Props, State> {
    * 退款金额变动
    */
   handleChangeMaxRefundAmount = (value: number = 0) => {
-    this.verifyMaxRefundAmount(value*100);
+    this.checkRefundCoupon({
+      childOrderId: this.orderInfoVO.childOrderId,
+      refundNum: value,
+      refundAmount: value * 100,
+      refundType: this.checkVO.refundType
+    }, () => {
+      this.verifyMaxRefundAmount(value * 100)
+    })
   }
   /**
    * 获取运费
@@ -181,13 +226,37 @@ class CheckBoth extends React.Component<Props, State> {
     let isAllow = this.props.form.getFieldValue('isAllow')
     return isAllow === 1;
   }
+
+  isAllowChange = (e: any) => {
+    const value = e.target.value
+    if (value === 1) {
+      this.checkRefundCoupon({
+        childOrderId: this.orderInfoVO.childOrderId,
+        refundNum: this.checkVO.serverNum,
+        refundAmount: this.checkVO.refundAmount,
+        refundType: this.checkVO.refundType
+      })
+    }
+  }
   render() {
     const { getFieldDecorator } = this.props.form
+    const { deductionAmount } = this.state
     const checkVO = this.data.checkVO || {}
     /** 是否是海淘订单 */
     const isHaiTao = Number(this.orderInfoVO.orderType) === 70
 
     const isXiaoDian = this.data.shopDTO && this.data.shopDTO.shopType === 2
+
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 12 },
+      },
+    };
     
     return (
       <>
@@ -209,7 +278,7 @@ class CheckBoth extends React.Component<Props, State> {
                   },
                 ],
               })(
-                <Radio.Group>
+                <Radio.Group onChange={this.isAllowChange}>
                   <Radio style={radioStyle} value={1}>
                     退款
                   </Radio>
@@ -241,6 +310,29 @@ class CheckBoth extends React.Component<Props, State> {
                   )}
                   <span>（最多可售后数目{checkVO.maxServerNum}）</span>
                 </Form.Item>
+                {
+                  deductionAmount && (
+                    <Form.Item label='是否回收优惠券金额'>
+                      {getFieldDecorator('refundCouponAmount', {
+                        rules: [
+                          {
+                            required: true,
+                            message: '请选择'
+                          }
+                        ]
+                      })(
+                        <ReturnCouponSelect
+                          deductionAmount={deductionAmount}
+                          onChange={() => {
+                            this.props.form.setFieldsValue({
+                              refundAmount: this.maxRefundAmount
+                            })
+                          }}
+                        />
+                      )}
+                    </Form.Item>
+                  )
+                }
                 <Form.Item label="退款金额">
                   {getFieldDecorator('refundAmount', {
                     initialValue: formatPrice(checkVO.refundAmount),
