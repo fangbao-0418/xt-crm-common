@@ -1,5 +1,6 @@
 import React from 'react'
 import { Form, FormItem } from '@/packages/common/components'
+import { FormInstance } from '@/packages/common/components/form'
 import { TreeSelect } from 'antd'
 import { getTreeCategory } from './api'
 
@@ -76,6 +77,7 @@ function getTreeData (list: any[]): any[] {
 }
 
 class Main extends React.Component<Props, State> {
+  public form: FormInstance
   public state = {
     treeData: []
   }
@@ -92,6 +94,7 @@ class Main extends React.Component<Props, State> {
   }
 
   public onChange = (ids: string[], label: string, extra: any) => {
+    this.form.setValues({ categorys: ids })
     const treeNodes = ids.map((id: string) => {
       const [firstCategoryId, secondCategoryId, thirdCategoryId]: any = getPath(id)
       return { firstCategoryId, secondCategoryId, thirdCategoryId }
@@ -113,7 +116,10 @@ class Main extends React.Component<Props, State> {
       },
     };
     return (
-      <Form style={{ height: 400 }}>
+      <Form
+        getInstance={ref => this.form = ref}
+        style={{ height: 400 }}
+      >
         <div style={{ color: 'red', marginBottom: 10 }}>取消勾选后所有已选择赠运费的商品将被取消，重新勾选类目后需再次在商品中勾选赠运费险</div>
         <FormItem
           label='类目'
