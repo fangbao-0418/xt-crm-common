@@ -52,6 +52,7 @@ interface SkuSaleFormState extends Record<string, any> {
   isGroup: boolean;
   productCode: string;
   showFreightInsurance: boolean // 是否显示运费险
+  enableFreightInsurance: 0 | 1
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
@@ -78,7 +79,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     productList: [],
     isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1',
     productCode: '',
-    showFreightInsurance: false
+    showFreightInsurance: false,
+    enableFreightInsurance: 0
   }
   id: number
   modifyTime: number
@@ -170,9 +172,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'returnPhone',
           'returnAddress',
           'showImage',
-          'productCustomsDetailVOList'
+          'productCustomsDetailVOList',
+          'enableFreightInsurance'
         ])
       })
+      console.log('categoryId', categoryId)
+      this.checkCategory(categoryId)
       this.form.setValues({
         categoryId,
         ...pick(res, [
@@ -201,7 +206,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'productImage',
           'storeProductId',
           'isAuthentication',
-          'isCalculateFreight'
+          'isCalculateFreight',
+          'enableFreightInsurance'
         ]),
         storeAddress: {
           storeAddressId: res.storeAddressId + '',
@@ -580,7 +586,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     this.getSupplierInfo(res.storeId)
     const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : []
     categoryId[0] && this.getStrategyByCategory(categoryId[0])
-    console.log('categoryId => ', categoryId)
+    console.log('setProductFileds res =>//////////////////////// ', res)
     const specs = this.getSpecs([
       {
         title: res.property1,
@@ -638,7 +644,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         'productImage',
         'storeProductId',
         'isAuthentication',
-        'isCalculateFreight'
+        'isCalculateFreight',
+        'enableFreightInsurance'
       ]),
       storeAddress: {
         storeAddressId: res.storeAddressId ? res.storeAddressId + '' : undefined,
@@ -674,7 +681,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       productList,
       isGroup,
       productCode,
-      showFreightInsurance
+      showFreightInsurance,
+      enableFreightInsurance
     } = this.state
     const { productType, status, storeId }: any = this.form ? this.form.getValues() : {}
     console.log(barCode, 'render123', storeId)
@@ -879,6 +887,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 return (
                   <>
                     {form.getFieldDecorator('enableFreightInsurance', {
+                      initialValue: enableFreightInsurance,
                       valuePropName: 'checked'
                     })(
                       <Checkbox disabled={interception === 1}>赠运费险</Checkbox>
