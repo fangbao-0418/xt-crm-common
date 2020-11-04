@@ -8977,9 +8977,10 @@ verror@1.6.0:
   dependencies:
     extsprintf "1.2.0"
 
-viewerjs@^1.5.0:
-  version "1.6.1"
-  resolved "http://xtnpm-registry.hzxituan.com:8082/viewerjs/-/viewerjs-1.6.1.tgz#719719898cbf7b63dd41763a0b4dabfa927ddfcf"
+viewerjs@1.5.0:
+  version "1.5.0"
+  resolved "http://xtnpm-registry.hzxituan.com:8082/viewerjs/-/viewerjs-1.5.0.tgz#debea9492189fa41223cc567de915d79435899d0"
+  integrity sha1-3r6pSSGJ+kEiPMVn3pFdeUNYmdA=
 
 vm-browserify@^1.0.1:
   version "1.1.2"
