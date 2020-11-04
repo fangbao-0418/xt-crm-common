@@ -1,7 +1,6 @@
 import React from 'react'
 import { Form, FormItem } from '@/packages/common/components'
 import { TreeSelect } from 'antd'
-import { getCategorys } from '@/pages/interface/category/api';
 import { getTreeCategory } from './api'
 
 const { SHOW_CHILD } = TreeSelect
@@ -97,7 +96,6 @@ class Main extends React.Component<Props, State> {
       const [firstCategoryId, secondCategoryId, thirdCategoryId]: any = getPath(id)
       return { firstCategoryId, secondCategoryId, thirdCategoryId }
     })
-    console.log('treeNodes', treeNodes)
     this.props.onChange(treeNodes)
   }
 

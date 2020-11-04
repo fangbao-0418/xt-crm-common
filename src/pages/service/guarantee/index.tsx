@@ -7,6 +7,7 @@ import { Alert } from 'antd'
 import { getGuaranteeList, updategGuarantee, getCategoryRelationDetail, saveRelationCategory } from './api'
 import Detail from './Detail'
 import Category from './Category'
+import { adapterGuaranteeRes } from './adapter'
 
 interface State {
   dataSource: any[]
@@ -46,6 +47,7 @@ class Main extends React.Component<AlertComponentProps, State> {
   }
   public fetchData = async () => {
     const dataSource = await getGuaranteeList()
+    console.log('dataSource', dataSource)
     this.setState({ dataSource })
   }
   // 选择支持运费险类目
@@ -63,6 +65,10 @@ class Main extends React.Component<AlertComponentProps, State> {
         />
       ),
       onOk: async (hide) => {
+        if (Array.isArray(nodes) && nodes.length === 0) {
+          APP.error('类目关联列表不能为空')
+          return
+        }
         const productGuaranteeCategoryRelationDTOList = nodes.map(item => ({ guaranteeId: id, ...item}));
         const res = await saveRelationCategory({ productGuaranteeCategoryRelationDTOList })
         if (res) {
@@ -74,6 +80,7 @@ class Main extends React.Component<AlertComponentProps, State> {
   }
   // 编辑
   public handleEdit = (data: any) => {
+    data = adapterGuaranteeRes(data)
     let detailRef = React.createRef<Detail>()
     this.props.alert({
       title: '编辑服务保障',

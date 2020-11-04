@@ -1,4 +1,4 @@
-import { adapterGuaranteeInfo } from "./adapter"
+import { adapterGuaranteeReq, adapterGuaranteeRes } from "./adapter"
 
 const { get, newPost, newPut } = APP.http
 
@@ -46,6 +46,6 @@ export function updategGuarantee (payload: {
   content: string
   sort: number
 }) {
-  payload = adapterGuaranteeInfo(payload)
+  payload = adapterGuaranteeReq(payload)
   return newPut('/mcweb/product/guarantee/update', payload)
 }
