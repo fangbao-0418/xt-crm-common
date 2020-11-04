@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 import { connect, parseQuery } from '@/util/utils'
 import { Card, Row, Col, Form, Input, Select, Button, Divider, Table } from 'antd'
 import moment from 'moment'
-import { levelArr } from '../config'
+import { levelArr, HAODIAN_LEVEL_OPTIONS } from '../config'
 import { levelName } from '../utils'
 import styles from './index.module.scss'
 import Modal from './modal'
 import { namespace } from './model'
-import { HAODIAN_LEVEL_OPTIONS } from '../config'
 const FormItem = Form.Item
 const { Option } = Select
 
@@ -70,7 +69,7 @@ function getColumns (scope) {
         return (
           <>
             {
-              record.memberTypeDO.key >= 10 && scope.props.bizSource === '0' // 喜团优选业务，团长以上才可以发码
+              record.memberTypeDO.key >= 10 && scope.props.bizSource === '1' // 喜团优选业务，团长以上才可以发码
                 ? (
                   <>
                     <span
@@ -90,14 +89,14 @@ function getColumns (scope) {
             {
               record.haveChild
                 ? <>
-                    <Divider type='vertical' />
-                    <span
-                      className={styles['more-button']}
-                      onClick={scope.onMore.bind(scope, record)}
-                    >
+                  <Divider type='vertical' />
+                  <span
+                    className={styles['more-button']}
+                    onClick={scope.onMore.bind(scope, record)}
+                  >
                       查看下级
-                    </span>
-                  </> : ''
+                  </span>
+                </> : ''
             }
           </>
         )
@@ -127,10 +126,10 @@ const defaultPayload = {
   // }
 })
 export default class extends Component {
-    constructor(props) {
-      super(props)
-      this.props.getInstance(this)
-    }
+  constructor (props) {
+    super(props)
+    this.props.getInstance(this)
+  }
     payload = Object.assign({}, defaultPayload, APP.fn.getPayload(namespace))
 
     // componentDidMount () {
@@ -345,34 +344,34 @@ export default class extends Component {
     render () {
       const { tableConfig } = this.props
       return (
-            <>
-                <Card>
-                  <Row>
-                    <Col style={{ marginBottom: 20 }}>
-                      {
-                        this.renderForm()
-                      }
-                    </Col>
-                    <Col>
-                      <Table
-                        dataSource={tableConfig.records}
-                        columns={getColumns(this)}
-                        pagination={{
-                          total: tableConfig.total,
-                          showSizeChanger: true,
-                          showQuickJumper: true,
-                          showTotal: this.showTotal,
-                          current: tableConfig.current
-                        }}
-                        onChange={this.onChange}
-                        rowKey={record => record.id}
-                        // loading={loading}
-                      />
-                    </Col>
-                    <Modal />
-                  </Row>
-                </Card>
-            </>
+        <>
+          <Card>
+            <Row>
+              <Col style={{ marginBottom: 20 }}>
+                {
+                  this.renderForm()
+                }
+              </Col>
+              <Col>
+                <Table
+                  dataSource={tableConfig.records}
+                  columns={getColumns(this)}
+                  pagination={{
+                    total: tableConfig.total,
+                    showSizeChanger: true,
+                    showQuickJumper: true,
+                    showTotal: this.showTotal,
+                    current: tableConfig.current
+                  }}
+                  onChange={this.onChange}
+                  rowKey={record => record.id}
+                  // loading={loading}
+                />
+              </Col>
+              <Modal />
+            </Row>
+          </Card>
+        </>
       )
     }
 }
