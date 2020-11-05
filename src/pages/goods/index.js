@@ -10,7 +10,7 @@ import GoodsDetail from './goods-detail'
 import SkuSaleForm from './sku-sale/form'
 import SkuStock from './sku-stock'
 import SkuStockForm from './sku-stock/form'
-import Material from './material'
+import Material from './material/Routes'
 import Virtual from './virtual'
 /** 积分商城 */
 import Integral from './integral'

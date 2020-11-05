@@ -12,6 +12,8 @@ import Add from './add'
 import AuditAndDetail from './audit'
 import { defaultConfig, channels } from './config'
 import styles from './style.module.scss'
+import { withRouter, RouteComponentProps } from 'react-router'
+import { parseQuery } from '@/packages/common/utils'
 
 // 审核状态文案
 enum enumAuditStatus {
@@ -31,7 +33,7 @@ const tableProps: any = {
   }
 }
 
-interface Props {
+interface Props extends RouteComponentProps {
   status: string
 }
 
@@ -49,6 +51,7 @@ interface State {
 }
 class MaterialTabItem extends React.Component<Props, State> {
   list: ListPageInstanceProps
+  queryParmas = parseQuery('/' + this.props.location.search)
   columns = [
     {
       title: '商品ID',
@@ -76,14 +79,14 @@ class MaterialTabItem extends React.Component<Props, State> {
       width: 120,
       dataIndex: 'productName'
     },
-    {
-      title: '商品渠道',
-      width: 120,
-      dataIndex: 'channel',
-      render(text: any) {
-        return channels[text]
-      }
-    },
+    // {
+    //   title: '商品渠道',
+    //   width: 120,
+    //   dataIndex: 'channel',
+    //   render(text: any) {
+    //     return channels[text]
+    //   }
+    // },
     {
       title: '内容',
       width: 100,
@@ -272,9 +275,11 @@ class MaterialTabItem extends React.Component<Props, State> {
    */
   addMaterial = () => {
     this.setState({
+      actionType: undefined,
       materialDetail: null
+    }, () => {
+      this.changeModalVisible(true)
     })
-    this.changeModalVisible(true)
   }
   /**
    * 是否显示增加/编辑弹窗
@@ -318,6 +323,16 @@ class MaterialTabItem extends React.Component<Props, State> {
     }, () => {
       this.changeModalVisible(true)
     })
+  }
+
+  componentWillMount () {
+    if (this.queryParmas.type === 'add') {
+      this.setState({
+        actionType: undefined,
+        materialDetail: null,
+        modalVisible: true
+      })
+    }
   }
 
   render () {
@@ -369,7 +384,7 @@ class MaterialTabItem extends React.Component<Props, State> {
           )}
         />
         <Modal
-          key={uuid()}
+          // key={uuid()}
           title={materialDetail ? '编辑素材' : '添加素材'}
           destroyOnClose
           visible={modalVisible}
@@ -410,4 +425,4 @@ class MaterialTabItem extends React.Component<Props, State> {
   }
 }
 
-export default MaterialTabItem
+export default withRouter(MaterialTabItem)
