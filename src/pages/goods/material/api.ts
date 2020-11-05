@@ -97,3 +97,22 @@ export function getGoodsList (data: any) {
     return res
   })
 }
+
+/** 获取素材评论列表 */
+export const fetchCommentList = (data: {
+  materialId: number
+  page: number
+  pageSize: number
+}) => {
+  return newPost('/mcweb/product/material/reply/list', data)
+}
+
+/** 删除评论 */
+export const removeComment = (id: number) => {
+  return newPost(`/mcweb/product/material/reply/del?replyId=${id}`)
+}
+
+/** 恢复评论 */
+export const recoverComment = (id: number) => {
+  return newPost(`/mcweb/product/material/reply/recover?replyId=${id}`)
+}
