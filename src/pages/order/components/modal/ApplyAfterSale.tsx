@@ -226,7 +226,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
           <Form {...formItemLayout}>
             <If condition={!!deductionInfo?.deductionStr}>
               <Form.Item label='提示'>
-                <span style={{ color: 'red' }}>{skuDetail.deductionStr}</span>
+                <span style={{ color: 'red' }}>{deductionInfo?.deductionStr}</span>
               </Form.Item>
             </If>
             <Form.Item label='售后类型'>

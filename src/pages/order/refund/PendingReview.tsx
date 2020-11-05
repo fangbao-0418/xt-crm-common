@@ -351,12 +351,14 @@ class PendingReview extends React.Component<Props, State> {
       refundAmount: this.checkVO.refundAmount,
       refundType: this.checkVO.refundType
     }, () => {
+      console.log(result, this.maxRefundAmount, 354)
+      const refundAmount = result > this.maxRefundAmount ? formatPrice(this.maxRefundAmount) : formatPrice(result)
       this.props.form.setFieldsValue(
         {
-          refundAmount: formatPrice(result)
+          refundAmount
         },
         () => {
-          this.verifyMaxRefundAmount(result)
+          this.verifyMaxRefundAmount(refundAmount)
         }
       )
     })
