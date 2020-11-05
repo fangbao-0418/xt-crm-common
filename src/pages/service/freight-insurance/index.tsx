@@ -141,7 +141,7 @@ class Main extends React.Component {
             >
               <Button type='primary' className='ml10'>导入excel</Button>
             </Upload>
-            <span className='href ml10' onClick={() => APP.fn.download('http://sh-tximg-1300503753.cos.ap-shanghai.myqcloud.com/tximg/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551604390595313.xlsx', '运费险导入模板')}>下载导入模板</span>
+            <span className='href ml10' onClick={() => APP.fn.download('https://assets.hzxituan.com/upload/2020-11-05/7fbf9ebf-3ad3-4448-a0e5-64d7026d0ed5-kh4ls7fc.xlsx', '运费险导入模板')}>下载导入模板</span>
           </>
         )}
         columns={this.columns}
