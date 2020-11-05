@@ -184,7 +184,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
     }, () => {
       const serverNum = getFieldValue('serverNum')
       if (serverNum) {
-        console.log(modalInfo.dealPrice, formatPrice(modalInfo.dealPrice * serverNum), 'formatPrice(modalInfo.dealPrice * serverNum)')
+        console.log(modalInfo.dealPrice, serverNum, this.maxRefundAmount, '188')
         const maxRefundAmount = formatPrice(this.maxRefundAmount)
         const calcAmount = formatPrice(modalInfo.dealPrice * serverNum)
         setFieldsValue({
@@ -279,7 +279,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
               </Form.Item>
             </If>
             <If condition={refundTypeValue !== enumRefundType.Exchange}>
-              <Form.Item label={'退款金额' + formatPrice(skuDetail.amount)}>
+              <Form.Item label={'退款金额'}>
                 {getFieldDecorator('amount', {
                   rules: [{ required: true, message: '请输入退款金额' }],
                   initialValue: formatPrice(skuDetail.amount)
