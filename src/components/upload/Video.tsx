@@ -49,11 +49,11 @@ class VideoUpload extends React.Component<Props, State> {
     visible: false,
     fileList: [],
     url: '',
-    value: this.initValue()
+    value: this.initValue(this.props.value)
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({
-      value: this.initValue(props.value)
+      value: this.initValue(props.value || [])
     })
   }
   public getViewUrl (url: string) {
@@ -64,7 +64,7 @@ class VideoUpload extends React.Component<Props, State> {
     url = APP.fn.fillOssDomainUrl(url)
     return url
   }
-  public initValue (value = this.props.value) {
+  public initValue (value: UploadFile<any>[] | undefined) {
     const res = value?.map((item) => {
       let url = item.url || ''
       const thumbUrl = this.getViewUrl(url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast,ar_auto')
@@ -143,7 +143,6 @@ class VideoUpload extends React.Component<Props, State> {
     const maxCount = this.props.maxCount || 1
     const { value } = this.state
     const accept = this.props.accept || 'video/mp4'
-    console.log(disabled, value, 'disableddisableddisableddisableddisabled')
     return (
       <>
         <Upload
