@@ -147,7 +147,15 @@ class OrderList extends React.Component {
             <>
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
               <AccountModal onSuccess={this.query} {...record} />
-              <Button type='primary' style={{ marginLeft: 8 }}>ERP接入管理</Button>
+              <Button
+                type='primary'
+                style={{ marginLeft: 8 }}
+                onClick={() => {
+                  APP.history.push('/supplier/access-details')
+                }}
+              >
+                ERP接入管理
+              </Button>
             </>
           )
         }
