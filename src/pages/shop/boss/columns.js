@@ -95,6 +95,7 @@ export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
             <If condition={record.shopStatus === 3 || record.shopStatus === 1}>
               <div onClick={onOpen.bind(null, record)} className='href'>开启店铺</div>
             </If>
+            <div className='href'>ERP接入管理</div>
           </div >
         )
       }
