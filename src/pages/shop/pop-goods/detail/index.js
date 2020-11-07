@@ -55,7 +55,12 @@ class GoodsDetail extends React.Component {
   }
 
   getSpecVals = (goodsInfo) => {
-    return goodsInfo.skuList
+    return goodsInfo.skuList?.map((item) => {
+      return {
+        ...item,
+        agencyCommission: item?.agencyCommission || 0.01
+      }
+    })
   }
 
   render() {
@@ -73,7 +78,7 @@ class GoodsDetail extends React.Component {
         productName: goodsInfo.productName || '暂无数据',
         commissionIncreaseRate: goodsInfo.commissionIncreaseRate||0,
         productImage: goodsInfo.productImage?.split(',')?.map((url) => initImgList(url)?.[0]),
-        listImage: goodsInfo.listImage?.split(',')?.map((url) => initImgList(url)?.[0]),
+        listImage: goodsInfo.listImage ? goodsInfo.listImage?.split(',')?.map((url) => initImgList(url)?.[0]) : [],
         saleCount: goodsInfo.saleCount || 0,
         productCategoryVO: goodsInfo.productCategoryVO,
         status: goodsInfo.status
@@ -134,7 +139,7 @@ class GoodsDetail extends React.Component {
                   productPoolId: productPoolId,
                   productPoolSkuCommissionUpdateDTOList: goodsInfo.skuList?.map((item) => {
                     return {
-                      agencyCommission: item.agencyCommission,
+                      agencyCommission: item.agencyCommission || 0.01,
                       companyCommission: item.companyCommission,
                       productPoolSkuId: item.skuId
                     }

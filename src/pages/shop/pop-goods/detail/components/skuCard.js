@@ -175,7 +175,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
             }
             APP.dispatch[namespace].saveDefault({ goodsInfo });
           }}
-          min={0}
+          min={0.01}
           max={MAX_PRICE_NUMBER}
           precision={2}
         />
