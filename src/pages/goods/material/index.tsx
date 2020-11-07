@@ -28,6 +28,7 @@ class Material extends React.Component<any> {
 
   // 切换tabPane
   public handleChange = (key: string) => {
+    APP.history.replace('/goods/material?')
     setPayload(namespace, key)
     this.setState({
       status: key as StatusType

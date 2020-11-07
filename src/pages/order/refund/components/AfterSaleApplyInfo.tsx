@@ -6,7 +6,7 @@ import {
   withRouter,
   RouteComponentProps
 } from 'react-router'
-import { getDetailColumns } from '../../constant'
+import { getDetailColumns, enumRefundStatus } from '../../constant'
 import { replaceHttpUrl } from '@/util/utils'
 import {
   formatMoneyWithSign,
@@ -16,7 +16,6 @@ import { ColumnProps } from 'antd/es/table'
 import moment from 'moment'
 import { namespace } from '../../refund/model'
 import { RemarkModal } from '../../components/modal'
-import { enumRefundStatus } from '../../constant'
 type OrderServerVO = AfterSalesInfo.OrderServerVO
 type ProductVO = AfterSalesInfo.ProductVO
 
