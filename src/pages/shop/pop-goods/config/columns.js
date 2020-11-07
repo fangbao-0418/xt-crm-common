@@ -162,17 +162,6 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
     {
       title: '违规次数',
       dataIndex: 'violationCount',
-      width: 200,
-      render: (val, record) => {
-        if (val === 0) {
-          return val
-        }
-        return <span onClick={() => onViolation(record)} className='href'>{val}</span>
-      }
-    },
-    {
-      title: '违规次数',
-      dataIndex: 'violationCount',
       width: 100,
       align: 'center'
     },
