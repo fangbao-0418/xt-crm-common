@@ -173,7 +173,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
               ...skuList[index],
               agencyCommission: current
             }
-            APP.dispatch[namespace].saveDefault({ goodsInfo });
+            APP.dispatch[namespace].saveDefault({ goodsInfo: {...goodsInfo} });
           }}
           min={0.01}
           max={MAX_PRICE_NUMBER}
@@ -213,7 +213,8 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
               ...skuList[index],
               companyCommission: current
             }
-            APP.dispatch[namespace].saveDefault({ goodsInfo });
+            console.log(current, 'current')
+            APP.dispatch[namespace].saveDefault({ goodsInfo: {...goodsInfo} });
           }}
           min={min}
           max={MAX_PRICE_NUMBER}

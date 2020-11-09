@@ -55,12 +55,12 @@ class GoodsDetail extends React.Component {
   }
 
   getSpecVals = (goodsInfo) => {
-    return goodsInfo.skuList?.map((item) => {
+    return goodsInfo?.skuList?.map((item) => {
       return {
         ...item,
         agencyCommission: item?.agencyCommission || 0.01
       }
-    })
+    }) || []
   }
 
   render() {
@@ -70,6 +70,8 @@ class GoodsDetail extends React.Component {
       skuInfo = null, // 规格信息
       logisInfo = null, // 物流信息
       auditInfo = null; // 审核信息
+
+    console.log(goodsInfo, this.getSpecVals(goodsInfo), 'nihaoa');
 
     if (goodsInfo) {
       baseInfo = {
@@ -83,7 +85,6 @@ class GoodsDetail extends React.Component {
         productCategoryVO: goodsInfo.productCategoryVO,
         status: goodsInfo.status
       }
-
       skuInfo = {
         specKeys: this.getSpecKeys(goodsInfo),
         specVals: this.getSpecVals(goodsInfo)
