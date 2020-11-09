@@ -8,6 +8,7 @@ import { formItemLayout } from '@/config'
 import Upload, { VideoUpload } from '@/components/upload'
 import { replaceHttpUrl } from '@/util/utils'
 import * as api from './api'
+import Comment from './components/Comment'
 
 // import { getCategory, saveRule, editRule } from './api'
 const { TextArea } = Input
@@ -112,7 +113,7 @@ class Add extends React.Component<Props, State> {
   }
 
   render () {
-    const { actionType } = this.props
+    const { actionType, dataSource } = this.props
     const { auditData } = this.state
     const isAudit = actionType === 'audit'
     const { authorPhone, author, productName, productId, content, videoUrl, productImage, auditMsg } = auditData
@@ -194,7 +195,7 @@ class Add extends React.Component<Props, State> {
               ))
               : '无'}
           </FormItem>
-          <If condition={!isAudit}>
+          <If condition={!isAudit && dataSource?.auditStatus !== 1}>
             <FormItem label='审核意见'>
               {auditMsg ? auditMsg : '无'}
             </FormItem>
@@ -210,6 +211,9 @@ class Add extends React.Component<Props, State> {
             >
             </FormItem>
           </If>
+          <FormItem labelCol={{ span: 2 }} >
+            {dataSource?.id !== undefined && <Comment id={dataSource.id} />}
+          </FormItem>
         </Form>
       </Card>
     )

@@ -2,7 +2,7 @@ import React from 'react'
 import { Table, Form, Input, InputNumber, Card, Modal, message } from 'antd'
 import { If } from '@/packages/common/components'
 import { FormComponentProps } from 'antd/lib/form'
-import { getDetailColumns } from '../../constant'
+import { getDetailColumns, enumRefundType } from '../../constant'
 import { refundType } from '@/enum'
 import { formatPrice } from '@/util/format'
 import UploadView from '@/components/upload'
@@ -12,7 +12,6 @@ import ModifyAddress from './ModifyShippingAddress'
 import AfterSaleSelect from '../after-sale-select'
 import { mul } from '@/util/utils'
 import { getProductDetail, customerAdd, checkRefundCoupon } from '../../api'
-import { enumRefundType } from '../../constant'
 const { TextArea } = Input
 
 interface Props extends FormComponentProps {
@@ -184,7 +183,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
     }, () => {
       const serverNum = getFieldValue('serverNum')
       if (serverNum) {
-        console.log(modalInfo.dealPrice, formatPrice(modalInfo.dealPrice * serverNum), 'formatPrice(modalInfo.dealPrice * serverNum)')
+        console.log(modalInfo.dealPrice, serverNum, this.maxRefundAmount, '188')
         const maxRefundAmount = formatPrice(this.maxRefundAmount)
         const calcAmount = formatPrice(modalInfo.dealPrice * serverNum)
         setFieldsValue({
@@ -226,7 +225,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
           <Form {...formItemLayout}>
             <If condition={!!deductionInfo?.deductionStr}>
               <Form.Item label='提示'>
-                <span style={{ color: 'red' }}>{skuDetail.deductionStr}</span>
+                <span style={{ color: 'red' }}>{deductionInfo?.deductionStr}</span>
               </Form.Item>
             </If>
             <Form.Item label='售后类型'>
@@ -279,7 +278,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
               </Form.Item>
             </If>
             <If condition={refundTypeValue !== enumRefundType.Exchange}>
-              <Form.Item label={'退款金额' + formatPrice(skuDetail.amount)}>
+              <Form.Item label={'退款金额'}>
                 {getFieldDecorator('amount', {
                   rules: [{ required: true, message: '请输入退款金额' }],
                   initialValue: formatPrice(skuDetail.amount)

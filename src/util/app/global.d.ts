@@ -12,6 +12,7 @@ declare module APP {
     goBack()
     push: (url: string) => void
     go: (url: string | number) => void
+    replace: (url: string) => void
   }
   interface ReduxActionProps<T = any> {
     type: string,
