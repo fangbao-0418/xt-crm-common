@@ -215,6 +215,7 @@ class Main extends React.Component<Props> {
     const { data } = this.props
     const { enableGroupBuyPermission, enableStorePurchase } = this.state
     const { form: { getFieldDecorator } } = this.props;
+    console.log(APP.user.id, 'xxxxxxxxxxxx')
     return (
       <div>
         <Card
