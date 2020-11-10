@@ -6,7 +6,7 @@ export const levelName = function (member) {
   let type = member.memberType
   try{
     type = type.toString()
-  }catch(e) {
+  } catch(e) {
     return '';
   }
   let level = member.memberTypeLevel
