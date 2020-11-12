@@ -113,6 +113,22 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
       <Row gutter={24}>
         <Col span={8}>姓名：{orderInfoVO.realName}</Col>
         <Col span={8}>身份证号：{orderInfoVO.idNo}</Col>
+        {/*
+          5-未生效 10-保障中 15-理赔成功 20-理赔失败 25-取消
+          当运费险为【理赔成功】时显示【赔付金额】
+        */}
+        <Col span={8}>
+          运费险：
+          <span
+            className='href'
+            onClick={() => {
+              APP.history.push(`/service/freight-insurance?childOrderCode=${orderInfoVO.childOrderCode}`)
+            }}
+          >
+            {orderInfoVO?.freightInsuranceVO?.insuranceStatusDesc}
+          </span>
+          {orderInfoVO?.freightInsuranceVO?.insuranceStatus === 15 && <span>赔付金额：{APP.fn.formatMoney(orderInfoVO?.freightInsuranceVO?.insurancePaidAmount)}</span>}
+        </Col>
       </Row>
       <h4>供应商信息</h4>
       {shopDTO ? (
