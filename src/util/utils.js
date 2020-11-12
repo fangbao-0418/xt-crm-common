@@ -7,6 +7,7 @@ import * as LocalStorage from '@/util/localstorage';
 import moment from 'moment';
 import { isNil } from 'lodash';
 import { handleApiUrl } from './app/config';
+import { getUniqueId } from '@/packages/common/utils'
 const pathToRegexp = require('path-to-regexp');
 const History = createHashHistory();
 
@@ -170,13 +171,10 @@ export function formatData(data) {
 
 export function initImgList (imgUrlWap, uid) {
   if (imgUrlWap) {
-    if (imgUrlWap.indexOf('http') !== 0) {
-      imgUrlWap = APP.fn.fillOssDomainUrl(imgUrlWap)
-      // imgUrlWap = 'https://assets.hzxituan.com/' + imgUrlWap;
-    }
+    imgUrlWap = APP.fn.fillOssDomainUrl(imgUrlWap)
     return [
       {
-        uid: uid || String(Math.random()).slice(2),
+        uid: uid || getUniqueId(),
         url: imgUrlWap,
         status: 'done',
         thumbUrl: imgUrlWap,

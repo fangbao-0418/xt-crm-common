@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Tabs, message, Button, Icon } from 'antd'
+import { Card, Tabs, message, Modal, Button, Icon } from 'antd'
 import { getGoodsList, getCategoryTopList, getShopList, exportGoods, passGoods, getGoodsInfo, getShopTypes } from './api'
 import * as api from './api'
 import SelectFetch from '@/components/select-fetch'
@@ -16,6 +16,7 @@ import { combinationStatusList, formConfig } from './config/config'
 import getColumns from './config/columns'
 import Alert from '@/packages/common/components/alert'
 import { param } from '@/packages/common/utils'
+import MultiSoldOut from './components/MultiSoldOut'
 
 const { TabPane } = Tabs
 
@@ -184,6 +185,7 @@ class Main extends React.Component {
   /** 操作：切换状态查询 */
   handleTabChange = (tabStatus) => {
     this.setState({
+      selectedRowKeys: [],
       tabStatus
     }, () => {
       this.listRef.refresh(true)
@@ -233,7 +235,34 @@ class Main extends React.Component {
       carouselVisible: false
     })
   }
-
+  multiSoldOut = () => {
+    let formRef
+    const selectedRowKeys = this.state.selectedRowKeys
+    if (!selectedRowKeys.length) {
+      APP.error('请选择下架商品')
+      return
+    }
+    const hide = this.props.alert({
+      title: '批量下架',
+      content: (
+        <MultiSoldOut getInstance={(ref) => formRef = ref} />
+      ),
+      onOk: () => {
+        formRef.props.form.validateFields((errors, values) => {
+          api.multiSoldOut({
+            productPoolIds: selectedRowKeys,
+            ...values
+          }).then(() => {
+            this.setState({
+              selectedRowKeys: []
+            })
+            hide()
+            this.listRef.refresh()
+          })
+        })
+      }
+    })
+  }
   importAdvisePrice () {
     const _this = this
     const el = document.createElement('input')
@@ -338,11 +367,6 @@ class Main extends React.Component {
             } else {
               payload.auditStatus = undefined
             }
-            /** 清除选择 */
-            this.setState({
-              selectedRowKeys: []
-            })
-            console.log(payload, 'payload')
             return {
               ...payload,
               storeId: payload.store?.key,
@@ -488,6 +512,10 @@ class Main extends React.Component {
                 type='primary'
                 className='mr8'
                 onClick={() => {
+                  /** 清除选择 */
+                  this.setState({
+                    selectedRowKeys: []
+                  })
                   this.listRef.refresh()
                 }}
               >
@@ -496,6 +524,10 @@ class Main extends React.Component {
               <Button
                 className='mr8'
                 onClick={() => {
+                  /** 清除选择 */
+                  this.setState({
+                    selectedRowKeys: []
+                  })
                   this.listRef.refresh(true)
                 }}
               >
@@ -535,6 +567,15 @@ class Main extends React.Component {
             </>
           }
         />
+        <div style={{ position: 'relative' }}>
+          <div style={{ position: 'absolute', top: -70, left: 20 }}>
+            {tabStatus === '1' && (
+              <Button type='danger' onClick={this.multiSoldOut}>
+                批量下架
+              </Button>
+            )}
+          </div>
+        </div>
       </Card>
     )
   }

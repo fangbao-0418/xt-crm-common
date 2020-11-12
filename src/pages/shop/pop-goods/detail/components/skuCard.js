@@ -8,6 +8,8 @@ import { parseQuery } from '@/util/utils'
 import ArrowContain from './arrow-contain'
 import Decimaljs from 'decimal.js'
 
+const MAX_PRICE_NUMBER = 9999999.99
+
 const ConfirmStatusEnum = {
   0: '未导入价格',
   1: '商家已确认',
@@ -66,9 +68,14 @@ function speedyInput(
                 let key = `${field}-${currentIndex}`
                 fields.push(key);
                 const record = dataSource[currentIndex]
-                const min = -Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10).toNumber()
-                const max = record.salePrice
-                const currentText = text > max ? max : ((text < min) ? min : text)
+                // const min = -Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10).toNumber()
+                // const max = record.salePrice
+                // const currentText = text > max ? max : ((text < min) ? min : text)
+                let currentText = text
+                if (field === 'companyCommission') {
+                  const min = -record.costPrice + 1
+                  currentText = text < min ? min : text
+                }
                 dataSource[currentIndex][field] = currentText
                 currentIndex++
                 values[key] = text
@@ -111,40 +118,42 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     width: 90
   }, {
     title: '规格ID',
+    width: 150,
     dataIndex: 'productSkuId'
   }, {
     title: '条形码',
+    width: 150,
     dataIndex: 'barCode'
   }, {
     title: '供货价',
     dataIndex: 'costPrice',
+    width: 150,
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '市场价',
     dataIndex: 'marketPrice',
+    width: 150,
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '销售价',
     dataIndex: 'salePrice',
     key: 'salePrice',
+    width: 150,
     render: (value) => {
       return (formatMoneyWithSign(value))
     }
   }, {
-    title: '佣金上浮',
+    title: '代理佣金',
     hidden: !(status === 1 && confirmStatus === 1),
-    // hidden: true,
-    dataIndex: 'commissionIncreasePrice',
+    dataIndex: 'agencyCommission',
+    width: 200,
     render: (text, record, index) => {
       if (readonly || (status !== 1 || confirmStatus !== 1)) {
         return (formatMoneyWithSign(text))
       }
-      const value = APP.fn.formatMoneyNumber(text, 'm2u')
-      const min = -APP.fn.formatMoneyNumber(Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10).toNumber(), 'm2u')
-      const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
       return speedyInput(
         form,
-        `commissionIncreasePrice`,
+        `agencyCommission`,
         text,
         record,
         index,
@@ -154,72 +163,93 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
       )(
         <InputNumber
           // value={value}
+          style={{ width: '100%' }}
           onChange={(e) => {
-            const current = APP.fn.formatMoneyNumber(e > max ? max : ((e < min) ? min : e))
+            e = e > MAX_PRICE_NUMBER ? MAX_PRICE_NUMBER : e
+            e = e < 0 ? 0 : e
+            const current = APP.fn.formatMoneyNumber(e)
             const skuList = goodsInfo.skuList
             skuList[index] = {
               ...skuList[index],
-              commissionIncreasePrice: current,
-              increaseSalePrice: current + record.salePrice
+              agencyCommission: current
             }
-            APP.dispatch[namespace].saveDefault({ goodsInfo });
+            APP.dispatch[namespace].saveDefault({ goodsInfo: {...goodsInfo} });
           }}
-          min={min}
-          max={max}
-          precision={1}
+          min={0.01}
+          max={MAX_PRICE_NUMBER}
+          precision={2}
         />
       )
-      // return (
-      //   <Form.Item>
-      //     {
-      //       form.getFieldDecorator(`commissionIncreasePrice[${index}]`, {
-      //         initialValue: value
-      //       })(
-      //         <InputNumber
-      //           value={value}
-      //           onChange={(e) => {
-      //             const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
-      //             const current = APP.fn.formatMoneyNumber(e > max ? max : e)
-      //             const skuList = goodsInfo.skuList
-      //             skuList[index] = {
-      //               ...skuList[index],
-      //               commissionIncreasePrice: current,
-      //               increaseSalePrice: current + record.salePrice
-      //             }
-      //             APP.dispatch[namespace].saveDefault({ goodsInfo });
-      //           }}
-      //           min={-min}
-      //           max={APP.fn.formatMoneyNumber(record.salePrice, 'm2u')}
-      //           precision={1}
-      //         />
-      //       )
-      //     }
-      //   </Form.Item>
-      // )
     }
   }, {
-    title: '上浮后销售价',
+    title: '公司利润',
     hidden: !(status === 1 && confirmStatus === 1),
-    dataIndex: 'increaseSalePrice',
+    dataIndex: 'companyCommission',
+    width: 200,
+    render: (text, record, index) => {
+      if (readonly || (status !== 1 || confirmStatus !== 1)) {
+        return (formatMoneyWithSign(text))
+      }
+      const min = -APP.fn.formatMoneyNumber(record.costPrice - 1, 'm2u')
+      return speedyInput(
+        form,
+        `companyCommission`,
+        text,
+        record,
+        index,
+        specVals,
+        handleChangeValue,
+        agencyRate
+      )(
+        <InputNumber
+          // value={value}
+          style={{ width: '100%' }}
+          onChange={(e) => {
+            e = e > MAX_PRICE_NUMBER ? MAX_PRICE_NUMBER : e
+            e = e < min ? min : e
+            const current = APP.fn.formatMoneyNumber(e)
+            const skuList = goodsInfo.skuList
+            skuList[index] = {
+              ...skuList[index],
+              companyCommission: current
+            }
+            console.log(current, 'current')
+            APP.dispatch[namespace].saveDefault({ goodsInfo: {...goodsInfo} });
+          }}
+          min={min}
+          max={MAX_PRICE_NUMBER}
+          precision={2}
+        />
+      )
+    }
+  }, {
+    title: '调整后销售价',
+    hidden: !(status === 1 && confirmStatus === 1),
+    dataIndex: 'finalSalePrice',
+    width: 150,
     render: (value, record) => {
-      return formatMoneyWithSign(record.salePrice + record.commissionIncreasePrice)
+      return formatMoneyWithSign((record.costPrice ?? 0) + (record.agencyCommission ?? 0) + (record.companyCommission ?? 0))
     },
   }, {
     title: '建议供货价',
     dataIndex: 'adviseCostPrice',
     hidden: !(auditStatus === 2 && confirmStatus !== 0),
+    width: 150,
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '建议销售价',
     dataIndex: 'adviseSalePrice',
     hidden: !(auditStatus === 2 && confirmStatus !== 0),
+    width: 150,
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '总库存',
-    dataIndex: 'stock'
+    dataIndex: 'stock',
+    width: 150
   }, {
     title: '可用库存',
-    dataIndex: 'usableStock'
+    dataIndex: 'usableStock',
+    width: 150
   }].filter((item) => !item.hidden)
 
   const startColumns = fixedColumns.slice(0, 2);
@@ -227,14 +257,32 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   const columns = [...startColumns, ...dynaColums, ...endColumns].concat(confirmStatus !== 0 ? [{
     title: '商家确认状态',
     dataIndex: 'confirmStatus',
+    width: 150,
     render: (text) => {
       return ConfirmStatusEnum[confirmStatus]
     }
   }] : []);
 
-  return <div>
-    <Table pagination={false} dataSource={specVals} columns={columns} />
-  </div>
+  // console.log(columns, 'coumns coumnscoumnscoumns')
+  // console.log(columns.reduce((a, b) => {
+  //   console.log((typeof a === 'number') ? a : a?.width, b, 'xxxx')
+  //   return ((typeof a === 'number') ? a : (a?.width || 0)) + (b.width || 0)
+  // }), 'xxxxxxx')
+  return (
+    <div>
+      <Table
+        pagination={false}
+        dataSource={specVals}
+        columns={columns}
+        scroll={{
+          x: columns.reduce((a, b) => {
+            // console.log(a, b.width, 'xxxxxx')
+            return ((typeof a === 'number') ? a : (a?.width || 100)) + (b.width || 100)
+          })
+        }}
+      />
+    </div>
+  )
 }
 
 class SkuCard extends React.Component {
