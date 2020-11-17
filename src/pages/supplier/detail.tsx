@@ -53,7 +53,6 @@ class Main extends React.Component<{}, State> {
     title: '操作人',
     dataIndex: 'createUserName'
   }]
-  public handleChange = () => {}
   public unbind = () => {
     Modal.confirm({
       title: '确认解绑？',
@@ -79,7 +78,6 @@ class Main extends React.Component<{}, State> {
       <Card>
         <Tabs
           defaultActiveKey="1"
-          onChange={this.handleChange}
         >
           <TabPane tab="接入详情" key="1">
             <div>

@@ -22,8 +22,8 @@ class RouteApp extends React.Component {
     const { match } = this.props
     return (
       <Switch>
-        <Route path={`${match.url}`} component={List} exact />
-        <Route path={`${match.url}/access-details`} component={Detail} />
+        <Route path={`${match.url}/list`} component={List} exact />
+        <Route path={`${match.url}/access-details`} component={Detail} exact />
       </Switch>
     )
   }
