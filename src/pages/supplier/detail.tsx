@@ -3,6 +3,8 @@ import ListPage from '@/packages/common/components/list-page'
 import { Tabs, Card, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table';
 import Modal from 'antd/es/modal';
+import { parseQuery } from '@/util/utils';
+import { getErpInfo } from './api';
 
 const { TabPane } = Tabs
 interface Log {
@@ -11,6 +13,14 @@ interface Log {
   operator: string
 }
 class Main extends React.Component {
+  public componentDidMount () {
+    this.getErpInfo()
+  }
+  public getErpInfo() {
+    const { shopId } = parseQuery() as any
+    console.log('shopId', shopId)
+    getErpInfo(shopId)
+  }
   public columns: ColumnProps<Log>[] = [{
     title: '操作',
     dataIndex: 'operate'

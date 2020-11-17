@@ -28,6 +28,13 @@ const mockData = {
   total: 0
 }
 
+/**
+ * CRM端-查询供应商ERP信息
+ */
+export function getErpInfo (shopId) {
+  return get(`/mmweb/crm/erp/info?shopId=${shopId}`)
+}
+
 // 新增供应商账号
 export function addSupplierAccount (data) {
   return post('/store/add/supplier', data)

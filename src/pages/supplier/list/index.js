@@ -151,7 +151,7 @@ class OrderList extends React.Component {
                 type='primary'
                 style={{ marginLeft: 8 }}
                 onClick={() => {
-                  APP.history.push('/supplier/access-details')
+                  APP.history.push(`/supplier/access-details?shopId=${record.shopIdStr}`)
                 }}
               >
                 ERP接入管理
