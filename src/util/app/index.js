@@ -162,3 +162,12 @@ Object.defineProperty(APP, 'token', {
     localStorage.setItem('token', val)
   }
 })
+
+Object.defineProperty(APP, 'user', {
+  get () {
+    return getUser()
+  },
+  set (val) {
+    localStorage.setItem('user', JSON.stringify(val))
+  }
+})

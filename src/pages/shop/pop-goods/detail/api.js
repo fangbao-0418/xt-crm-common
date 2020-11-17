@@ -24,13 +24,13 @@ export function auditGoods(data) {
  * 
  * @param {object} payload 
  * @param {number} payload.productPoolId - 商品池id
+ * @param {string} payload.productName - 商品名称
+ * @param {string} payload.productImage - 商品图片值为字符串多个图片,分割
+ * @param {string} payload.listImage - 商品详情值为字符串多个图片,分割
  * @param {Object[]} payload.productPoolSkuCommissionUpdateDTOList - 商品sku记录信息
  * @param {number} payload.productPoolSkuCommissionUpdateDTOList[].commissionIncreasePrice - 上浮金额（分）
  * @param {number} payload.productPoolSkuCommissionUpdateDTOList[].productPoolSkuId - 商品池skuid
  */
 export function updateGoods (payload) {
-  return newPut('/mcweb/product/shop/pop/update', {
-    productPoolId: payload.productPoolId,
-    productPoolSkuCommissionUpdateDTOList: payload.productPoolSkuCommissionUpdateDTOList
-  })
+  return newPut('/mcweb/product/shop/pop/update', payload)
 }

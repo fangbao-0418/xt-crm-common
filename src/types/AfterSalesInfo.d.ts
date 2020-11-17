@@ -89,6 +89,7 @@ declare module AfterSalesInfo {
     /** 积分 */
     pointValue: string
     salePrice?: number // 单价
+    freightInsuranceVO: any // 运费险
   }
   export interface OrderServerVO {
     id: number;
