@@ -65,7 +65,11 @@ class Main extends React.Component<{}, State> {
           shopId: this.shopId,
           erpType: this.state.detail.erpType
         })
-        console.log('res', res)
+        if (res) {
+          APP.success('操作成功')
+          this.getErpInfo();
+          this.getErpRecords();
+        }
       }
     })
   }
