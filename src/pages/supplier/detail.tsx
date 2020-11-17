@@ -6,20 +6,37 @@ import Modal from 'antd/es/modal';
 import { parseQuery } from '@/util/utils';
 import { getErpInfo } from './api';
 
+enum erpStatusEnum {
+  未对接 = 0,
+  已绑定 = 1
+}
 const { TabPane } = Tabs
 interface Log {
   operate: string
   content: string
   operator: string
 }
-class Main extends React.Component {
+
+interface State {
+  detail: Partial<{
+    erpStatus: 0 | 1
+    erpType: '0' | '1' | '2' // ERP类型(0:无,1:网店管家,2:旺店通)
+    erpTypeDesc: 0 | 1 | 2 // ERP类型(0:无,1:网店管家,2:旺店通)
+    erpKey: '0' | '1' // ERP对接状态(0:未对接,1:已绑定)
+  }>
+}
+class Main extends React.Component<{}, State> {
+  public state: State = {
+    detail: {}
+  }
   public componentDidMount () {
     this.getErpInfo()
   }
-  public getErpInfo() {
+  public async getErpInfo() {
     const { shopId } = parseQuery() as any
     console.log('shopId', shopId)
-    getErpInfo(shopId)
+    const res = await getErpInfo(shopId)
+    this.setState({ detail: res })
   }
   public columns: ColumnProps<Log>[] = [{
     title: '操作',
@@ -41,6 +58,7 @@ class Main extends React.Component {
     })
   }
   public render () {
+    const { detail } = this.state
     return (
       <Card>
         <Tabs
@@ -49,7 +67,7 @@ class Main extends React.Component {
         >
           <TabPane tab="接入详情" key="1">
             <div>
-              <span className='mr10'>供应商ERP对接状态：未绑定 </span>
+              <span className='mr10'>供应商ERP对接状态：{detail.erpStatus && erpStatusEnum[detail.erpStatus]}</span>
               <Button type='primary' onClick={this.unbind}>解绑</Button>
             </div>
             <div>密钥：-</div>
