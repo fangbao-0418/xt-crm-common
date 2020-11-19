@@ -141,12 +141,21 @@ class OrderList extends React.Component {
       },
       {
         title: '操作',
-        width: 200,
+        width: 320,
         render: (operator, record) => {
           return (
             <>
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
               <AccountModal onSuccess={this.query} {...record} />
+              <Button
+                type='primary'
+                style={{ marginLeft: 8 }}
+                onClick={() => {
+                  APP.history.push(`/supplier/access-details?shopId=${record.shopIdStr}`)
+                }}
+              >
+                ERP接入管理
+              </Button>
             </>
           )
         }

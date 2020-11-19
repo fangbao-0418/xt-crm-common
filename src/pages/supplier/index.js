@@ -9,6 +9,7 @@ import PropTypes from 'prop-types'
 // import Loadable from 'react-loadable';
 import { Route, Switch } from 'react-router-dom'
 import List from './list'
+import Detail from './detail'
 // import { view as Loader } from '../../components/loader';
 
 // const List = Loadable({
@@ -21,7 +22,8 @@ class RouteApp extends React.Component {
     const { match } = this.props
     return (
       <Switch>
-        <Route path={`${match.url}`} component={List} />
+        <Route path={`${match.url}/list`} component={List} exact />
+        <Route path={`${match.url}/access-details`} component={Detail} exact />
       </Switch>
     )
   }
