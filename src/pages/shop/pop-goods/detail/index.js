@@ -8,6 +8,7 @@ import { unionBy } from 'lodash'
 import { Button } from 'antd'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
+import { initImgList } from '@/util/utils'
 
 @connect(state => ({
   goodsInfo: state['shop.pop.goods.detail'].goodsInfo
@@ -20,7 +21,6 @@ class GoodsDetail extends React.Component {
   }
 
   componentDidMount() {
-    // console.log(this.query, 'query query query query query')
     this.fetchData()
   }
 
@@ -51,14 +51,16 @@ class GoodsDetail extends React.Component {
       }))
       pitem.content = unionBy(pitem.content, 'specName')
     })
-
-    console.log(propertys)
-
     return propertys
   }
 
   getSpecVals = (goodsInfo) => {
-    return goodsInfo.skuList
+    return goodsInfo?.skuList?.map((item) => {
+      return {
+        ...item,
+        agencyCommission: item?.agencyCommission || 0.01
+      }
+    }) || []
   }
 
   render() {
@@ -69,18 +71,20 @@ class GoodsDetail extends React.Component {
       logisInfo = null, // 物流信息
       auditInfo = null; // 审核信息
 
+    console.log(goodsInfo, this.getSpecVals(goodsInfo), 'nihaoa');
+
     if (goodsInfo) {
       baseInfo = {
         productCategory: goodsInfo.productCategoryVO && goodsInfo.productCategoryVO.combineName || '暂无数据',
         commission: (goodsInfo.productCategoryVO && (goodsInfo.productCategoryVO.agencyRate + goodsInfo.productCategoryVO.companyRate) || 0) + ' %',
         productName: goodsInfo.productName || '暂无数据',
         commissionIncreaseRate: goodsInfo.commissionIncreaseRate||0,
-        productImage: goodsInfo.productImage.split(','),
-        listImage: goodsInfo.listImage.split(','),
+        productImage: goodsInfo.productImage?.split(',')?.map((url) => initImgList(url)?.[0]),
+        listImage: goodsInfo.listImage ? goodsInfo.listImage?.split(',')?.map((url) => initImgList(url)?.[0]) : [],
         saleCount: goodsInfo.saleCount || 0,
-        productCategoryVO: goodsInfo.productCategoryVO
+        productCategoryVO: goodsInfo.productCategoryVO,
+        status: goodsInfo.status
       }
-
       skuInfo = {
         specKeys: this.getSpecKeys(goodsInfo),
         specVals: this.getSpecVals(goodsInfo)
@@ -108,7 +112,7 @@ class GoodsDetail extends React.Component {
     }
     return (
       <div>
-        <BaseCard data={baseInfo} />
+        <BaseCard data={baseInfo} getInstance={(ref) => this.baseCardRef = ref} />
         <SkuCard goodsInfo={goodsInfo} data={skuInfo} />
         <LogisCard data={logisInfo} />
         <AuditCard data={auditInfo} productPoolId={productPoolId} />
@@ -117,17 +121,32 @@ class GoodsDetail extends React.Component {
             <Button
               type='primary'
               className='mr10'
-              onClick={() => {
+              onClick={async () => {
+                let values = {}
+                if (this.baseCardRef && goodsInfo.status === 1) {
+                  await this.baseCardRef?.props.form.validateFields((error) => {
+                    //
+                    if (error) {
+                      APP.error('请检查输入项')
+                      return
+                    }
+                  })
+                  values = this.baseCardRef?.props.form.getFieldsValue()
+                  values.productImage = values.productImage?.map((item) => item.url)?.join(',')
+                  values.listImage = values.listImage?.map((item) => item.url)?.join(',')
+                }
                 api.updateGoods({
+                  ...values,
                   productPoolId: productPoolId,
                   productPoolSkuCommissionUpdateDTOList: goodsInfo.skuList?.map((item) => {
                     return {
-                      commissionIncreasePrice: item.commissionIncreasePrice,
+                      agencyCommission: item.agencyCommission || 0.01,
+                      companyCommission: item.companyCommission,
                       productPoolSkuId: item.skuId
                     }
                   })
                 }).then(() => {
-                  APP.success('佣金上浮修改成功')
+                  APP.success('商品修改成功')
                   this.fetchData()
                 })
               }}

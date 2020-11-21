@@ -9,7 +9,10 @@ const fields: string[] = ['costPrice', 'salePrice', 'marketPrice', 'cityMemberPr
 
 // 过滤新增、编辑销售商品请求
 export function formRequest(payload: any) {
-  console.log('payload =>', payload)
+  if (payload.enableFreightInsurance !== undefined) {
+    // 是否支持运费险 0:不支持,1:支持 勾了就传1
+    payload.enableFreightInsurance = payload.enableFreightInsurance ? 1 : 0
+  }
   // 组合商品默认是入库商品
   if (payload.isGroup) {
     payload.warehouseType = 1;
@@ -40,6 +43,8 @@ export function formRequest(payload: any) {
   result.secondCategoryId = payload.categoryId?.[1]
   result.thirdCategoryId = payload.categoryId?.[2]
   result.categoryId = payload.categoryId?.[2]
+
+  console.log('payload=>', payload)
   return omit({ ...payload, ...result }, 'skuList')
 }
 
@@ -62,6 +67,8 @@ export function formResponse(res: any) {
   res.status = +res.status;
   res.productCustomsDetailVOList = res.productCustomsDetailVOList || [];
   res.warehouseType = res.warehouseType ? 1 :  0;
+  // 是否支持运费险 1为选中，0为未选中
+  res.enableFreightInsurance = res.enableFreightInsurance === 1
   return res;
 }
 

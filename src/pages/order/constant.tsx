@@ -69,9 +69,16 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       render: MoneyRender
     },
     {
-      title: '使用优惠券',
-      dataIndex: 'faceValue',
-      key: 'faceValue'
+      title: '平台优惠券',
+      dataIndex: 'platformCouponPrice',
+      key: 'platformCouponPrice',
+      render: MoneyRender
+    },
+    {
+      title: '店铺优惠券',
+      dataIndex: 'couponPrice',
+      key: 'couponPrice',
+      render: MoneyRender
     },
     {
       title: '应付金额',
@@ -97,6 +104,7 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
     {
       title: '积分抵扣',
       dataIndex: 'pointValue',
+      key: 'pointValue',
       width: '8%'
     },
     {

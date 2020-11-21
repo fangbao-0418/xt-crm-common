@@ -9,6 +9,17 @@ import { queryString } from '@/util/utils'
 import { omit } from 'lodash'
 const { newPost, get } = APP.http
 
+/**
+ * 校验类目是否支持展示运费险
+ */
+export function checkCategory (payload: {
+  firstCategoryId: number
+  secondCategoryId: number
+  thirdCategoryId: number
+}) {
+  return get('/mcweb/product/guarantee/category/check', payload)
+}
+
 // 库存商品ID查询
 export function getBaseProduct (productBasicId: number) {
   return get('/mcweb/product/basic/select/detail', { productBasicId }).then(baseProductResponse)

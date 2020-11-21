@@ -28,6 +28,25 @@ const mockData = {
   total: 0
 }
 
+/** CRM端-供应商解除绑定ERP */
+export function unBind (payload) {
+  return newPost('/mmweb/crm/erp/unBind', payload)
+}
+
+/**
+ * CRM端-查询供应商ERP接入操作记录
+ */
+export function getErpRecords (shopId) {
+  return get(`/mmweb/crm/erp/records?shopId=${shopId}`)
+}
+
+/**
+ * CRM端-查询供应商ERP信息
+ */
+export function getErpInfo (shopId) {
+  return get(`/mmweb/crm/erp/info?shopId=${shopId}`)
+}
+
 // 新增供应商账号
 export function addSupplierAccount (data) {
   return post('/store/add/supplier', data)

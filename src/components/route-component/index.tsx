@@ -1,8 +1,11 @@
 import React from 'react'
 import { Route, Switch, RouteComponentProps } from 'react-router-dom'
 import { RouteProps, withRouter } from 'react-router'
-interface Props extends RouteComponentProps {
-  config: RouteProps[]
+
+export type RouteConfigProps = RouteProps
+
+export interface Props extends RouteComponentProps {
+  config: RouteConfigProps[]
 }
 
 class Main extends React.Component<Props> {

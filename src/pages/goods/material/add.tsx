@@ -305,6 +305,11 @@ class Add extends React.Component<Props, State> {
                       <VideoUpload
                         maxCount={3}
                         maxSize={15 * 1024 * 1024}
+                        onChange={() => {
+                          this.form.setValues({
+                            productImage: undefined
+                          })
+                        }}
                       />
                     )
                   }
@@ -326,6 +331,11 @@ class Add extends React.Component<Props, State> {
                         size={0.3}
                         ossType='cos'
                         placeholder='上传商品图片'
+                        onChange={() => {
+                          this.form.setValues({
+                            videoUrl: undefined
+                          })
+                        }}
                       />
                     )}
                   </div>

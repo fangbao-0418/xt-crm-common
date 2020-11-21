@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Card, Row, Col, Table, Input, Form, DatePicker, Button, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from '@/util/utils';
-
+import { exportAsync } from './api';
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 
 function getColumns(scope) {
@@ -125,7 +125,7 @@ export default class extends Component {
   }
   exportFile = () => {
     const { form: { validateFields }, dispatch } = this.props;
-    validateFields((errors, values) => {
+    validateFields(async (errors, values) => {
       const { time } = values;
       const payload = {
         ...values,
@@ -133,7 +133,11 @@ export default class extends Component {
         withdrawalEndDate: time && time[1] && time[1].format(timeFormat),
         time: undefined, // 覆盖values.time
       };
-      dispatch['finance.log'].exportFile(payload);
+      const res = await exportAsync(payload);
+      if (res) {
+        APP.success('导出成功')
+      }
+      // dispatch['finance.log'].exportFile(payload);
     })
   }
   renderForm = () => {

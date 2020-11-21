@@ -263,19 +263,39 @@ class Main extends React.Component<Props> {
             </Descriptions.Item>
             <Descriptions.Item label="等级">
               {data?.memberTypeDO?.value}
-              <Button
-                disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)}
-                onClick={() => this.modifyMemberType(1)} style={{ marginLeft: 20 }}
-              >
-                升级
-              </Button>
-              <Button
-                disabled={(data.memberTypeVO && (!data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))}
-                onClick={() => this.modifyMemberType(-1)}
-                style={{ marginLeft: 20 }}
-              >
-                降级
-              </Button>
+              {[1, 505].includes(APP.user.id) ? (
+                <>
+                  <Button
+                    // disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)}
+                    onClick={() => this.modifyMemberType(1)} style={{ marginLeft: 20 }}
+                  >
+                    升级
+                  </Button>
+                  <Button
+                    // disabled={(data.memberTypeVO && (!data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))}
+                    onClick={() => this.modifyMemberType(-1)}
+                    style={{ marginLeft: 20 }}
+                  >
+                    降级
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)}
+                    onClick={() => this.modifyMemberType(1)} style={{ marginLeft: 20 }}
+                  >
+                    升级
+                  </Button>
+                  <Button
+                    disabled={(data.memberTypeVO && (!data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))}
+                    onClick={() => this.modifyMemberType(-1)}
+                    style={{ marginLeft: 20 }}
+                  >
+                    降级
+                  </Button>
+                </>
+              )}
             </Descriptions.Item>
             <Descriptions.Item label="微信">
               {data.wechat || '暂无'}
